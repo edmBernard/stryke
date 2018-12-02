@@ -5,6 +5,10 @@ project(Stryke)
 #**************************************************************************************************
 cmake_minimum_required(VERSION 3.5)
 
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 #**************************************************************************************************
 # Find Package **************************************************************************************************
 find_package(protobuf CONFIG REQUIRED)
@@ -39,7 +43,7 @@ SET(SOURCES
 
 #**************************************************************************************************
 # Set compiler **************************************************************************************************
-add_compile_options(-std=c++17 -Wall) # for all targets in current directory
+add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directory
 
 #**************************************************************************************************
 # Linker **************************************************************************************************
@@ -50,7 +54,7 @@ add_compile_options(-std=c++17 -Wall) # for all targets in current directory
 #**************************************************************************************************
 add_executable(stryke_main ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_compile_options(stryke_main PRIVATE -O3)
-target_link_libraries(stryke_main PRIVATE -lstdc++fs Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${ORC_LIBRARY})
+target_link_libraries(stryke_main PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
 
 #**************************************************************************************************
@@ -65,8 +69,7 @@ if(BUILD_UNIT_TESTS)
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
-  target_link_libraries(unit-test PRIVATE -lstdc++fs Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${ORC_LIBRARY})
-  add_dependencies(unit-test uwebsocket_lib)
+  target_link_libraries(unit-test PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
   add_test(NAME "unit_test_default"
     COMMAND unit-test
