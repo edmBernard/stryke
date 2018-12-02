@@ -48,9 +48,9 @@ add_compile_options(-std=c++17 -Wall) # for all targets in current directory
 #**************************************************************************************************
 # Make configuration
 #**************************************************************************************************
-add_executable(orc_test ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-target_compile_options(orc_test PRIVATE -O3)
-target_link_libraries(orc_test PRIVATE -lstdc++fs Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${ORC_LIBRARY})
+add_executable(stryke_main ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+target_compile_options(stryke_main PRIVATE -O3)
+target_link_libraries(stryke_main PRIVATE -lstdc++fs Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${ORC_LIBRARY})
 
 
 #**************************************************************************************************
