@@ -27,19 +27,19 @@
 
 namespace stryke {
 
-namespace utils {
+// namespace utils {
 
-template <typename T, std::size_t... Indices, typename Function>
-auto for_each_impl(T &&t, std::index_sequence<Indices...>, Function &&f) -> std::vector<decltype(f(std::get<0>(t)))> {
-  return {f(std::get<Indices>(t))...};
-}
+// template <typename T, std::size_t... Indices, typename Function>
+// auto for_each_impl(T &&t, std::index_sequence<Indices...>, Function &&f) -> std::vector<decltype(f(std::get<0>(t)))> {
+//   return {f(std::get<Indices>(t))...};
+// }
 
-template <typename... Types, typename Function>
-auto for_each(std::tuple<Types...> &t, Function &&f) {
-  return for_each_impl(t, std::index_sequence_for<Types...>(), f);
-}
+// template <typename... Types, typename Function>
+// auto for_each(std::tuple<Types...> &t, Function &&f) {
+//   return for_each_impl(t, std::index_sequence_for<Types...>(), f);
+// }
 
-} // namespace utils
+// } // namespace utils
 
 namespace functors {
 
@@ -60,13 +60,39 @@ namespace functors {
 
 } // namespace functors
 
+// template<typename U>
+// class AddStructField
+// {
+//     addStructField() {}
+
+//     template<typename T>
+//     bool operator()(T &&t) {
+//       fillLongValues<U, T>(this->data, this->batch, this->numValues);
+//       return true;
+//     }
+// }
+
+
+// template<typename T>
+// void test<0,T>(T* array)
+// {
+//     return;
+// }
+
 template<typename T>
-  void addStructField(std::unique_ptr<orc::Type> &struct_type, const std::string & column_name) {
+  bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
+  return false;
 }
 
 template<>
-void addStructField<int>(std::unique_ptr<orc::Type> &struct_type, const std::string & column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::INT));
+bool addStructField<int>(std::unique_ptr<orc::Type> &struct_type) {
+  struct_type->addStructField("mol" + std::to_string(1), orc::createPrimitiveType(orc::TypeKind::INT));
+  return true;
+}
+
+template <typename... Types>
+std::vector<bool> for_each(std::unique_ptr<orc::Type> &struct_type) {
+  return {addStructField<Types>(struct_type)...};
 }
 
 template <class T, uint64_t N>
@@ -100,11 +126,12 @@ public:
       : batchSize(batchSize) {
 
     // TODO: Trouver comment créer ce schema sans string
-    // fileType = orc::Type::buildTypeFromString("struct<col1:int,col2:int,col3:int>");
     fileType = orc::createStructType();
-    addStructField<int>(fileType, "col1");
-    addStructField<int>(fileType, "col2");
-    addStructField<int>(fileType, "col3");
+    auto ret = for_each<Types...>(fileType);
+
+    for (auto&& i : ret) {
+      std::cout << i << std::endl;
+    }
 
     options.setStripeSize(1000);
 
