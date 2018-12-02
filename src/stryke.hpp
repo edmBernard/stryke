@@ -14,6 +14,7 @@
 #define STRYKE_HPP_
 
 #include "orc/OrcFile.hh"
+#include "orc/Type.hh"
 
 #include <iomanip>
 #include <iostream>
@@ -59,6 +60,16 @@ namespace functors {
 
 } // namespace functors
 
+// template<typename T>
+// void addStructField(orc::Type &struct_type, const std::string & column_name) {
+// }
+
+// template<>
+// void addStructField<int>(orc::Type &struct_type, const std::string & column_name) {
+//   struct_type.addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::INT));
+// }
+
+
 template <class T, uint64_t N>
 void fillLongValues(const std::vector<T> &data,
                     orc::StructVectorBatch *batch,
@@ -90,7 +101,12 @@ public:
       : batchSize(batchSize) {
 
     // TODO: Trouver comment créer ce schema sans string
-    fileType = orc::Type::buildTypeFromString("struct<col1:int,col2:int,col3:int>");
+    // fileType = orc::Type::buildTypeFromString("struct<col1:int,col2:int,col3:int>");
+    fileType = orc::createStructType();
+
+    fileType->addStructField("col1", orc::createPrimitiveType(orc::TypeKind::INT));
+    fileType->addStructField("col2", orc::createPrimitiveType(orc::TypeKind::INT));
+    fileType->addStructField("col3", orc::createPrimitiveType(orc::TypeKind::INT));
 
     options.setStripeSize(1000);
 
