@@ -15,14 +15,70 @@
 
 #include "orc/OrcFile.hh"
 
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <queue>
+#include <regex>
 #include <string>
 #include <thread>
 #include <tuple>
 
 namespace stryke {
+
+namespace utils {
+
+template <typename T, std::size_t... Indices, typename Function>
+auto for_each_impl(T &&t, std::index_sequence<Indices...>, Function &&f) -> std::vector<decltype(f(std::get<0>(t)))> {
+  return {f(std::get<Indices>(t))...};
+}
+
+template <typename... Types, typename Function>
+auto for_each(std::tuple<Types...> &t, Function &&f) {
+  return for_each_impl(t, std::index_sequence_for<Types...>(), f);
+}
+
+} // namespace utils
+
+namespace functors {
+
+// template <class U>
+// struct executeFillValues {
+//   executeFillValues(const std::vector<T> &data, orc::StructVectorBatch *batch, uint64_t numValues) : data(data), batch(batch), numValues(numValues) {}
+
+//   const std::vector<T> &data;
+//   orc::StructVectorBatch *batch;
+//   uint64_t numValues;
+
+//   template <typename T>
+//   bool operator()(T &&t) {
+//     fillLongValues<U, T>(this->data, this->batch, this->numValues);
+//     return true;
+//   }
+// };
+
+} // namespace functors
+
+template <class T, uint64_t N>
+void fillLongValues(const std::vector<T> &data,
+                    orc::StructVectorBatch *batch,
+                    uint64_t numValues) {
+  orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+  bool hasNull = false;
+  for (uint64_t i = 0; i < numValues; ++i) {
+    auto col = std::get<N>(data[i]);
+    std::cout << col << " - " << std::endl;
+    if (col == 0) {
+      longBatch->notNull[i] = 0;
+      hasNull = true;
+    } else {
+      longBatch->notNull[i] = 1;
+      longBatch->data[i] = col;
+    }
+  }
+  longBatch->hasNulls = hasNull;
+  longBatch->numElements = numValues;
+}
 
 //! Writer in one file one thread.
 //!
@@ -30,39 +86,59 @@ namespace stryke {
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix) : batchSize(batchSize) {
+  OrcWriterImpl(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix)
+      : batchSize(batchSize) {
 
     // TODO: Trouver comment créer ce schema sans string
-    fileType = orc::Type::buildTypeFromString("struct<x:int>");
+    fileType = orc::Type::buildTypeFromString("struct<col1:int,col2:int,col3:int>");
 
     options.setStripeSize(1000);
 
-    outStream = orc::writeLocalFile(folder + "/" + prefix);
-    writer = orc::createWriter(*fileType, outStream.get(), options);
-    rowBatch = writer->createRowBatch(this->batchSize);
+    this->outStream = orc::writeLocalFile(folder + "/" + prefix);
+    this->writer = orc::createWriter(*fileType, outStream.get(), options);
+    this->rowBatch = this->writer->createRowBatch(this->batchSize);
 
+    // this->buffer = orc::DataBuffer<char>(*orc::getDefaultPool(), 4 * 1024 * 1024);
   }
 
   ~OrcWriterImpl() {
+    addToFile();
+    std::cout << "Destrutor" << std::endl;
     this->writer->close();
   }
 
-  void write(Types... data) {
+  void write(Types... dataT) {
 
-    std::cout << "argument length: " << sizeof...(data) << std::endl;
+    // std::cout << "argument length: " << sizeof...(data) << std::endl;
     if (this->numValues < this->batchSize) {
 
-      this->data.push_back(std::make_tuple(data...));
+      this->data.push_back(std::make_tuple(dataT...));
       ++this->numValues;
 
     } else {
-      // TODO: Faire le remplissage via template
-      // TODO: on fait le remplissage à chaque fin de batch ou à chaque ajout de data ?
+      addToFile();
+    }
+  }
 
-      orc::StructVectorBatch* structBatch = dynamic_cast<orc::StructVectorBatch*>(rowBatch.get());
-      structBatch->numElements = numValues;
+  void addToFile() {
+    orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
+    structBatch->numElements = this->numValues;
+    {
+      // auto ret = utils::for_each(this->parsers, functors::executeFillValues(this->data, structBatch, this->numValues));
+      // for (auto &&i : ret) {
+      //   std::cout << i << " " << std::endl;
+      // }
+
+      fillLongValues<std::tuple<Types...>, 0>(this->data, structBatch, this->numValues);
+      fillLongValues<std::tuple<Types...>, 1>(this->data, structBatch, this->numValues);
+      fillLongValues<std::tuple<Types...>, 2>(this->data, structBatch, this->numValues);
+
     }
 
+    this->writer->add(*this->rowBatch);
+
+    this->data.clear();
+    this->numValues = 0;
   }
 
   OrcWriterImpl &setSchema() {
@@ -78,7 +154,8 @@ private:
   std::unique_ptr<orc::ColumnVectorBatch> rowBatch;
 
   std::vector<std::tuple<Types...>> data; // buffer that holds a batch of rows in tuple
-  uint64_t numValues = 0;
+
+  uint64_t numValues = 0; // num of lines read in a batch
   uint64_t batchSize;
 };
 

@@ -10,17 +10,17 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 
-#include <iostream>
 #include "stryke.hpp"
+#include <iostream>
 #include <string>
 
 using namespace stryke;
 
+int main(int argc, char const *argv[]) {
+  OrcWriterImpl<int, int, int> my_writer(10, 100, "../data", "toto.orc");
+  for (int i = 0; i < 150; ++i) {
+    my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2);
+  }
 
-int main(int argc, char const *argv[])
-{
-    OrcWriterImpl<int, std::string> my_writer(10, 100, "my_path", "my_prefix");
-    my_writer.write(1, "toto");
-
-    return 0;
+  return 0;
 }
