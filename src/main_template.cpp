@@ -10,7 +10,7 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 
-#include "stryke.hpp"
+#include "stryke_template.hpp"
 #include <iostream>
 #include <string>
 

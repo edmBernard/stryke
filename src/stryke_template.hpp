@@ -27,82 +27,6 @@
 
 namespace stryke {
 
-// namespace utils {
-
-// template <typename T, std::size_t... Indices, typename Function>
-// auto for_each_impl(T &&t, std::index_sequence<Indices...>, Function &&f) -> std::vector<decltype(f(std::get<0>(t)))> {
-//   return {f(std::get<Indices>(t))...};
-// }
-
-// template <typename... Types, typename Function>
-// auto for_each(std::tuple<Types...> &t, Function &&f) {
-//   return for_each_impl(t, std::index_sequence_for<Types...>(), f);
-// }
-
-// } // namespace utils
-
-namespace functors {
-
-// template <class U>
-// struct executeFillValues {
-//   executeFillValues(const std::vector<T> &data, orc::StructVectorBatch *batch, uint64_t numValues) : data(data), batch(batch), numValues(numValues) {}
-
-//   const std::vector<T> &data;
-//   orc::StructVectorBatch *batch;
-//   uint64_t numValues;
-
-//   template <typename T>
-//   bool operator()(T &&t) {
-//     fillLongValues<U, T>(this->data, this->batch, this->numValues);
-//     return true;
-//   }
-// };
-
-} // namespace functors
-
-// template<typename U>
-// class AddStructField
-// {
-//     addStructField() {}
-
-//     template<typename T>
-//     bool operator()(T &&t) {
-//       fillLongValues<U, T>(this->data, this->batch, this->numValues);
-//       return true;
-//     }
-// }
-
-
-// template<typename T>
-// void test<0,T>(T* array)
-// {
-//     return;
-// }
-
-// template<size_t Value, typename Type>
-// struct AddStructField
-// {
-//     AddStructField<Value, Type>(std::unique_ptr<orc::Type> &struct_type) : struct_type(struct_type) {}
-//     std::unique_ptr<orc::Type> &struct_type;
-//     static size_t const count = 0;
-
-//     template<typename T>
-//     bool operator()(T &&t) {
-//       return false;
-//     }
-// };
-
-// template<size_t Value>
-// struct AddStructField<Value, int> {
-
-//   template<typename T>
-//   bool operator()(T &&t) {
-//     this->struct_type->addStructField("super_col" + std::to_string(this->count++), orc::createPrimitiveType(orc::TypeKind::INT));
-//     return true;
-//   }
-// };
-
-
 template<typename T>
   bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
   return false;
@@ -126,11 +50,6 @@ template <typename... Types>
 std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
   return {addStructField<Types>(struct_type)...};
 }
-
-// template <typename... Types, std::size_t... Indices>
-// std::vector<bool> for_each(std::index_sequence<Indices...>, std::unique_ptr<orc::Type> &struct_type) {
-//   return {AddStructField<Indices, Types>(struct_type)()...};
-// }
 
 template <class T, uint64_t N>
 void fillLongValues(const std::vector<T> &data,
@@ -162,7 +81,6 @@ public:
   OrcWriterImpl(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix)
       : batchSize(batchSize) {
 
-    // TODO: Trouver comment créer ce schema sans string
     fileType = orc::createStructType();
     auto ret = create_schema<Types...>(fileType);
 
@@ -176,7 +94,6 @@ public:
     this->writer = orc::createWriter(*fileType, outStream.get(), options);
     this->rowBatch = this->writer->createRowBatch(this->batchSize);
 
-    // this->buffer = orc::DataBuffer<char>(*orc::getDefaultPool(), 4 * 1024 * 1024);
   }
 
   ~OrcWriterImpl() {
@@ -202,10 +119,6 @@ public:
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
     {
-      // auto ret = utils::for_each(this->parsers, functors::executeFillValues(this->data, structBatch, this->numValues));
-      // for (auto &&i : ret) {
-      //   std::cout << i << " " << std::endl;
-      // }
 
       fillLongValues<std::tuple<Types...>, 0>(this->data, structBatch, this->numValues);
       fillLongValues<std::tuple<Types...>, 1>(this->data, structBatch, this->numValues);
