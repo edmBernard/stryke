@@ -52,10 +52,13 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 #**************************************************************************************************
 # Make configuration
 #**************************************************************************************************
-add_executable(stryke_main ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-target_compile_options(stryke_main PRIVATE -O3)
-target_link_libraries(stryke_main PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+add_executable(stryke_dyn ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dynamic.cpp)
+target_compile_options(stryke_dyn PRIVATE -O3)
+target_link_libraries(stryke_dyn PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
+add_executable(stryke_tpl ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_template.cpp)
+target_compile_options(stryke_tpl PRIVATE -O3)
+target_link_libraries(stryke_tpl PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
 #**************************************************************************************************
 # Test configuration
