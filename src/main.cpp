@@ -17,7 +17,8 @@
 using namespace stryke;
 
 int main(int argc, char const *argv[]) {
-  OrcWriterImpl<int, int, int> my_writer(10, 100, "../data", "toto.orc");
+
+  OrcWriterImpl<int, int, long> my_writer(10, 100, "../data", "toto.orc");
   for (int i = 0; i < 150; ++i) {
     my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2);
   }

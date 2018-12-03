@@ -79,6 +79,30 @@ namespace functors {
 //     return;
 // }
 
+// template<size_t Value, typename Type>
+// struct AddStructField
+// {
+//     AddStructField<Value, Type>(std::unique_ptr<orc::Type> &struct_type) : struct_type(struct_type) {}
+//     std::unique_ptr<orc::Type> &struct_type;
+//     static size_t const count = 0;
+
+//     template<typename T>
+//     bool operator()(T &&t) {
+//       return false;
+//     }
+// };
+
+// template<size_t Value>
+// struct AddStructField<Value, int> {
+
+//   template<typename T>
+//   bool operator()(T &&t) {
+//     this->struct_type->addStructField("super_col" + std::to_string(this->count++), orc::createPrimitiveType(orc::TypeKind::INT));
+//     return true;
+//   }
+// };
+
+
 template<typename T>
   bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
   return false;
@@ -86,7 +110,15 @@ template<typename T>
 
 template<>
 bool addStructField<int>(std::unique_ptr<orc::Type> &struct_type) {
-  struct_type->addStructField("mol" + std::to_string(1), orc::createPrimitiveType(orc::TypeKind::INT));
+  static int count = 0;
+  struct_type->addStructField("col_int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
+  return true;
+}
+
+template<>
+bool addStructField<long>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
   return true;
 }
 
@@ -94,6 +126,11 @@ template <typename... Types>
 std::vector<bool> for_each(std::unique_ptr<orc::Type> &struct_type) {
   return {addStructField<Types>(struct_type)...};
 }
+
+// template <typename... Types, std::size_t... Indices>
+// std::vector<bool> for_each(std::index_sequence<Indices...>, std::unique_ptr<orc::Type> &struct_type) {
+//   return {AddStructField<Indices, Types>(struct_type)()...};
+// }
 
 template <class T, uint64_t N>
 void fillLongValues(const std::vector<T> &data,
