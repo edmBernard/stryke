@@ -123,7 +123,7 @@ bool addStructField<long>(std::unique_ptr<orc::Type> &struct_type) {
 }
 
 template <typename... Types>
-std::vector<bool> for_each(std::unique_ptr<orc::Type> &struct_type) {
+std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
   return {addStructField<Types>(struct_type)...};
 }
 
@@ -164,7 +164,7 @@ public:
 
     // TODO: Trouver comment créer ce schema sans string
     fileType = orc::createStructType();
-    auto ret = for_each<Types...>(fileType);
+    auto ret = create_schema<Types...>(fileType);
 
     for (auto&& i : ret) {
       std::cout << i << std::endl;
