@@ -27,7 +27,6 @@
 
 namespace stryke {
 
-
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
 template<typename Types, uint64_t N, typename T>
 class Filler {
@@ -37,6 +36,7 @@ public:
                 uint64_t numValues) {
     return false;
   }
+
 };
 
 template<typename Types, uint64_t N>
@@ -89,6 +89,7 @@ public:
   }
 };
 
+
 namespace utils {
 
 template <typename T, std::size_t... Indices>
@@ -139,6 +140,10 @@ public:
 
     fileType = orc::createStructType();
     auto ret = create_schema<Types...>(fileType);
+
+    for (auto &&i : ret) {
+      std::cout << i << std::endl;
+    }
 
     options.setStripeSize(1000);
 
