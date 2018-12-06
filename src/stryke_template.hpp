@@ -27,33 +27,73 @@
 
 namespace stryke {
 
-template <class T, uint64_t N>
-bool fillLongValues(const std::vector<T> &data,
-                    orc::StructVectorBatch *batch,
-                    uint64_t numValues) {
-  orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
-  bool hasNull = false;
-  for (uint64_t i = 0; i < numValues; ++i) {
-    auto col = std::get<N>(data[i]);
-    std::cout << col << " - " << std::endl;
-    if (col == 0) {
-      longBatch->notNull[i] = 0;
-      hasNull = true;
-    } else {
-      longBatch->notNull[i] = 1;
-      longBatch->data[i] = col;
-    }
+
+// I use a class because function template partial specialisation is not allowed in c++, but class yes
+template<typename Types, uint64_t N, typename T>
+class Filler {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                orc::StructVectorBatch *batch,
+                uint64_t numValues) {
+    return false;
   }
-  longBatch->hasNulls = hasNull;
-  longBatch->numElements = numValues;
-  return true;
-}
+};
+
+template<typename Types, uint64_t N>
+class Filler<Types, N, long> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      auto col = std::get<N>(data[i]);
+      std::cout << col << " - " << std::endl;
+      if (col == 0) {
+        longBatch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        longBatch->notNull[i] = 1;
+        longBatch->data[i] = col;
+      }
+    }
+    longBatch->hasNulls = hasNull;
+    longBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template<typename Types, uint64_t N>
+class Filler<Types, N, int> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      auto col = std::get<N>(data[i]);
+      std::cout << col << " - " << std::endl;
+      if (col == 0) {
+        longBatch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        longBatch->notNull[i] = 1;
+        longBatch->data[i] = col;
+      }
+    }
+    longBatch->hasNulls = hasNull;
+    longBatch->numElements = numValues;
+    return true;
+  }
+};
 
 namespace utils {
 
 template <typename T, std::size_t... Indices>
 auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
-  return {fillLongValues<T, Indices>(data, structBatch, numValues)...};
+  return {Filler<T, Indices, std::tuple_element<Indices, T>>::fillValue(data, structBatch, numValues)...};
 }
 
 template <typename... Types>
@@ -88,7 +128,6 @@ std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
 }
 
 
-
 //! Writer in one file one thread.
 //!
 //!
@@ -100,10 +139,6 @@ public:
 
     fileType = orc::createStructType();
     auto ret = create_schema<Types...>(fileType);
-
-    for (auto &&i : ret) {
-      std::cout << i << std::endl;
-    }
 
     options.setStripeSize(1000);
 
@@ -135,7 +170,7 @@ public:
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
 
-    utils::fillValues(this->data, structBatch, this->numValues);
+    auto ret = utils::fillValues(this->data, structBatch, this->numValues);
 
     this->writer->add(*this->rowBatch);
 
