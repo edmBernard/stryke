@@ -27,32 +27,8 @@
 
 namespace stryke {
 
-template<typename T>
-  bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
-  return false;
-}
-
-template<>
-bool addStructField<int>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("col_int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
-  return true;
-}
-
-template<>
-bool addStructField<long>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
-  return true;
-}
-
-template <typename... Types>
-std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
-  return {addStructField<Types>(struct_type)...};
-}
-
 template <class T, uint64_t N>
-void fillLongValues(const std::vector<T> &data,
+bool fillLongValues(const std::vector<T> &data,
                     orc::StructVectorBatch *batch,
                     uint64_t numValues) {
   orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
@@ -70,7 +46,48 @@ void fillLongValues(const std::vector<T> &data,
   }
   longBatch->hasNulls = hasNull;
   longBatch->numElements = numValues;
+  return true;
 }
+
+namespace utils {
+
+template <typename T, std::size_t... Indices>
+auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
+  return {fillLongValues<T, Indices>(data, structBatch, numValues)...};
+}
+
+template <typename... Types>
+auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) {
+  return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues);
+}
+
+} // namespace utils
+
+template <typename T>
+bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
+  return false;
+}
+
+template <>
+bool addStructField<int>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("col_int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
+  return true;
+}
+
+template <>
+bool addStructField<long>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+  return true;
+}
+
+template <typename... Types>
+std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
+  return {addStructField<Types>(struct_type)...};
+}
+
+
 
 //! Writer in one file one thread.
 //!
@@ -84,7 +101,7 @@ public:
     fileType = orc::createStructType();
     auto ret = create_schema<Types...>(fileType);
 
-    for (auto&& i : ret) {
+    for (auto &&i : ret) {
       std::cout << i << std::endl;
     }
 
@@ -93,7 +110,6 @@ public:
     this->outStream = orc::writeLocalFile(folder + "/" + prefix);
     this->writer = orc::createWriter(*fileType, outStream.get(), options);
     this->rowBatch = this->writer->createRowBatch(this->batchSize);
-
   }
 
   ~OrcWriterImpl() {
@@ -118,13 +134,8 @@ public:
   void addToFile() {
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
-    {
 
-      fillLongValues<std::tuple<Types...>, 0>(this->data, structBatch, this->numValues);
-      fillLongValues<std::tuple<Types...>, 1>(this->data, structBatch, this->numValues);
-      fillLongValues<std::tuple<Types...>, 2>(this->data, structBatch, this->numValues);
-
-    }
+    utils::fillValues(this->data, structBatch, this->numValues);
 
     this->writer->add(*this->rowBatch);
 
