@@ -134,10 +134,10 @@ public:
 // Date Type Category
 class Date {
 public:
-  Date(long &&data)
+  Date(std::string &&data)
       : data(std::move(data)) {
   }
-  long data;
+  std::string data;
   typedef Date type;
 };
 
@@ -185,14 +185,20 @@ public:
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      auto col = std::get<N>(data[i]);
-      std::cout << col.data << " - " << std::endl;
-      if (col.data == 0) {
-        longBatch->notNull[i] = 0;
+      std::string col = std::get<N>(data[i]).data;
+      if (col.empty()) {
+        batch->notNull[i] = 0;
         hasNull = true;
       } else {
-        longBatch->notNull[i] = 1;
-        longBatch->data[i] = col.data;
+        batch->notNull[i] = 1;
+        struct tm tm;
+        memset(&tm, 0, sizeof(struct tm));
+        strptime(col.c_str(), "%Y-%m-%d", &tm);
+        time_t t = mktime(&tm);
+        time_t t1970 = 0;
+        double seconds = difftime(t, t1970);
+        int64_t days = static_cast<int64_t>(seconds / (60 * 60 * 24));
+        longBatch->data[i] = days;
       }
     }
     longBatch->hasNulls = hasNull;

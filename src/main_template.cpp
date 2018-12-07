@@ -18,9 +18,11 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterImpl<Int, Int, Date> my_writer(10, 100, "../data", "toto.orc");
+  OrcWriterImpl<Int, Long, Date, Timestamp> my_writer(10, 100, ".", "toto.orc");
   for (int i = 0; i < 3; ++i) {
-    my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2);
+
+    my_writer.write(1000 + i, 2000 + i+1, std::string("1990-12-18 12:26:20"), std::string("1980-12-18 12:26:20"));
+    // my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2, 4000 + i+3);
   }
 
   return 0;
