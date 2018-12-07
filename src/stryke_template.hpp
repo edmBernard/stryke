@@ -29,24 +29,24 @@
 namespace stryke {
 
 // All Type
-// orc::BYTE        --> Not Impletmented
+// orc::BYTE        --> Not Implemented
 // orc::INT
 // orc::SHORT
 // orc::LONG
 // orc::STRING
 // orc::CHAR
-// orc::VARCHAR     --> Not Impletmented
-// orc::BINARY      --> Not Impletmented
+// orc::VARCHAR     --> Not Implemented
+// orc::BINARY      --> Not Implemented
 // orc::FLOAT
 // orc::DOUBLE
-// orc::DECIMAL     --> Not Impletmented
+// orc::DECIMAL     --> Not Implemented
 // orc::BOOLEAN
 // orc::DATE
 // orc::TIMESTAMP
-// orc::STRUCT      --> Not Impletmented
-// orc::LIST        --> Not Impletmented
-// orc::MAP         --> Not Impletmented
-// orc::UNION       --> Not Impletmented
+// orc::STRUCT      --> Not Implemented
+// orc::LIST        --> Not Implemented
+// orc::MAP         --> Not Implemented
+// orc::UNION       --> Not Implemented
 
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
 template <typename Types, uint64_t N, typename T>
@@ -362,7 +362,7 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
 
 } // namespace utils
 
-// I don't make implementation of the default template to raise on error at compile time if it's not implemented
+// I don't make implementation of the default template to raise on error at compile time if it's not implemented for the type
 template <typename T>
 bool addStructField(std::unique_ptr<orc::Type> &struct_type);
 
