@@ -28,62 +28,130 @@
 namespace stryke {
 
 // All Type
-
-template <typename T>
-struct remap {
-    // Default: Output type is the same as input type.
-    typedef T type;
-};
-
-// class Bytes {
-//   public:
-//     Bytes(int&& data) : data(std::move(data)) {}
-//     int data;
-// };
-class Int {
-  public:
-    Int(int&& data) : data(std::move(data)) {}
-    int data;
-};
-
-class Short {
-  public:
-    Short(short&& data) : data(std::move(data)) {}
-    short data;
-};
-
-class Long {
-  public:
-    Long(long&& data) : data(std::move(data)) {}
-    long data;
-};
-
-class Date {
-  public:
-    Date(long&& data) : data(std::move(data)) {}
-    long data;
-};
-
-class String {
-  public:
-    String(std::string&& data) : data(std::move(data)) {}
-    std::string data;
-};
-
+// orc::BYTE        --> Not Impletmented
+// orc::INT
+// orc::SHORT
+// orc::LONG
+// orc::STRING
+// orc::CHAR
+// orc::VARCHAR     --> Not Impletmented
+// orc::BINARY      --> Not Impletmented
+// orc::FLOAT
+// orc::DOUBLE
+// orc::DECIMAL     --> Not Impletmented
+// orc::BOOLEAN
+// orc::DATE
+// orc::TIMESTAMP
+// orc::STRUCT      --> Not Impletmented
+// orc::LIST        --> Not Impletmented
+// orc::MAP         --> Not Impletmented
+// orc::UNION       --> Not Impletmented
 
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
-template<typename Types, uint64_t N, typename T>
+template <typename Types, uint64_t N, typename T>
 class Filler {
 public:
-  static bool fillValue(const std::vector<Types> &data,
-                orc::StructVectorBatch *batch,
-                uint64_t numValues) {
-    return false;
-  }
-
+  // This function is commented to throw on exception at compile time if one of requested type is not implemented
+  // static bool fillValue(const std::vector<Types> &data,
+  //                       orc::StructVectorBatch *batch,
+  //                       uint64_t numValues) {
+  //   return false;
+  // }
 };
 
-template<typename Types, uint64_t N>
+// Long Type Category
+class Long {
+public:
+  Long(long &&data)
+      : data(std::move(data)) {
+  }
+  long data;
+  typedef Long type;
+};
+class Short {
+public:
+  Short(short &&data)
+      : data(std::move(data)) {
+  }
+  short data;
+  typedef Long type;
+};
+class Int {
+public:
+  Int(int &&data)
+      : data(std::move(data)) {
+  }
+  int data;
+  typedef Long type;
+};
+
+// String Type Category
+class String {
+public:
+  String(std::string &&data)
+      : data(std::move(data)) {
+  }
+  std::string data;
+  typedef String type;
+};
+class Char {
+public:
+  Char(char &&data)
+      : data(std::move(data)) {
+  }
+  char data;
+  typedef String type;
+};
+
+// Double Type Category
+class Double {
+public:
+  Double(double &&data)
+      : data(std::move(data)) {
+  }
+  double data;
+  typedef Double type;
+};
+class Float {
+public:
+  Float(float &&data)
+      : data(std::move(data)) {
+  }
+  float data;
+  typedef Double type;
+};
+
+// Boolean Type Category
+class Boolean {
+public:
+  Boolean(bool &&data)
+      : data(std::move(data)) {
+  }
+  bool data;
+  typedef Boolean type;
+};
+
+// Date Type Category
+class Date {
+public:
+  Date(long &&data)
+      : data(std::move(data)) {
+  }
+  long data;
+  typedef Date type;
+};
+
+// Timestamp Type Category
+class Timestamp {
+public:
+  Timestamp(std::string &&data)
+      : data(std::move(data)) {
+  }
+  std::string data;
+  typedef Timestamp type;
+};
+
+template <typename Types, uint64_t N>
 class Filler<Types, N, Long> {
 public:
   static bool fillValue(const std::vector<Types> &data,
@@ -108,7 +176,7 @@ public:
   }
 };
 
-template<typename Types, uint64_t N>
+template <typename Types, uint64_t N>
 class Filler<Types, N, Date> {
 public:
   static bool fillValue(const std::vector<Types> &data,
@@ -133,38 +201,61 @@ public:
   }
 };
 
-template<typename Types, uint64_t N>
-class Filler<Types, N, Int> {
+template <typename Types, uint64_t N>
+class Filler<Types, N, Timestamp> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
                         uint64_t numValues) {
-    orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    struct tm timeStruct;
+    orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      auto col = std::get<N>(data[i]);
-      std::cout << col.data << " - " << std::endl;
-      if (col.data == 0) {
-        longBatch->notNull[i] = 0;
+      std::cout << "debug1" << std::endl;
+      std::string col = std::get<N>(data[i]).data;
+      if (col.empty()) {
+        std::cout << "debug2.1" << std::endl;
+        batch->notNull[i] = 0;
         hasNull = true;
       } else {
-        longBatch->notNull[i] = 1;
-        longBatch->data[i] = col.data;
+        std::cout << "debug2.2" << std::endl;
+        memset(&timeStruct, 0, sizeof(timeStruct));
+        char *left = strptime(col.c_str(), "%Y-%m-%d %H:%M:%S", &timeStruct);
+        if (left == nullptr) {
+          std::cout << "debug3.1" << std::endl;
+          batch->notNull[i] = 0;
+        } else {
+          std::cout << "debug3.2" << std::endl;
+          batch->notNull[i] = 1;
+          std::cout << "debug3.2.1" << std::endl;
+          tsBatch->data[i] = timegm(&timeStruct);
+          std::cout << "debug3.3" << std::endl;
+          char *tail;
+          double d = strtod(left, &tail);
+          std::cout << "debug4" << std::endl;
+          if (tail != left) {
+            std::cout << "debug5.1" << std::endl;
+            tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
+          } else {
+            std::cout << "debug5.2" << std::endl;
+            tsBatch->nanoseconds[i] = 0;
+          }
+        }
       }
     }
-    longBatch->hasNulls = hasNull;
-    longBatch->numElements = numValues;
+    std::cout << "debugafter" << std::endl;
+    tsBatch->hasNulls = hasNull;
+    tsBatch->numElements = numValues;
     return true;
   }
 };
-
 
 namespace utils {
 
 template <typename T, std::size_t... Indices>
 auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
   // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
-  return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type>::fillValue(data, structBatch, numValues)...};
+  return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type::type>::fillValue(data, structBatch, numValues)...};
 }
 
 template <typename... Types>
@@ -174,29 +265,35 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
 
 } // namespace utils
 
+// I don't make implementation of the default template to raise on error at compile time if it's not implemented
 template <typename T>
-bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
-  return false;
-}
+bool addStructField(std::unique_ptr<orc::Type> &struct_type);
 
 template <>
 bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
-  struct_type->addStructField("col_int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
-  return true;
-}
-
-template <>
-bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+  struct_type->addStructField("int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
   return true;
 }
 
 template <>
 bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
-  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+  return true;
+}
+
+template <>
+bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+  return true;
+}
+
+template <>
+bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("timstamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
   return true;
 }
 
@@ -204,7 +301,6 @@ template <typename... Types>
 std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
   return {addStructField<Types>(struct_type)...};
 }
-
 
 //! Writer in one file one thread.
 //!
