@@ -18,8 +18,8 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterImpl<int, int, long> my_writer(10, 100, "../data", "toto.orc");
-  for (int i = 0; i < 150; ++i) {
+  OrcWriterImpl<Int, Int, Date> my_writer(10, 100, "../data", "toto.orc");
+  for (int i = 0; i < 3; ++i) {
     my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2);
   }
 
