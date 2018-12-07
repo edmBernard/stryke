@@ -177,14 +177,13 @@ public:
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      auto col = std::get<N>(data[i]);
-      std::cout << col.data << " - " << std::endl;
-      if (col.data == 0) {
+      long col = std::get<N>(data[i]).data;
+      if (col == 0) {
         longBatch->notNull[i] = 0;
         hasNull = true;
       } else {
         longBatch->notNull[i] = 1;
-        longBatch->data[i] = col.data;
+        longBatch->data[i] = col;
       }
     }
     longBatch->hasNulls = hasNull;
@@ -192,6 +191,32 @@ public:
     return true;
   }
 };
+
+
+template <typename Types, uint64_t N>
+class Filler<Types, N, Double> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::DoubleVectorBatch *dblBatch = dynamic_cast<orc::DoubleVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      double col = std::get<N>(data[i]).data;
+      if (col == 0) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        batch->notNull[i] = 1;
+        dblBatch->data[i] = col;
+      }
+    }
+    dblBatch->hasNulls = hasNull;
+    dblBatch->numElements = numValues;
+    return true;
+  }
+};
+
 
 template <typename Types, uint64_t N>
 class Filler<Types, N, Date> {
@@ -292,7 +317,6 @@ public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
                         uint64_t numValues) {
-    struct tm timeStruct;
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -347,6 +371,13 @@ template <>
 bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
   struct_type->addStructField("long_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+  return true;
+}
+
+template <>
+bool addStructField<Double>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("double_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DOUBLE));
   return true;
 }
 
