@@ -24,6 +24,7 @@
 #include <string>
 #include <thread>
 #include <tuple>
+#include <cmath>
 
 namespace stryke {
 
@@ -326,10 +327,11 @@ public:
         hasNull = true;
       } else {
         batch->notNull[i] = 1;
-        tsBatch->data[i] = time_t(col);
-        double d = col - long(col);
-        if (d > 0) {
-          tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
+        double decimale, integrale;
+        decimale = std::modf(col, &integrale);
+        tsBatch->data[i] = time_t(integrale);
+        if (decimale > 0) {
+          tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
         } else {
           tsBatch->nanoseconds[i] = 0;
         }
