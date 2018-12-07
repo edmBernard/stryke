@@ -140,6 +140,14 @@ public:
   std::string data;
   typedef Date type;
 };
+class DateNumber {
+public:
+  DateNumber(long &&data)
+      : data(std::move(data)) {
+  }
+  long data;
+  typedef Long type;
+};
 
 // Timestamp Type Category
 class Timestamp {
@@ -150,6 +158,15 @@ public:
   std::string data;
   typedef Timestamp type;
 };
+class TimestampNumber {
+public:
+  TimestampNumber(double &&data)
+      : data(std::move(data)) {
+  }
+  double data;
+  typedef TimestampNumber type;
+};
+
 
 template <typename Types, uint64_t N>
 class Filler<Types, N, Long> {
@@ -208,6 +225,30 @@ public:
 };
 
 template <typename Types, uint64_t N>
+class Filler<Types, N, DateNumber> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      long col = std::get<N>(data[i]).data;
+      if (col == 0) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        batch->notNull[i] = 1;
+        longBatch->data[i] = int64_t(col);
+      }
+    }
+    longBatch->hasNulls = hasNull;
+    longBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template <typename Types, uint64_t N>
 class Filler<Types, N, Timestamp> {
 public:
   static bool fillValue(const std::vector<Types> &data,
@@ -239,7 +280,37 @@ public:
         }
       }
     }
-    std::cout << "debugafter" << std::endl;
+    tsBatch->hasNulls = hasNull;
+    tsBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template <typename Types, uint64_t N>
+class Filler<Types, N, TimestampNumber> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    struct tm timeStruct;
+    orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      double col = std::get<N>(data[i]).data;
+      if (col == 0) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        batch->notNull[i] = 1;
+        tsBatch->data[i] = time_t(col);
+        double d = col - long(col);
+        if (d > 0) {
+          tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
+        } else {
+          tsBatch->nanoseconds[i] = 0;
+        }
+      }
+    }
     tsBatch->hasNulls = hasNull;
     tsBatch->numElements = numValues;
     return true;
@@ -275,7 +346,7 @@ bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type) {
 template <>
 bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
-  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+  struct_type->addStructField("long_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
   return true;
 }
 
@@ -285,11 +356,23 @@ bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
   struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
   return true;
 }
+template <>
+bool addStructField<DateNumber>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+  return true;
+}
 
 template <>
 bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
-  struct_type->addStructField("timstamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
+  struct_type->addStructField("timestamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
+  return true;
+}
+template <>
+bool addStructField<TimestampNumber>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("timestamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
   return true;
 }
 
