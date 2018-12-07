@@ -27,22 +27,40 @@
 
 namespace stryke {
 
-// Type
+// All Type
+
+template <typename T>
+struct remap {
+    // Default: Output type is the same as input type.
+    typedef T type;
+};
+
+// class Bytes {
+//   public:
+//     Bytes(int&& data) : data(std::move(data)) {}
+//     int data;
+// };
 class Int {
   public:
     Int(int&& data) : data(std::move(data)) {}
     int data;
 };
 
-class Date {
+class Short {
   public:
-    Date(long&& data) : data(std::move(data)) {}
-    long data;
+    Short(short&& data) : data(std::move(data)) {}
+    short data;
 };
 
 class Long {
   public:
     Long(long&& data) : data(std::move(data)) {}
+    long data;
+};
+
+class Date {
+  public:
+    Date(long&& data) : data(std::move(data)) {}
     long data;
 };
 
