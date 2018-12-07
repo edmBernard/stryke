@@ -66,7 +66,7 @@ public:
 };
 
 template<typename Types, uint64_t N>
-class Filler<Types, N, Long&> {
+class Filler<Types, N, Long> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
@@ -91,7 +91,7 @@ public:
 };
 
 template<typename Types, uint64_t N>
-class Filler<Types, N, Date&> {
+class Filler<Types, N, Date> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
@@ -116,7 +116,7 @@ public:
 };
 
 template<typename Types, uint64_t N>
-class Filler<Types, N, Int&> {
+class Filler<Types, N, Int> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
@@ -145,7 +145,8 @@ namespace utils {
 
 template <typename T, std::size_t... Indices>
 auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
-  return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
+  // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
+  return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type>::fillValue(data, structBatch, numValues)...};
 }
 
 template <typename... Types>
