@@ -27,6 +27,32 @@
 
 namespace stryke {
 
+// Type
+class Int {
+  public:
+    Int(int&& data) : data(std::move(data)) {}
+    int data;
+};
+
+class Date {
+  public:
+    Date(long&& data) : data(std::move(data)) {}
+    long data;
+};
+
+class Long {
+  public:
+    Long(long&& data) : data(std::move(data)) {}
+    long data;
+};
+
+class String {
+  public:
+    String(std::string&& data) : data(std::move(data)) {}
+    std::string data;
+};
+
+
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
 template<typename Types, uint64_t N, typename T>
 class Filler {
@@ -40,7 +66,7 @@ public:
 };
 
 template<typename Types, uint64_t N>
-class Filler<Types, N, long&> {
+class Filler<Types, N, Long&> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
@@ -49,13 +75,13 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       auto col = std::get<N>(data[i]);
-      std::cout << col << " - " << std::endl;
-      if (col == 0) {
+      std::cout << col.data << " - " << std::endl;
+      if (col.data == 0) {
         longBatch->notNull[i] = 0;
         hasNull = true;
       } else {
         longBatch->notNull[i] = 1;
-        longBatch->data[i] = col;
+        longBatch->data[i] = col.data;
       }
     }
     longBatch->hasNulls = hasNull;
@@ -65,7 +91,7 @@ public:
 };
 
 template<typename Types, uint64_t N>
-class Filler<Types, N, int&> {
+class Filler<Types, N, Date&> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
@@ -74,13 +100,38 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       auto col = std::get<N>(data[i]);
-      std::cout << col << " - " << std::endl;
-      if (col == 0) {
+      std::cout << col.data << " - " << std::endl;
+      if (col.data == 0) {
         longBatch->notNull[i] = 0;
         hasNull = true;
       } else {
         longBatch->notNull[i] = 1;
-        longBatch->data[i] = col;
+        longBatch->data[i] = col.data;
+      }
+    }
+    longBatch->hasNulls = hasNull;
+    longBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template<typename Types, uint64_t N>
+class Filler<Types, N, Int&> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      auto col = std::get<N>(data[i]);
+      std::cout << col.data << " - " << std::endl;
+      if (col.data == 0) {
+        longBatch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        longBatch->notNull[i] = 1;
+        longBatch->data[i] = col.data;
       }
     }
     longBatch->hasNulls = hasNull;
@@ -110,16 +161,23 @@ bool addStructField(std::unique_ptr<orc::Type> &struct_type) {
 }
 
 template <>
-bool addStructField<int>(std::unique_ptr<orc::Type> &struct_type) {
+bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
   struct_type->addStructField("col_int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
   return true;
 }
 
 template <>
-bool addStructField<long>(std::unique_ptr<orc::Type> &struct_type) {
+bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
   struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+  return true;
+}
+
+template <>
+bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("col_date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
   return true;
 }
 
@@ -176,6 +234,11 @@ public:
     structBatch->numElements = this->numValues;
 
     auto ret = utils::fillValues(this->data, structBatch, this->numValues);
+
+    std::cout << "ret : FillValues :" << std::endl;
+    for (auto &&i : ret) {
+      std::cout << i << std::endl;
+    }
 
     this->writer->add(*this->rowBatch);
 
