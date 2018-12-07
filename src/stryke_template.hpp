@@ -211,33 +211,23 @@ public:
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      std::cout << "debug1" << std::endl;
       std::string col = std::get<N>(data[i]).data;
       if (col.empty()) {
-        std::cout << "debug2.1" << std::endl;
         batch->notNull[i] = 0;
         hasNull = true;
       } else {
-        std::cout << "debug2.2" << std::endl;
         memset(&timeStruct, 0, sizeof(timeStruct));
         char *left = strptime(col.c_str(), "%Y-%m-%d %H:%M:%S", &timeStruct);
         if (left == nullptr) {
-          std::cout << "debug3.1" << std::endl;
           batch->notNull[i] = 0;
         } else {
-          std::cout << "debug3.2" << std::endl;
           batch->notNull[i] = 1;
-          std::cout << "debug3.2.1" << std::endl;
           tsBatch->data[i] = timegm(&timeStruct);
-          std::cout << "debug3.3" << std::endl;
           char *tail;
           double d = strtod(left, &tail);
-          std::cout << "debug4" << std::endl;
           if (tail != left) {
-            std::cout << "debug5.1" << std::endl;
             tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
           } else {
-            std::cout << "debug5.2" << std::endl;
             tsBatch->nanoseconds[i] = 0;
           }
         }
