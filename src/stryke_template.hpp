@@ -69,6 +69,7 @@ public:
   long data;
   typedef Long type;
 };
+
 class Short {
 public:
   Short(short &&data)
@@ -77,6 +78,7 @@ public:
   short data;
   typedef Long type;
 };
+
 class Int {
 public:
   Int(int &&data)
@@ -95,6 +97,7 @@ public:
   std::string data;
   typedef String type;
 };
+
 class Char {
 public:
   Char(char &&data)
@@ -113,6 +116,7 @@ public:
   double data;
   typedef Double type;
 };
+
 class Float {
 public:
   Float(float &&data)
@@ -141,6 +145,7 @@ public:
   std::string data;
   typedef Date type;
 };
+
 class DateNumber {
 public:
   DateNumber(long &&data)
@@ -159,6 +164,7 @@ public:
   std::string data;
   typedef Timestamp type;
 };
+
 class TimestampNumber {
 public:
   TimestampNumber(double &&data)
@@ -193,7 +199,6 @@ public:
   }
 };
 
-
 template <typename Types, uint64_t N>
 class Filler<Types, N, Double> {
 public:
@@ -217,7 +222,6 @@ public:
     return true;
   }
 };
-
 
 template <typename Types, uint64_t N>
 class Filler<Types, N, Date> {
@@ -389,6 +393,7 @@ bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
   struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
   return true;
 }
+
 template <>
 bool addStructField<DateNumber>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
@@ -402,6 +407,7 @@ bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type) {
   struct_type->addStructField("timestamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
   return true;
 }
+
 template <>
 bool addStructField<TimestampNumber>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
