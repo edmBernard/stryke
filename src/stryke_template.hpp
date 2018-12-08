@@ -488,19 +488,24 @@ private:
 //  Multifile Writer Implementation
 // ==============================================================
 
-//! Writer in mutli file one thread.
-//!
-//!
-template <typename... Types>
-class OrcWriterMulti {
-public:
-  OrcWriterMulti(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix) {
-  }
+// //! Writer in mutli file one thread.
+// //!
+// //!
+// template <typename... Types>
+// class OrcWriterMulti {
+// public:
+//   OrcWriterMulti(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix) {
+//   }
 
-  void write(Types... data) {
-    this->fifo.push(data...);
-  }
-};
+//   void write(Types... dataT) {
+//     for (auto&& i : this->writers) {
+//       i.write(dataT...);
+//     }
+//   }
+
+//   fs::path root_folder;
+//   std::map<fs::path, OrcWriterImpl<Types>> writers;
+// };
 
 // ==============================================================
 //  Multithread Writer Implementation
