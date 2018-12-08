@@ -48,18 +48,6 @@ namespace stryke {
 // orc::MAP         --> Not Implemented
 // orc::UNION       --> Not Implemented
 
-// I use a class because function template partial specialisation is not allowed in c++, but class yes
-template <typename Types, uint64_t N, typename T>
-class Filler {
-public:
-  // This function is commented to throw on exception at compile time if one of requested type is not implemented
-  // static bool fillValue(const std::vector<Types> &data,
-  //                       orc::StructVectorBatch *batch,
-  //                       uint64_t numValues) {
-  //   return false;
-  // }
-};
-
 // Long Type Category
 class Long {
 public:
@@ -174,6 +162,19 @@ public:
   typedef TimestampNumber type;
 };
 
+namespace utils {
+
+// I use a class because function template partial specialisation is not allowed in c++, but class yes
+template <typename Types, uint64_t N, typename T>
+class Filler {
+public:
+  // This function is commented to throw on exception at compile time if one of requested type is not implemented
+  // static bool fillValue(const std::vector<Types> &data,
+  //                       orc::StructVectorBatch *batch,
+  //                       uint64_t numValues) {
+  //   return false;
+  // }
+};
 
 template <typename Types, uint64_t N>
 class Filler<Types, N, Long> {
@@ -347,8 +348,6 @@ public:
   }
 };
 
-namespace utils {
-
 template <typename T, std::size_t... Indices>
 auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
   // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
@@ -360,79 +359,76 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
   return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues);
 }
 
-} // namespace utils
-
 // I don't make implementation of the default template to raise on error at compile time if it's not implemented for the type
 template <typename T>
-bool addStructField(std::unique_ptr<orc::Type> &struct_type);
+bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name);
 
 template <>
-bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("int_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::INT));
+bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::INT));
   return true;
 }
 
 template <>
-bool addStructField<Short>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("short_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::SHORT));
+bool addStructField<Short>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::SHORT));
   return true;
 }
 
 template <>
-bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("long_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::LONG));
   return true;
 }
 
 template <>
-bool addStructField<Float>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("float_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::FLOAT));
+bool addStructField<Float>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::FLOAT));
   return true;
 }
 
 template <>
-bool addStructField<Double>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("double_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DOUBLE));
+bool addStructField<Double>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DOUBLE));
   return true;
 }
 
 template <>
-bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DATE));
   return true;
 }
 
 template <>
-bool addStructField<DateNumber>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("date_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::DATE));
+bool addStructField<DateNumber>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DATE));
   return true;
 }
 
 template <>
-bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("timestamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
+bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
   return true;
 }
 
 template <>
-bool addStructField<TimestampNumber>(std::unique_ptr<orc::Type> &struct_type) {
-  static int count = 0;
-  struct_type->addStructField("timestamp_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
+bool addStructField<TimestampNumber>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
   return true;
+}
+
+template <typename... Types, std::size_t... Indices>
+auto createSchemaImpl(std::index_sequence<Indices...>, std::unique_ptr<orc::Type> &struct_type, std::array<std::string, sizeof...(Types)> column_names) -> std::vector<bool> {
+  // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
+  return {addStructField<Types>(struct_type, column_names[Indices])...};
 }
 
 template <typename... Types>
-std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
-  return {addStructField<Types>(struct_type)...};
+auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::string, sizeof...(Types)> column_names) {
+  return createSchemaImpl<Types...>(std::index_sequence_for<Types...>(), struct_type, column_names);
 }
+
+} // namespace utils
 
 //! Writer in one file one thread.
 //!
@@ -440,11 +436,11 @@ std::vector<bool> create_schema(std::unique_ptr<orc::Type> &struct_type) {
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix)
-      : batchSize(batchSize) {
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix)
+      : column_names(column_names), batchSize(batchSize) {
 
-    fileType = orc::createStructType();
-    auto ret = create_schema<Types...>(fileType);
+    this->fileType = orc::createStructType();
+    auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);
 
     for (auto &&i : ret) {
       std::cout << i << std::endl;
@@ -453,7 +449,7 @@ public:
     options.setStripeSize(1000);
 
     this->outStream = orc::writeLocalFile(folder + "/" + prefix);
-    this->writer = orc::createWriter(*fileType, outStream.get(), options);
+    this->writer = orc::createWriter(*this->fileType, outStream.get(), options);
     this->rowBatch = this->writer->createRowBatch(this->batchSize);
   }
 
@@ -506,6 +502,7 @@ private:
   std::unique_ptr<orc::ColumnVectorBatch> rowBatch;
 
   std::vector<std::tuple<Types...>> data; // buffer that holds a batch of rows in tuple
+  std::array<std::string, sizeof...(Types)> column_names;
 
   uint64_t numValues = 0; // num of lines read in a batch
   uint64_t batchSize;
