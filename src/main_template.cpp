@@ -18,11 +18,14 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterImpl<Int, Long, Double, DateNumber, TimestampNumber, Date, Timestamp> my_writer(10, 100, ".", "toto.orc");
+  OrcWriterImpl<Int, Short, Long, Double, Float> writer_number({"A1", "B1", "C1","D1", "E1"}, 10, 100, ".", "number.orc");
+  OrcWriterImpl<Int, DateNumber, TimestampNumber, Date, Timestamp> writer_date({"A2", "B2", "C2","D2", "E2"}, 10, 100, ".", "date.orc");
+
   for (int i = 0; i < 3; ++i) {
 
-    my_writer.write(1000 + i, 2000 + i+1, 123456.124567 + i/10000.,3000 + i+2, 4000 + i + i/10., std::string("1990-12-18 12:26:20"), std::string("1980-12-18 12:26:20.1234567"));
-    // my_writer.write(1000 + i, 2000 + i+1, 3000 + i+2, 4000 + i+3);
+    writer_number.write(1000 + i, 2000 + i+1, 3000 + i+2, 11111.111111 + i/10000.,222222.2222222 + i/10000.);
+    writer_date.write(1000 + i, 2000 + i+1, 222222.2222222 + i/10000., std::string("1990-12-18 12:26:20"), std::string("1980-12-18 12:26:20.1234567"));
+
   }
 
   return 0;
