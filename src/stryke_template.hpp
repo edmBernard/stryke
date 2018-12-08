@@ -33,14 +33,14 @@ namespace stryke {
 // orc::INT
 // orc::SHORT
 // orc::LONG
-// orc::STRING
-// orc::CHAR
+// orc::STRING      --> Not Implemented yet coming soon
+// orc::CHAR        --> Not Implemented yet coming soon
 // orc::VARCHAR     --> Not Implemented
 // orc::BINARY      --> Not Implemented
 // orc::FLOAT
 // orc::DOUBLE
 // orc::DECIMAL     --> Not Implemented
-// orc::BOOLEAN
+// orc::BOOLEAN     --> Not Implemented yet coming soon
 // orc::DATE
 // orc::TIMESTAMP
 // orc::STRUCT      --> Not Implemented
@@ -56,6 +56,7 @@ public:
   }
   long data;
   typedef Long type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::LONG;
 };
 
 class Short {
@@ -65,6 +66,7 @@ public:
   }
   short data;
   typedef Long type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::SHORT;
 };
 
 class Int {
@@ -74,6 +76,7 @@ public:
   }
   int data;
   typedef Long type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::INT;
 };
 
 // String Type Category
@@ -84,6 +87,7 @@ public:
   }
   std::string data;
   typedef String type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::STRING;
 };
 
 class Char {
@@ -93,6 +97,7 @@ public:
   }
   char data;
   typedef String type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::CHAR;
 };
 
 // Double Type Category
@@ -103,6 +108,7 @@ public:
   }
   double data;
   typedef Double type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::DOUBLE;
 };
 
 class Float {
@@ -112,6 +118,7 @@ public:
   }
   float data;
   typedef Double type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::FLOAT;
 };
 
 // Boolean Type Category
@@ -122,6 +129,7 @@ public:
   }
   bool data;
   typedef Boolean type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::BOOLEAN;
 };
 
 // Date Type Category
@@ -132,6 +140,7 @@ public:
   }
   std::string data;
   typedef Date type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
 };
 
 class DateNumber {
@@ -141,6 +150,7 @@ public:
   }
   long data;
   typedef Long type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
 };
 
 // Timestamp Type Category
@@ -151,6 +161,7 @@ public:
   }
   std::string data;
   typedef Timestamp type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
 };
 
 class TimestampNumber {
@@ -160,6 +171,7 @@ public:
   }
   double data;
   typedef TimestampNumber type;
+  static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
 };
 
 namespace utils {
@@ -359,61 +371,9 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
   return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues);
 }
 
-// I don't make implementation of the default template to raise on error at compile time if it's not implemented for the type
 template <typename T>
-bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name);
-
-template <>
-bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::INT));
-  return true;
-}
-
-template <>
-bool addStructField<Short>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::SHORT));
-  return true;
-}
-
-template <>
-bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::LONG));
-  return true;
-}
-
-template <>
-bool addStructField<Float>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::FLOAT));
-  return true;
-}
-
-template <>
-bool addStructField<Double>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DOUBLE));
-  return true;
-}
-
-template <>
-bool addStructField<Date>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DATE));
-  return true;
-}
-
-template <>
-bool addStructField<DateNumber>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::DATE));
-  return true;
-}
-
-template <>
-bool addStructField<Timestamp>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
-  return true;
-}
-
-template <>
-bool addStructField<TimestampNumber>(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(orc::TypeKind::TIMESTAMP));
+bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
+  struct_type->addStructField(column_name, orc::createPrimitiveType(T::TypeKind));
   return true;
 }
 
