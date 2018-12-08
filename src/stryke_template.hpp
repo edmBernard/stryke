@@ -374,9 +374,23 @@ bool addStructField<Int>(std::unique_ptr<orc::Type> &struct_type) {
 }
 
 template <>
+bool addStructField<Short>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("short_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::SHORT));
+  return true;
+}
+
+template <>
 bool addStructField<Long>(std::unique_ptr<orc::Type> &struct_type) {
   static int count = 0;
   struct_type->addStructField("long_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::LONG));
+  return true;
+}
+
+template <>
+bool addStructField<Float>(std::unique_ptr<orc::Type> &struct_type) {
+  static int count = 0;
+  struct_type->addStructField("float_" + std::to_string(count++), orc::createPrimitiveType(orc::TypeKind::FLOAT));
   return true;
 }
 
