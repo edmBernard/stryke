@@ -28,6 +28,10 @@
 
 namespace stryke {
 
+// ==============================================================
+// Type Implementation
+// ==============================================================
+
 // All Type
 // orc::BYTE        --> Not Implemented
 // orc::INT
@@ -175,6 +179,10 @@ public:
 };
 
 namespace utils {
+
+// ==============================================================
+// Filler Implementation: function to fill batch
+// ==============================================================
 
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
 template <typename Types, uint64_t N, typename T>
@@ -371,6 +379,10 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
   return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues);
 }
 
+// ==============================================================
+//  Create Schema Implementation: function to create data schema
+// ==============================================================
+
 template <typename T>
 bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
   struct_type->addStructField(column_name, orc::createPrimitiveType(T::TypeKind));
@@ -389,6 +401,10 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 }
 
 } // namespace utils
+
+// ==============================================================
+//  Simple Writer Implementation
+// ==============================================================
 
 //! Writer in one file one thread.
 //!
@@ -468,6 +484,10 @@ private:
   uint64_t batchSize;
 };
 
+// ==============================================================
+//  Multifile Writer Implementation
+// ==============================================================
+
 //! Writer in mutli file one thread.
 //!
 //!
@@ -481,6 +501,10 @@ public:
     this->fifo.push(data...);
   }
 };
+
+// ==============================================================
+//  Multithread Writer Implementation
+// ==============================================================
 
 //! Writer in mutli file separate thread.
 //!
