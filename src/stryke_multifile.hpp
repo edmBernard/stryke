@@ -28,27 +28,6 @@ namespace fs = std::filesystem;
 
 namespace utils {
 
-// template <typename T>
-// bool get_name(T mydate);
-
-// template<>
-// bool get_name(Date mydate);
-
-// template <>
-// bool get_name(DateNumber mydate) {
-//   time_t mytime = mydate.data * (60 * 60 * 24);
-//   auto mytm = gmtime(&mytime);
-//   std::cout << "years: " << 1900 + mytm->tm_year << std::endl;
-//   std::cout << "month: " << 1 + mytm->tm_mon << std::endl;
-//   std::cout << "days: " << mytm->tm_mday << std::endl;
-//   return true;
-// }
-
-// template<>
-// bool get_name(Timestamp mydate);
-
-// template<>
-// bool get_name(TimestampNumber mydate);
 
 } // namespace utils
 
@@ -77,6 +56,7 @@ private:
 
     fs::path file_folder = this->root_folder / std::to_string(1900 + mytm->tm_year) / std::to_string(1 + mytm->tm_mon) / std::to_string(mytm->tm_mday);
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::to_string(1 + mytm->tm_mon) + "-" + std::to_string(mytm->tm_mday);
+
     // Add suffix to avoid file erasing
     std::string filename = file_folder / (prefix_with_date + "-0" + ".orc");
     {
@@ -92,6 +72,14 @@ private:
   std::string get_writer(T date) {
     fs::path filename = get_name(date);
     if (this->writers.count(filename) == 0) {
+
+      // to avoid lots of open file in long running process, we assume date are sorted.
+      // so previous writers can be close at each new date
+      for (auto&& i : this->writers) {
+        this->counts.erase(i.first);
+        this->writers.erase(i.first);
+      }
+
       fs::create_directories(filename.parent_path());
       this->writers[filename] = std::make_unique<OrcWriterImpl<T, Types...>>(this->column_names, this->batchSize, this->batchNb_max, filename);
       this->counts[filename] = 0;
