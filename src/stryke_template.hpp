@@ -418,10 +418,6 @@ public:
     this->fileType = orc::createStructType();
     auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);
 
-    for (auto &&i : ret) {
-      std::cout << i << std::endl;
-    }
-
     options.setStripeSize(1000);
 
     this->outStream = orc::writeLocalFile(filename);
@@ -437,7 +433,6 @@ public:
 
   void write(Types... dataT) {
 
-    // std::cout << "argument length: " << sizeof...(data) << std::endl;
     if (this->numValues < this->batchSize) {
 
       this->data.push_back(std::make_tuple(dataT...));
@@ -454,21 +449,12 @@ public:
 
     auto ret = utils::fillValues(this->data, structBatch, this->numValues);
 
-    std::cout << "ret : FillValues :" << std::endl;
-    for (auto &&i : ret) {
-      std::cout << i << std::endl;
-    }
-
     this->writer->add(*this->rowBatch);
 
     this->data.clear();
     this->numValues = 0;
   }
 
-  OrcWriterImpl &setSchema() {
-    std::cout << "Apply a schema" << std::endl;
-    return *this;
-  }
 
 private:
   std::unique_ptr<orc::Type> fileType;
