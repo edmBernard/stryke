@@ -18,10 +18,10 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterMulti<DateNumber, Int, Long, Double> writer({"A2", "B2", "C2","D2"}, ".", "date.orc", 10, 100);
+  OrcWriterMulti<DateNumber, Int, Long, Double> writer({"A2", "B2", "C2","D2"}, ".", "date", 10, 100);
 
-  for (int i = 0; i < 3; ++i) {
-    writer.write(1000 + i, 2000 + i+1, 3000 + i+2, 11111.111111 + i/10000.);
+  for (int i = 0; i < 100; ++i) {
+    writer.write(300 * 30 + i/10., 2000 + i+1, 3000 + i+2, 11111.111111 + i/10000.);
   }
 
   return 0;
