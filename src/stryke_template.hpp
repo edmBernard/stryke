@@ -412,7 +412,7 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix)
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, uint64_t batchSize, int batchNb_max, std::string filename)
       : column_names(column_names), batchSize(batchSize) {
 
     this->fileType = orc::createStructType();
@@ -424,7 +424,7 @@ public:
 
     options.setStripeSize(1000);
 
-    this->outStream = orc::writeLocalFile(folder + "/" + prefix);
+    this->outStream = orc::writeLocalFile(filename);
     this->writer = orc::createWriter(*this->fileType, outStream.get(), options);
     this->rowBatch = this->writer->createRowBatch(this->batchSize);
   }
