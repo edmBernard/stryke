@@ -3,6 +3,29 @@ A C++ template library build on top of Orc C++ library.
 
 > The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. this code will try to make an easy to use writer and try to fix most of the structure at compilation time.
 
+We currently only support for the following type :
+
+| Type | Status |
+|--|--|
+|`orc::BYTE`|Not Implemented|
+|`orc::INT`||
+|`orc::SHORT`||
+|`orc::LONG`||
+|`orc::STRING`|Not Implemented yet coming soon|
+|`orc::CHAR`|Not Implemented yet coming soon|
+|`orc::VARCHAR`|Not Implemented|
+|`orc::BINARY`|Not Implemented|
+|`orc::FLOAT`||
+|`orc::DOUBLE`||
+|`orc::DECIMAL`|Not Implemented|
+|`orc::BOOLEAN`|Not Implemented yet coming soon|
+|`orc::DATE`||
+|`orc::TIMESTAMP`||
+|`orc::STRUCT`|Not Implemented|
+|`orc::LIST`|Not Implemented|
+|`orc::MAP`|Not Implemented|
+|`orc::UNION`|Not Implemented|
+
 ## Examples
 
 ### Simple writer
