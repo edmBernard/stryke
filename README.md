@@ -26,6 +26,12 @@ We currently only support for the following type :
 |`orc::MAP`|Not Implemented|
 |`orc::UNION`|Not Implemented|
 
+## Known limitations
+
+* One column file: At this time we can create (ex: `OrcWriterImpl<Int>`), it create ambiguous overload between:
+`void write(Types... dataT)` and `void write(std::tuple<Types...> dataT)`
+
+
 ## Examples
 
 ### Simple writer
@@ -115,3 +121,14 @@ cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
 make
 ```
+
+TODO: ok add char * support for type Date and Timestamp
+TODO: ok fix behavior with 0+i
+TODO: add string type support
+TODO: add bool type support
+TODO: add Date support in multi file
+
+TODO: Tests
+TODO: add function to check number of row in a file
+TODO: number of batch
+TODO: add function to get min max sum of a column in a row and type
