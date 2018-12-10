@@ -49,6 +49,11 @@ public:
     this->writers->write(date, dataT...);
   }
 
+  void write(std::tuple<T, Types...> dataT) {
+    this->get_writer(std::get<0>(dataT));
+    this->writers->write(dataT);
+  }
+
 private:
   bool get_name(T &date) {
     time_t mytime = date.data * (60 * 60 * 24);
