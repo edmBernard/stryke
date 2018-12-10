@@ -55,9 +55,17 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 # add_executable(stryke_dyn ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dynamic.cpp)
 # target_compile_options(stryke_dyn PRIVATE -O3)
 # target_link_libraries(stryke_dyn PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+add_executable(stryke_perf ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_performance.cpp)
+target_compile_options(stryke_perf PRIVATE -O3)
+target_link_libraries(stryke_perf PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+
 add_executable(stryke_multifile ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_multifile.cpp)
 target_compile_options(stryke_multifile PRIVATE -O3)
 target_link_libraries(stryke_multifile PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+
+add_executable(stryke_dispatch ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_dispatch.cpp)
+target_compile_options(stryke_dispatch PRIVATE -O3)
+target_link_libraries(stryke_dispatch PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
 add_executable(stryke_tpl ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main_template.cpp)
 target_compile_options(stryke_tpl PRIVATE -O3 -g)

@@ -10,8 +10,8 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_MULTIFILE_HPP_
-#define STRYKE_MULTIFILE_HPP_
+#ifndef STRYKE_DISPATCH_HPP_
+#define STRYKE_DISPATCH_HPP_
 
 #include "stryke_template.hpp"
 #include <exception>
@@ -35,13 +35,13 @@ namespace utils {
 //!
 //!
 template <typename T, typename... Types>
-class OrcWriterMulti {
+class OrcWriterDispatch {
 public:
-  OrcWriterMulti(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max)
+  OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max)
       : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize) {
   }
 
-  ~OrcWriterMulti() {
+  ~OrcWriterDispatch() {
   }
 
   void write(T date, Types... dataT) {
@@ -72,14 +72,6 @@ private:
   std::string get_writer(T date) {
     fs::path filename = get_name(date);
     if (this->writers.count(filename) == 0) {
-
-      // to avoid lots of open file in long running process, we assume date are sorted.
-      // so previous writers can be close at each new date
-      for (auto&& i : this->writers) {
-        this->counts.erase(i.first);
-        this->writers.erase(i.first);
-      }
-
       fs::create_directories(filename.parent_path());
       this->writers[filename] = std::make_unique<OrcWriterImpl<T, Types...>>(this->column_names, filename, this->batchSize);
       this->counts[filename] = 0;
@@ -99,4 +91,4 @@ private:
 
 } // namespace stryke
 
-#endif // !STRYKE_MULTIFILE_HPP_
+#endif // !STRYKE_DISPATCH_HPP_

@@ -412,7 +412,7 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, uint64_t batchSize, int batchNb_max, std::string filename)
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, uint64_t batchSize = 10000)
       : column_names(column_names), batchSize(batchSize) {
 
     this->fileType = orc::createStructType();
@@ -427,7 +427,6 @@ public:
 
   ~OrcWriterImpl() {
     addToFile();
-    std::cout << "Destrutor" << std::endl;
     this->writer->close();
   }
 

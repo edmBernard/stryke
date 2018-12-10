@@ -18,8 +18,8 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterImpl<Int, Short, Long, Double, Float> writer_number({"A1", "B1", "C1","D1", "E1"}, 10, 100, "number.orc");
-  OrcWriterImpl<Int, DateNumber, TimestampNumber, Date, Timestamp> writer_date({"A2", "B2", "C2","D2", "E2"}, 10, 100, "date.orc");
+  OrcWriterImpl<Int, Short, Long, Double, Float> writer_number({"A1", "B1", "C1","D1", "E1"}, "number.orc", 10);
+  OrcWriterImpl<Int, DateNumber, TimestampNumber, Date, Timestamp> writer_date({"A2", "B2", "C2","D2", "E2"}, "date.orc", 10);
 
   for (int i = 0; i < 3; ++i) {
 
