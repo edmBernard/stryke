@@ -55,8 +55,8 @@ namespace stryke {
 // Long Type Category
 class Long {
 public:
-  Long(long &&data)
-      : data(std::move(data)) {
+  Long(long data)
+      : data(data) {
   }
   long data;
   typedef Long type;
@@ -65,8 +65,8 @@ public:
 
 class Short {
 public:
-  Short(short &&data)
-      : data(std::move(data)) {
+  Short(short data)
+      : data(data) {
   }
   short data;
   typedef Long type;
@@ -75,8 +75,8 @@ public:
 
 class Int {
 public:
-  Int(int &&data)
-      : data(std::move(data)) {
+  Int(int data)
+      : data(data) {
   }
   int data;
   typedef Long type;
@@ -107,8 +107,8 @@ public:
 // Double Type Category
 class Double {
 public:
-  Double(double &&data)
-      : data(std::move(data)) {
+  Double(double data)
+      : data(data) {
   }
   double data;
   typedef Double type;
@@ -117,8 +117,8 @@ public:
 
 class Float {
 public:
-  Float(float &&data)
-      : data(std::move(data)) {
+  Float(float data)
+      : data(data) {
   }
   float data;
   typedef Double type;
@@ -128,8 +128,8 @@ public:
 // Boolean Type Category
 class Boolean {
 public:
-  Boolean(bool &&data)
-      : data(std::move(data)) {
+  Boolean(bool data)
+      : data(data) {
   }
   bool data;
   typedef Boolean type;
@@ -142,6 +142,9 @@ public:
   Date(std::string &&data)
       : data(std::move(data)) {
   }
+  Date(const char *data)
+      : data(std::string(data)) {
+  }
   std::string data;
   typedef Date type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
@@ -149,8 +152,8 @@ public:
 
 class DateNumber {
 public:
-  DateNumber(long &&data)
-      : data(std::move(data)) {
+  DateNumber(long data)
+      : data(data) {
   }
   long data;
   typedef Long type;
@@ -163,6 +166,9 @@ public:
   Timestamp(std::string &&data)
       : data(std::move(data)) {
   }
+  Timestamp(const char *data)
+      : data(std::string(data)) {
+  }
   std::string data;
   typedef Timestamp type;
   static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
@@ -170,8 +176,8 @@ public:
 
 class TimestampNumber {
 public:
-  TimestampNumber(double &&data)
-      : data(std::move(data)) {
+  TimestampNumber(double data)
+      : data(data) {
   }
   double data;
   typedef TimestampNumber type;
