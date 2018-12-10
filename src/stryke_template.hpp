@@ -482,54 +482,6 @@ private:
   uint64_t batchSize;
 };
 
-// ==============================================================
-//  Multifile Writer Implementation
-// ==============================================================
-
-// //! Writer in mutli file one thread.
-// //!
-// //!
-// template <typename... Types>
-// class OrcWriterMulti {
-// public:
-//   OrcWriterMulti(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix) {
-//   }
-
-//   void write(Types... dataT) {
-//     for (auto&& i : this->writers) {
-//       i.write(dataT...);
-//     }
-//   }
-
-//   fs::path root_folder;
-//   std::map<fs::path, OrcWriterImpl<Types>> writers;
-// };
-
-// ==============================================================
-//  Multithread Writer Implementation
-// ==============================================================
-
-//! Writer in mutli file separate thread.
-//!
-//!
-template <typename... Types>
-class OrcWriter {
-public:
-  OrcWriter(uint64_t batchSize, int batchNb_max, std::string folder, std::string prefix) {
-  }
-
-  void write(Types... data) {
-    this->fifo.push(data...);
-  }
-
-  std::tuple<Types...> get() {
-    return this->fifo.pop();
-  }
-
-  std::queue<std::tuple<Types...>> fifo;
-  std::thread writer_thread;
-};
-
 } // namespace stryke
 
 #endif // !STRYKE_HPP_
