@@ -38,20 +38,19 @@ template <typename T, typename... Types>
 class OrcWriterDispatch {
 public:
   OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max)
-      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize) {
+      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), batchNb_max(batchNb_max) {
   }
 
   ~OrcWriterDispatch() {
   }
 
   void write(T date, Types... dataT) {
-    std::string writers_path = this->get_writer(date);
-    this->writers[writers_path]->write(date, dataT...);
+    this->write(std::make_tuple(date, dataT...));
   }
 
   void write(std::tuple<T, Types...> dataT) {
-    this->get_writer(std::get<0>(dataT));
-    this->writers->write(dataT);
+    std::string writers_path = this->get_writer(std::get<0>(dataT));
+    this->writers[writers_path]->write(dataT);
   }
 
 private:

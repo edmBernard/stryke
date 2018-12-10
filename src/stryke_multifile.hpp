@@ -37,21 +37,21 @@ namespace utils {
 template <typename T, typename... Types>
 class OrcWriterMulti {
 public:
-  OrcWriterMulti(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max)
-      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize) {
+  OrcWriterMulti(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize = 10000, int batchNb_max = 0)
+      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), batchNb_max(batchNb_max) {
   }
 
   ~OrcWriterMulti() {
   }
 
   void write(T date, Types... dataT) {
-    this->get_writer(date);
-    this->writers->write(date, dataT...);
+    this->write(std::make_tuple(date, dataT...));
   }
 
   void write(std::tuple<T, Types...> dataT) {
     this->get_writer(std::get<0>(dataT));
     this->writers->write(dataT);
+    ++this->current_counts;
   }
 
 private:
@@ -62,15 +62,15 @@ private:
     fs::path file_folder = this->root_folder / std::to_string(1900 + mytm->tm_year) / std::to_string(1 + mytm->tm_mon) / std::to_string(mytm->tm_mday);
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::to_string(1 + mytm->tm_mon) + "-" + std::to_string(mytm->tm_mday);
 
-    // TODO: Add batchNb_max in this condition
+
     // Create new filename if date change or if batchNb_max is reached
-    if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date) {
+    if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->batchNb_max > 0 && this->current_counts >= this->batchSize * this->batchNb_max)) {
       this->current_suffix = 0;
       this->current_prefix_with_date = prefix_with_date;
 
       // Find the right suffix to avoid erasing existing file we check existance
       do {
-        this->current_filename = file_folder / (prefix_with_date + "-" + std::to_string(this->current_suffix++) + ".orc");
+        this->current_filename = file_folder / (this->current_prefix_with_date + "-" + std::to_string(this->current_suffix++) + ".orc");
       } while (fs::exists(this->current_filename));
 
       return true;
@@ -92,7 +92,7 @@ private:
   fs::path current_filename;
   std::unique_ptr<OrcWriterImpl<T, Types...>> writers;
   int current_suffix;
-  int current_counts;
+  uint64_t current_counts;
 
   fs::path root_folder;
   std::string file_prefix;

@@ -21,15 +21,15 @@ resulting file read by `orc-content`:
 
 `OrcWriterMulti` create a file by day in a tree with the pattern `{YYYY}/{MM}/{DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
 ```cpp
-OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date", 100000, 10);
+OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", 100000, 10);
 for (int i = 0; i < 100; ++i) {
-    writer.write(17875 + i/2., 42 + 1);
+    writer.write(17875 + i/2., 42 + i);
 }
 ```
 
-resulting file read by `orc-content` (`2018/12/10/date2018-12-10-0.orc`):
+resulting file read by `orc-content` (`2018/12/10/date_2018-12-10-0.orc`):
 ```python
-{"date": "2018-12-10", "value": 43}
+{"date": "2018-12-10", "value": 42}
 {"date": "2018-12-10", "value": 43}
 ```
 
@@ -39,33 +39,33 @@ data
 ├── 2018
 │   └── 12
 │       ├── 10
-│       │   └── date2018-12-10-0.orc
+│       │   └── date_2018-12-10-0.orc
 │       ├── 11
-│       │   └── date2018-12-11-0.orc
+│       │   └── date_2018-12-11-0.orc
 ...
 │       └── 31
-│           └── date2018-12-31-0.orc
+│           └── date_2018-12-31-0.orc
 └── 2019
     └── 1
         ├── 1
-        │   └── date2019-1-1-0.orc
+        │   └── date_2019-1-1-0.orc
         ├── 2
-        │   └── date2019-1-2-0.orc
+        │   └── date_2019-1-2-0.orc
 ...
         ├── 26
-        │   └── date2019-1-26-0.orc
+        │   └── date_2019-1-26-0.orc
         ├── 27
-        │   └── date2019-1-27-0.orc
+        │   └── date_2019-1-27-0.orc
         └── 28
-            └── date2019-1-28-0.orc
+            └── date_2019-1-28-0.orc
 ```
 
 ### Threaded file writer
 
 ```cpp
-    OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date", 1000000, 10);
+    OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", 1000000, 10);
     for (int i = 0; i < 100; ++i) {
-        writer.write(17875 + i/2., 42 + 1);
+        writer.write(17875 + i/2., 42 + i);
     }
 ```
 

@@ -431,29 +431,19 @@ public:
   }
 
   void write(Types... dataT) {
-
-    if (this->numValues < this->batchSize) {
-
-      this->data.push_back(std::make_tuple(dataT...));
-      ++this->numValues;
-
-    } else {
-      addToFile();
-    }
+    this->write(std::make_tuple(dataT...));
   }
 
   void write(std::tuple<Types...> dataT) {
 
-    if (this->numValues < this->batchSize) {
-
-      this->data.push_back(dataT);
-      ++this->numValues;
-
-    } else {
+    if (this->numValues >= this->batchSize) {
       addToFile();
     }
-  }
 
+    this->data.push_back(dataT);
+    ++this->numValues;
+
+  }
 
   void addToFile() {
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());

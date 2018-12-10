@@ -51,9 +51,7 @@ public:
   }
 
   void write(Types... data) {
-    std::unique_lock<std::mutex> lck(this->mx);
-    this->fifo.push(std::make_tuple(data...));
-    this->queue_is_not_empty.notify_all();
+    this->write(std::make_tuple(data...));
   }
 
   void write(std::tuple<Types...> data) {
