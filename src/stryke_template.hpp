@@ -212,13 +212,8 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       long col = std::get<N>(data[i]).data;
-      if (col == 0) {
-        longBatch->notNull[i] = 0;
-        hasNull = true;
-      } else {
-        longBatch->notNull[i] = 1;
-        longBatch->data[i] = col;
-      }
+      longBatch->notNull[i] = 1;
+      longBatch->data[i] = col;
     }
     longBatch->hasNulls = hasNull;
     longBatch->numElements = numValues;
@@ -236,13 +231,8 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       double col = std::get<N>(data[i]).data;
-      if (col == 0) {
-        batch->notNull[i] = 0;
-        hasNull = true;
-      } else {
-        batch->notNull[i] = 1;
-        dblBatch->data[i] = col;
-      }
+      batch->notNull[i] = 1;
+      dblBatch->data[i] = col;
     }
     dblBatch->hasNulls = hasNull;
     dblBatch->numElements = numValues;
@@ -291,13 +281,8 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       long col = std::get<N>(data[i]).data;
-      if (col == 0) {
-        batch->notNull[i] = 0;
-        hasNull = true;
-      } else {
-        batch->notNull[i] = 1;
-        longBatch->data[i] = int64_t(col);
-      }
+      batch->notNull[i] = 1;
+      longBatch->data[i] = int64_t(col);
     }
     longBatch->hasNulls = hasNull;
     longBatch->numElements = numValues;
@@ -353,19 +338,14 @@ public:
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
       double col = std::get<N>(data[i]).data;
-      if (col == 0) {
-        batch->notNull[i] = 0;
-        hasNull = true;
+      batch->notNull[i] = 1;
+      double decimale, integrale;
+      decimale = std::modf(col, &integrale);
+      tsBatch->data[i] = time_t(integrale);
+      if (decimale > 0) {
+        tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
       } else {
-        batch->notNull[i] = 1;
-        double decimale, integrale;
-        decimale = std::modf(col, &integrale);
-        tsBatch->data[i] = time_t(integrale);
-        if (decimale > 0) {
-          tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
-        } else {
-          tsBatch->nanoseconds[i] = 0;
-        }
+        tsBatch->nanoseconds[i] = 0;
       }
     }
     tsBatch->hasNulls = hasNull;
