@@ -6,7 +6,7 @@ namespace fs = std::filesystem;
 
 TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
-  std::string filename = "example.orc";
+  std::string filename = "test.orc";
 
   SECTION("Test Int") {
     {
@@ -109,4 +109,29 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
 
   fs::remove(filename);
+}
+
+
+TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
+
+  std::string filename = "test.orc";
+
+  for (auto&& batchsize : {10, 100, 1000, 10000}) {
+    for (auto&& nbr_rows : {10, 100, 1000, 100000}) {
+      SECTION("Batch size: " + std::to_string(batchsize) + " nbr_rows: " + std::to_string(nbr_rows)) {
+        {
+          stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, 10000);
+          for (int i = 0; i < nbr_rows; ++i) {
+            writer.write(i, i);
+          }
+        }
+        stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
+        REQUIRE(tmp_b.nbr_columns == 3);
+        REQUIRE(tmp_b.nbr_rows == nbr_rows);
+      }
+    }
+  }
+
+  fs::remove(filename);
+
 }
