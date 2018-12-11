@@ -49,7 +49,7 @@ template<typename T>
 ColumnsStats get_column_stats(std::string filename, uint32_t index);
 
 template <>
-ColumnsStats get_column_stats<Int>(std::string filename, uint32_t index) {
+inline ColumnsStats get_column_stats<Int>(std::string filename, uint32_t index) {
   ColumnsStats file_stats;
   std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readFile(std::string(filename)), orc::ReaderOptions());
   std::unique_ptr<orc::Statistics> colStats = reader->getStatistics();
@@ -57,7 +57,7 @@ ColumnsStats get_column_stats<Int>(std::string filename, uint32_t index) {
   // TODO: TO DO
 
   return file_stats;
-};
+}
 
 } // namespace Stryke
 
