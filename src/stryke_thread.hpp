@@ -63,9 +63,9 @@ public:
   void consumer() {
     while (!this->stop_thread) {
       std::unique_lock<std::mutex> lck(this->mx, std::defer_lock);
-      while (this->fifo.empty()) {
+      if (this->fifo.empty()) {
         lck.lock();
-        this->queue_is_not_empty.wait(lck);  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+        this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100));  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
         lck.unlock();
       }
 
