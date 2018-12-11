@@ -37,8 +37,8 @@ namespace utils {
 template <typename T, typename... Types>
 class OrcWriterDispatch {
 public:
-  OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max)
-      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), batchNb_max(batchNb_max) {
+  OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int nbr_batch_max)
+      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), nbr_batch_max(nbr_batch_max) {
   }
 
   ~OrcWriterDispatch() {
@@ -90,7 +90,7 @@ private:
   fs::path root_folder;
   std::string file_prefix;
   uint64_t batchSize;
-  int batchNb_max;
+  int nbr_batch_max;
 };
 
 } // namespace stryke

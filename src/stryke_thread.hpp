@@ -39,9 +39,9 @@ namespace utils {
 template <template <typename... Types> typename Writer, typename... Types>
 class OrcWriterThread {
 public:
-  OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int batchNb_max) {
+  OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int nbr_batch_max) {
 
-    this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, batchSize, batchNb_max);
+    this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, batchSize, nbr_batch_max);
     writer_thread = std::thread(&OrcWriterThread::consumer, this);
   }
 

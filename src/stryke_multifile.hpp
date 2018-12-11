@@ -37,8 +37,8 @@ namespace utils {
 template <typename T, typename... Types>
 class OrcWriterMulti {
 public:
-  OrcWriterMulti(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize = 10000, int batchNb_max = 0)
-      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), batchNb_max(batchNb_max) {
+  OrcWriterMulti(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize = 10000, int nbr_batch_max = 0)
+      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), batchSize(batchSize), nbr_batch_max(nbr_batch_max) {
   }
 
   ~OrcWriterMulti() {
@@ -63,8 +63,8 @@ private:
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::to_string(1 + mytm->tm_mon) + "-" + std::to_string(mytm->tm_mday);
 
 
-    // Create new filename if date change or if batchNb_max is reached
-    if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->batchNb_max > 0 && this->current_counts >= this->batchSize * this->batchNb_max)) {
+    // Create new filename if date change or if nbr_batch_max is reached
+    if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->nbr_batch_max > 0 && this->current_counts >= this->batchSize * this->nbr_batch_max)) {
       this->current_suffix = 0;
       this->current_prefix_with_date = prefix_with_date;
 
@@ -97,7 +97,7 @@ private:
   fs::path root_folder;
   std::string file_prefix;
   uint64_t batchSize;
-  int batchNb_max;
+  int nbr_batch_max;
 };
 
 } // namespace stryke
