@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "stryke_read_for_test.hpp"
+#include "stryke_template.hpp"
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -78,7 +79,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     {
       stryke::OrcWriterImpl<stryke::DateNumber, stryke::DateNumber> writer({"date", "col1"}, filename, 10000);
       for (int i = 0; i < 10; ++i) {
-        writer.write(i, i+1);
+        writer.write(i, i + 1);
       }
     }
     stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
@@ -100,7 +101,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     {
       stryke::OrcWriterImpl<stryke::DateNumber, stryke::TimestampNumber> writer({"date", "col1"}, filename, 10000);
       for (int i = 0; i < 10; ++i) {
-        writer.write(i, i+1);
+        writer.write(i, i + 1);
       }
     }
     stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
@@ -111,16 +112,17 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   fs::remove(filename);
 }
 
-
 TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
 
-  std::string filename = "test.orc";
 
-  for (auto&& batchsize : {10, 100, 1000, 10000}) {
-    for (auto&& nbr_rows : {10, 100, 1000, 100000}) {
+  for (auto &&batchsize : {10, 100, 1000, 10000}) {
+    for (auto &&nbr_rows : {10, 100, 1000, 100000}) {
+
+      std::string filename = "test.orc";
+
       SECTION("Batch size: " + std::to_string(batchsize) + " nbr_rows: " + std::to_string(nbr_rows)) {
         {
-          stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, 10000);
+          stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, batchsize);
           for (int i = 0; i < nbr_rows; ++i) {
             writer.write(i, i);
           }
@@ -129,9 +131,9 @@ TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
         REQUIRE(tmp_b.nbr_columns == 3);
         REQUIRE(tmp_b.nbr_rows == nbr_rows);
       }
+
+      fs::remove(filename);
     }
   }
-
-  fs::remove(filename);
 
 }
