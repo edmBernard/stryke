@@ -27,6 +27,7 @@ We currently only support for the following type :
 |`orc::UNION`||Not Implemented|
 
 We add Two custom type for date that can be initialized by double, long instead of string
+
 | Type | Stryke | Status |
 |--|--|--|
 |`orc::DATE`|`stryke::DateNumber`||
