@@ -122,13 +122,8 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
 make
 ```
 
-TODO: ok add char * support for type Date and Timestamp
-TODO: ok fix behavior with 0+i
-TODO: add string type support
-TODO: add bool type support
-TODO: add Date support in multi file
+### Generate Doxygen documentation
 
-TODO: Tests
-TODO: add function to check number of row in a file
-TODO: number of batch
-TODO: add function to get min max sum of a column in a row and type
+```bash
+make docs
+```
