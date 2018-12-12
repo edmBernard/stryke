@@ -5,26 +5,33 @@ A C++ template library build on top of Orc C++ library. Code is available on git
 
 We currently only support for the following type :
 
-| Type | Status |
-|--|--|
-|`orc::BYTE`|Not Implemented|
-|`orc::INT`||
-|`orc::SHORT`||
-|`orc::LONG`||
-|`orc::STRING`|Not Implemented yet coming soon|
-|`orc::CHAR`|Not Implemented yet coming soon|
-|`orc::VARCHAR`|Not Implemented|
-|`orc::BINARY`|Not Implemented|
-|`orc::FLOAT`||
-|`orc::DOUBLE`||
-|`orc::DECIMAL`|Not Implemented|
-|`orc::BOOLEAN`|Not Implemented yet coming soon|
-|`orc::DATE`||
-|`orc::TIMESTAMP`||
-|`orc::STRUCT`|Not Implemented|
-|`orc::LIST`|Not Implemented|
-|`orc::MAP`|Not Implemented|
-|`orc::UNION`|Not Implemented|
+| Type | Stryke | Status |
+|--|--|--|
+|`orc::BYTE`||Not Implemented|
+|`orc::INT`|`stryke::Int`||
+|`orc::SHORT`|`stryke::Short`||
+|`orc::LONG`|`stryke::Long`||
+|`orc::STRING`||Not Implemented yet coming soon|
+|`orc::CHAR`||Not Implemented yet coming soon|
+|`orc::VARCHAR`||Not Implemented|
+|`orc::BINARY`||Not Implemented|
+|`orc::FLOAT`|`stryke::Float`||
+|`orc::DOUBLE`|`stryke::Double`||
+|`orc::DECIMAL`||Not Implemented|
+|`orc::BOOLEAN`||Not Implemented yet coming soon|
+|`orc::DATE`|`stryke::Date`||
+|`orc::TIMESTAMP`|`stryke::TimeStamp`||
+|`orc::STRUCT`||Not Implemented|
+|`orc::LIST`||Not Implemented|
+|`orc::MAP`||Not Implemented|
+|`orc::UNION`||Not Implemented|
+
+We add Two custom type for date that can be initialized by double, long instead of string
+| Type | Stryke | Status |
+|--|--|--|
+|`orc::DATE`|`stryke::DateNumber`||
+|`orc::TIMESTAMP`|`stryke::TimeStampNumber`||
+
 
 ## Known limitations
 
