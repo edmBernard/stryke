@@ -41,7 +41,6 @@ template <template <typename... Types> typename Writer, typename... Types>
 class OrcWriterThread {
 public:
   OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int nbr_batch_max) {
-    // this->stop_thread = false;
     this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, batchSize, nbr_batch_max);
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
   }
@@ -56,8 +55,7 @@ public:
   }
 
   void write(std::tuple<Types...> data) {
-    std::unique_lock<std::mutex> lck(this->mx_queue);
-    std::unique_lock<std::mutex> lck2(this->mx_close);
+    std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
     this->fifo.push(data);
     this->queue_is_not_empty.notify_all();
   }
@@ -69,22 +67,22 @@ public:
   void close_async() {
     this->writer_closed = false;
     this->close_writer = true;  // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread if queue is already closed
+    this->queue_is_not_empty.notify_all();  // command to unlock writer thread if queue is already closed
   }
 
   void close_sync() {
     this->writer_closed = false;  // unecessary but iso with async close
-    this->close_writer = true;  // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all(); // Command to unlock writer thread if queue is already closed
-    std::unique_lock<std::mutex> lck(this->mx_close);
+    this->close_writer = true;    // ask writer thread to close writer
+    this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already closed
+    std::unique_lock<std::mutex> lck(this->mx_close);  // lock only to block close method until file is closed
     while (!this->fifo.empty()) {
-      this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+      this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
     }
   }
 
   void consumer() {
     while (!this->stop_thread) {
-      std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock);
+      std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock);  // lock to protect read and write on queue
       if (this->fifo.empty()) {
         if (this->close_writer) {
           this->writer->close();
@@ -93,7 +91,7 @@ public:
           this->writer_is_closed.notify_all();  // signal to unlock sync close
         }
         lck.lock();
-        this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+        this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
         lck.unlock();
       }
 
@@ -111,11 +109,11 @@ private:
   std::queue<std::tuple<Types...>> fifo;
   std::thread writer_thread;
   std::unique_ptr<Writer<Types...>> writer;
-  std::atomic<bool> stop_thread = false; // Super simple thread stopping.
-  std::atomic<bool> close_writer = false;
-  std::atomic<bool> writer_closed = true;
-  std::mutex mx_queue;
-  std::mutex mx_close;
+  std::atomic<bool> stop_thread = false;   // simple thread stopping.
+  std::atomic<bool> close_writer = false;  // ask writer thread to close writer
+  std::atomic<bool> writer_closed = true;  // variable for check after async close
+  std::mutex mx_queue;  // lock to protect read and write on queue
+  std::mutex mx_close;  // lock only to block close method until file is closed
   std::condition_variable queue_is_not_empty;
   std::condition_variable writer_is_closed;
 };
