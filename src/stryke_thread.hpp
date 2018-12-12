@@ -14,6 +14,7 @@
 #define STRYKE_THREAD_HPP_
 
 #include "stryke_template.hpp"
+#include <atomic>
 #include <condition_variable>
 #include <exception>
 #include <filesystem>
@@ -24,7 +25,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <atomic>
 
 namespace stryke {
 
@@ -69,18 +69,18 @@ public:
   void close_async() {
     this->writer_closed = false;
     this->close_writer = true;
-    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread
+    this->queue_is_not_empty.notify_all(); // Command to unlock writer thread if queue is already closed
   }
 
   void close_sync() {
     this->close_writer = true;
-    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread
+    this->queue_is_not_empty.notify_all(); // Command to unlock writer thread if queue is already closed
     std::unique_lock<std::mutex> lck(this->mx_close, std::defer_lock);
     while (!this->fifo.empty()) {
-        lck.lock();
-        this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100));  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
-        lck.unlock();
-      }
+      lck.lock();
+      this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+      lck.unlock();
+    }
   }
 
   void consumer() {
@@ -94,7 +94,7 @@ public:
           this->writer_is_closed.notify_all();
         }
         lck.lock();
-        this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100));  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+        this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
         lck.unlock();
       }
 
