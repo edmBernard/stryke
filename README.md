@@ -1,5 +1,5 @@
 # Stryke
-A C++ template library build on top of Orc C++ library.
+A C++ template library build on top of Orc C++ library. Code is available on github [here](https://github.com/edmBernard/Stryke)
 
 > The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. this code will try to make an easy to use writer and try to fix most of the structure at compilation time.
 
