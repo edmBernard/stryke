@@ -24,6 +24,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <atomic>
 
 namespace stryke {
 
@@ -40,14 +41,14 @@ template <template <typename... Types> typename Writer, typename... Types>
 class OrcWriterThread {
 public:
   OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, uint64_t batchSize, int nbr_batch_max) {
-
+    // this->stop_thread = false;
     this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, batchSize, nbr_batch_max);
-    writer_thread = std::thread(&OrcWriterThread::consumer, this);
+    this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
   }
 
   ~OrcWriterThread() {
     this->stop_thread = true;
-    writer_thread.join();
+    this->writer_thread.join();
   }
 
   void write(Types... data) {
@@ -55,15 +56,43 @@ public:
   }
 
   void write(std::tuple<Types...> data) {
-    std::unique_lock<std::mutex> lck(this->mx);
+    std::unique_lock<std::mutex> lck(this->mx_queue);
+    std::unique_lock<std::mutex> lck2(this->mx_close);
     this->fifo.push(data);
     this->queue_is_not_empty.notify_all();
   }
 
+  bool has_closed() {
+    return this->writer_closed;
+  }
+
+  void close_async() {
+    this->writer_closed = false;
+    this->close_writer = true;
+    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread
+  }
+
+  void close_sync() {
+    this->close_writer = true;
+    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread
+    std::unique_lock<std::mutex> lck(this->mx_close, std::defer_lock);
+    while (!this->fifo.empty()) {
+        lck.lock();
+        this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100));  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
+        lck.unlock();
+      }
+  }
+
   void consumer() {
     while (!this->stop_thread) {
-      std::unique_lock<std::mutex> lck(this->mx, std::defer_lock);
+      std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock);
       if (this->fifo.empty()) {
+        if (this->close_writer) {
+          this->writer->close();
+          this->close_writer = false;
+          this->writer_closed = true;
+          this->writer_is_closed.notify_all();
+        }
         lck.lock();
         this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100));  // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
         lck.unlock();
@@ -74,7 +103,6 @@ public:
         std::tuple<Types...> data = this->fifo.front();
         this->fifo.pop();
         lck.unlock();
-
         this->writer->write(data);
       }
     }
@@ -84,9 +112,13 @@ private:
   std::queue<std::tuple<Types...>> fifo;
   std::thread writer_thread;
   std::unique_ptr<Writer<Types...>> writer;
-  bool stop_thread = false; // Super simple thread stopping.
-  std::mutex mx;
+  std::atomic<bool> stop_thread = false; // Super simple thread stopping.
+  std::atomic<bool> close_writer = false;
+  std::atomic<bool> writer_closed = true;
+  std::mutex mx_queue;
+  std::mutex mx_close;
   std::condition_variable queue_is_not_empty;
+  std::condition_variable writer_is_closed;
 };
 
 } // namespace stryke

@@ -83,6 +83,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-template.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-multifile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-thread.cpp
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
