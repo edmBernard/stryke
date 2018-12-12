@@ -68,18 +68,17 @@ public:
 
   void close_async() {
     this->writer_closed = false;
-    this->close_writer = true;
-    this->queue_is_not_empty.notify_all(); // Command to unlock writer thread if queue is already closed
+    this->close_writer = true;  // ask writer thread to close writer
+    this->queue_is_not_empty.notify_all();  // Command to unlock writer thread if queue is already closed
   }
 
   void close_sync() {
-    this->close_writer = true;
+    this->writer_closed = false;  // unecessary but iso with async close
+    this->close_writer = true;  // ask writer thread to close writer
     this->queue_is_not_empty.notify_all(); // Command to unlock writer thread if queue is already closed
-    std::unique_lock<std::mutex> lck(this->mx_close, std::defer_lock);
+    std::unique_lock<std::mutex> lck(this->mx_close);
     while (!this->fifo.empty()) {
-      lck.lock();
       this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
-      lck.unlock();
     }
   }
 
@@ -90,8 +89,8 @@ public:
         if (this->close_writer) {
           this->writer->close();
           this->close_writer = false;
-          this->writer_closed = true;
-          this->writer_is_closed.notify_all();
+          this->writer_closed = true;  // variable for check after async close
+          this->writer_is_closed.notify_all();  // signal to unlock sync close
         }
         lck.lock();
         this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // Calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
