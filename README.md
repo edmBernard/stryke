@@ -36,9 +36,10 @@ We add Two custom type for date that can be initialized by double, long instead 
 
 ## Known limitations
 
-* One column file: At this time we can create (ex: `OrcWriterImpl<Int>`), it create ambiguous overload between:
+* One column file: At this time we can't create one column file (ex: `OrcWriterImpl<Int>`), it create ambiguous overload between:
 `void write(Types... dataT)` and `void write(std::tuple<Types...> dataT)`
 
+* `close_async` method of `OrcWriterThread`: I made the choice that `close_async` wait the queue to be empty before closing file. If we continue to write data fast enough the file can never close.
 
 ## Examples
 
@@ -135,3 +136,15 @@ make
 ```bash
 make docs
 ```
+
+
+
+
+
+
+TODO: add string type support
+TODO: add bool type support
+TODO: add Date support in multi file
+
+TODO: Tests
+TODO: add function to get min max sum of a column in a row and type

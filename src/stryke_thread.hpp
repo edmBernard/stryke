@@ -64,7 +64,7 @@ public:
     return this->writer_closed;
   }
 
-  //! I made the choice that close_async wait the queue to be empty before closing find.
+  //! I made the choice that close_async wait the queue to be empty before closing file.
   //! if we continue to write data fast enough the file can never close.
   void close_async() {
     this->writer_closed = false;
