@@ -54,6 +54,12 @@ public:
     ++this->current_counts;
   }
 
+  void close() {
+    this->writers.reset();
+    this->current_prefix_with_date = std::string();
+    this->current_counts = 0;
+  }
+
 private:
   bool get_name(T &date) {
     time_t mytime = date.data * (60 * 60 * 24);
