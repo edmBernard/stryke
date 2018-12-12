@@ -64,16 +64,18 @@ public:
     return this->writer_closed;
   }
 
+  //! I made the choice that close_async wait the queue to be empty before closing find.
+  //! if we continue to write data fast enough the file can never close.
   void close_async() {
     this->writer_closed = false;
     this->close_writer = true;  // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all();  // command to unlock writer thread if queue is already closed
+    this->queue_is_not_empty.notify_all();  // command to unlock writer thread if queue is already empty
   }
 
   void close_sync() {
     this->writer_closed = false;  // unecessary but iso with async close
     this->close_writer = true;    // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already closed
+    this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already empty
     std::unique_lock<std::mutex> lck(this->mx_close);  // lock only to block close method until file is closed
     while (!this->fifo.empty()) {
       this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
