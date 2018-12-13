@@ -13,19 +13,19 @@
 #include "stryke_template.hpp"
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace stryke;
 
 int main(int argc, char const *argv[]) {
+  std::string filename = "test.orc";
 
-  OrcWriterImpl<Int, Short, Long, Double, Float> writer_number({"A1", "B1", "C1","D1", "E1"}, "data/number.orc", 10);
-  OrcWriterImpl<Int, DateNumber, TimestampNumber, Date, Timestamp> writer_date({"A2", "B2", "C2","D2", "E2"}, "data/date.orc", 10);
-
-  for (int i = 0; i < 3; ++i) {
-
-    writer_number.write(1000 + i, 2000 + i+1, 3000 + i+2, 11111.111111 + i/10000.,222222.2222222 + i/10000.);
-    writer_date.write(1000 + i, 2000 + i+1, 222222.2222222 + i/10000., std::string("1990-12-18 12:26:20"), std::string("1980-12-18 12:26:20.1234567"));
-
+  {
+    OrcWriterImpl<DateNumber, Boolean> writer({"date", "col1"}, filename, WriterOptions());
+    for (int i = 0; i < 10; ++i) {
+      std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(1000));
+      writer.write(i, (i%2==0));
+    }
   }
 
   return 0;

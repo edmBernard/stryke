@@ -20,25 +20,25 @@
 using namespace stryke;
 namespace fs = std::filesystem;
 
-void bench_thread(int number_line, uint64_t batchsize, int nbr_batch_max) {
+void bench_thread(int number_line, const WriterOptions &options) {
   fs::create_directories("data");
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterThread<OrcWriterMulti, DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "thread_", batchsize, nbr_batch_max);
+    OrcWriterThread<OrcWriterMulti, DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "thread_", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
-      auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::nano>(1000);
+      auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
       auto start4 = std::chrono::high_resolution_clock::now();
 
-      writer_multi.write(17875 + i / 100000., 11111.111111 + i / 10000., 17875 + previous_timer);
+      writer_multi.write(17875 + i / 1000000., 11111.111111 + i / 10000., 17875 + previous_timer);
 
       previous_timer = (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000.;
       if (previous_timer > max_timer) {
         max_timer = previous_timer;
       }
       // std::this_thread::sleep_until(start3);
-      // std::cout << "previous_timer: " << previous_timer << "s -- " << (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000. << "s" << std::endl;
+      // std::cout << "previous_timer: " << previous_timer << "s -- " << (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000. << "s\n";
     }
     std::chrono::duration<double, std::milli> elapsed1 = std::chrono::high_resolution_clock::now() - start1;
     std::cout << std::setw(40) << std::left << "thread:  processing time : description : " << elapsed1.count() << " ms\n";
@@ -49,23 +49,23 @@ void bench_thread(int number_line, uint64_t batchsize, int nbr_batch_max) {
   fs::remove_all("data");
 }
 
-void bench_multi(int number_line, uint64_t batchsize, int nbr_batch_max) {
+void bench_multi(int number_line, const WriterOptions &options) {
   fs::create_directories("data");
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterMulti<DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "multi_", batchsize, nbr_batch_max);
+    OrcWriterMulti<DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "multi_", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
       auto start4 = std::chrono::high_resolution_clock::now();
 
-      writer_multi.write(17875 + i / 100000., 11111.111111 + i / 10000., 17875 + previous_timer);
+      writer_multi.write(17875 + i / 1000000., 11111.111111 + i / 10000., 17875 + previous_timer);
 
       previous_timer = (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000.;
       if (previous_timer > max_timer) {
         max_timer = previous_timer;
       }
-      // std::cout << "previous_timer: " << previous_timer << "s -- " << (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000. << "s" << std::endl;
+      // std::cout << "previous_timer: " << previous_timer << "s -- " << (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000. << "s\n";
     }
     std::chrono::duration<double, std::milli> elapsed1 = std::chrono::high_resolution_clock::now() - start1;
     std::cout << std::setw(40) << std::left << "multi:  processing time : description : " << elapsed1.count() << " ms\n";
@@ -79,11 +79,13 @@ void bench_multi(int number_line, uint64_t batchsize, int nbr_batch_max) {
 int main(int argc, char const *argv[]) {
 
   int number_line = 1000000;
-  uint64_t batchsize = 10000;
-  int nbr_batch_max = 100;
+  stryke::WriterOptions options;
+  options.set_batch_size(1000);
+  options.set_batch_max(0);
+  options.set_stripe_size(10000);
 
-  bench_thread(number_line, batchsize, nbr_batch_max);
-  bench_multi(number_line, batchsize, nbr_batch_max);
+  bench_thread(number_line, options);
+  bench_multi(number_line, options);
 
   return 0;
 }
