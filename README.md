@@ -19,7 +19,7 @@ We currently only support for the following type :
 |`orc::FLOAT`|`stryke::Float`||
 |`orc::DOUBLE`|`stryke::Double`||
 |`orc::DECIMAL`||Not Implemented|
-|`orc::BOOLEAN`||Not Implemented yet coming soon|
+|`orc::BOOLEAN`|`stryke::Boolean`||
 |`orc::DATE`|`stryke::Date`||
 |`orc::TIMESTAMP`|`stryke::TimeStamp`||
 |`orc::STRUCT`||Not Implemented|

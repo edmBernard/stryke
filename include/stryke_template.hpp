@@ -241,6 +241,25 @@ public:
 };
 
 template <typename Types, uint64_t N>
+class Filler<Types, N, Boolean> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues) {
+    orc::LongVectorBatch *boolBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      bool col = std::get<N>(data[i]).data;
+      batch->notNull[i] = 1;
+      boolBatch->data[i] = col;
+    }
+    boolBatch->hasNulls = hasNull;
+    boolBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template <typename Types, uint64_t N>
 class Filler<Types, N, Date> {
 public:
   static bool fillValue(const std::vector<Types> &data,
