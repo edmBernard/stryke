@@ -37,8 +37,8 @@ namespace utils {
 template <typename T, typename... Types>
 class OrcWriterDispatch {
 public:
-  OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, bool create_lock_file = true, uint64_t batchSize = 10000, int nbr_batch_max = 0, uint64_t stripeSize = 10000)
-      : column_names(column_names), root_folder(root_folder), file_prefix(file_prefix), create_lock_file(create_lock_file), batchSize(batchSize), nbr_batch_max(nbr_batch_max), stripeSize(stripeSize) {
+  OrcWriterDispatch(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : writeroptions(options), column_names(column_names), root_folder(root_folder), file_prefix(file_prefix) {
   }
 
   ~OrcWriterDispatch() {
@@ -77,11 +77,13 @@ private:
     fs::path filename = get_name(date);
     if (this->writers.count(filename) == 0) {
       fs::create_directories(filename.parent_path());
-      this->writers[filename] = std::make_unique<OrcWriterImpl<T, Types...>>(this->column_names, filename, this->create_lock_file, this->batchSize, this->stripeSize);
+      this->writers[filename] = std::make_unique<OrcWriterImpl<T, Types...>>(this->column_names, filename, this->writeroptions);
       this->counts[filename] = 0;
     }
     return filename;
   }
+
+  WriterOptions writeroptions;
 
   std::array<std::string, sizeof...(Types) + 1> column_names;
   std::map<fs::path, std::unique_ptr<OrcWriterImpl<T, Types...>>> writers;
@@ -89,10 +91,6 @@ private:
 
   fs::path root_folder;
   std::string file_prefix;
-  bool create_lock_file;
-  uint64_t batchSize;
-  int nbr_batch_max;
-  uint64_t stripeSize;
 };
 
 } // namespace stryke

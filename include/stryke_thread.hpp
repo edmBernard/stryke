@@ -40,8 +40,8 @@ namespace utils {
 template <template <typename... Types> typename Writer, typename... Types>
 class OrcWriterThread {
 public:
-  OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, bool create_lock_file = true, uint64_t batchSize = 10000, int nbr_batch_max = 0, uint64_t stripeSize = 10000) {
-    this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, create_lock_file, batchSize, nbr_batch_max, stripeSize);
+  OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+    this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, options);
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
   }
 

@@ -30,6 +30,33 @@
 
 namespace stryke {
 
+class WriterOptions {
+public:
+  WriterOptions() {
+  }
+
+  void disable_lock_file(bool disable_lock_file = true) {
+    this->create_lock_file = !disable_lock_file;
+  }
+
+  void set_batch_size(uint64_t batchSize) {
+    this->batchSize = batchSize;
+  }
+
+  void set_batch_max(int nbr_batch_max) {
+    this->nbr_batch_max = nbr_batch_max;
+  }
+
+  void set_stripe_size(uint64_t stripeSize) {
+    this->stripeSize = stripeSize;
+  }
+
+  bool create_lock_file = true;
+  uint64_t batchSize = 10000;
+  int nbr_batch_max = 0;
+  uint64_t stripeSize = 10000;
+};
+
 // ==============================================================
 // Type Implementation
 // ==============================================================
@@ -419,19 +446,19 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, bool create_lock_file = true, uint64_t batchSize = 10000, uint64_t stripeSize = 10000)
-      : column_names(column_names), filename(filename), create_lock_file(create_lock_file), batchSize(batchSize) {
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
+      : writeroptions(options), column_names(column_names), filename(filename) {
 
     this->fileType = orc::createStructType();
     auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);
 
-    options.setStripeSize(stripeSize);
+    this->orc_writeroptions.setStripeSize(writeroptions.stripeSize);
 
     this->outStream = orc::writeLocalFile(this->filename);
-    this->writer = orc::createWriter(*this->fileType, outStream.get(), options);
-    this->rowBatch = this->writer->createRowBatch(this->batchSize);
+    this->writer = orc::createWriter(*this->fileType, outStream.get(), this->orc_writeroptions);
+    this->rowBatch = this->writer->createRowBatch(this->writeroptions.batchSize);
 
-    if (this->create_lock_file) {
+    if (this->writeroptions.create_lock_file) {
       std::ofstream outfile(this->filename + ".lock");
       outfile.close();
     }
@@ -440,7 +467,7 @@ public:
   ~OrcWriterImpl() {
     addToFile();
     this->writer->close();
-    if (this->create_lock_file) {
+    if (this->writeroptions.create_lock_file) {
       std::filesystem::remove(this->filename + ".lock");
     }
   }
@@ -451,13 +478,12 @@ public:
 
   void write(std::tuple<Types...> dataT) {
 
-    if (this->numValues >= this->batchSize) {
+    if (this->numValues >= this->writeroptions.batchSize) {
       addToFile();
     }
 
     this->data.push_back(dataT);
     ++this->numValues;
-
   }
 
   void addToFile() {
@@ -472,10 +498,12 @@ public:
     this->numValues = 0;
   }
 
-
 private:
   std::unique_ptr<orc::Type> fileType;
-  orc::WriterOptions options;
+
+  WriterOptions writeroptions;
+  orc::WriterOptions orc_writeroptions;
+
   std::unique_ptr<orc::OutputStream> outStream;
   std::unique_ptr<orc::Writer> writer;
   std::unique_ptr<orc::ColumnVectorBatch> rowBatch;
@@ -484,11 +512,8 @@ private:
   std::array<std::string, sizeof...(Types)> column_names;
 
   std::string filename;
-  bool create_lock_file;
 
   uint64_t numValues = 0; // num of lines read in a batch
-  uint64_t batchSize;
-
 };
 
 } // namespace stryke

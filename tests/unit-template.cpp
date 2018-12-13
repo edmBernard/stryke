@@ -9,9 +9,14 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
   std::string filename = "test.orc";
 
+  stryke::WriterOptions options;
+  options.set_batch_size(10000);
+  options.set_batch_max(0);
+  options.set_stripe_size(10000);
+
   SECTION("Test Int") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i);
       }
@@ -22,7 +27,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Short") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Short> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Short> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i);
       }
@@ -33,7 +38,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Long") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i);
       }
@@ -44,7 +49,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Float") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Float> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Float> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i + 1, i / 1000.);
       }
@@ -55,7 +60,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Double") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i / 1000.);
       }
@@ -66,7 +71,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Bool") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, (i%2==0));
       }
@@ -77,7 +82,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Date") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Date> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Date> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, "1990-12-18 12:26:20");
       }
@@ -88,7 +93,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test DateNumber") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::DateNumber> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::DateNumber> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i + 1);
       }
@@ -99,7 +104,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test Timestamp") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Timestamp> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Timestamp> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, "1990-12-18 12:26:20");
       }
@@ -110,7 +115,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   }
   SECTION("Test TimestampNumber") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::TimestampNumber> writer({"date", "col1"}, filename, 10000);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::TimestampNumber> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, i + 1);
       }
@@ -129,10 +134,14 @@ TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
     for (auto &&nbr_rows : {10, 100, 1000, 100000}) {
 
       std::string filename = "test.orc";
+      stryke::WriterOptions options;
+      options.set_batch_size(batchsize);
+      options.set_batch_max(0);
+      options.set_stripe_size(10000);
 
       SECTION("Batch size: " + std::to_string(batchsize) + " nbr_rows: " + std::to_string(nbr_rows)) {
         {
-          stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, batchsize);
+          stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, options);
           for (int i = 0; i < nbr_rows; ++i) {
             writer.write(i, i);
           }
@@ -151,10 +160,16 @@ TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
 TEST_CASE("OrcWriterImpl Lock File", "[Simple]") {
 
   std::string filename = "test.orc";
+  stryke::WriterOptions options;
+  options.set_batch_size(10000);
+  options.set_batch_max(0);
+  options.set_stripe_size(10000);
 
   SECTION("Without lock file") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, false);
+      options.disable_lock_file();
+
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, (i%2==0));
         REQUIRE_FALSE(fs::exists(filename + ".lock"));
@@ -164,7 +179,7 @@ TEST_CASE("OrcWriterImpl Lock File", "[Simple]") {
   }
   SECTION("With lock file") {
     {
-      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, true);
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, options);
       for (int i = 0; i < 10; ++i) {
         writer.write(i, (i%2==0));
         REQUIRE(fs::exists(filename + ".lock"));
