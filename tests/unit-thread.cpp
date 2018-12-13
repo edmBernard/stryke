@@ -55,7 +55,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
     std::string root_folder = "data_test";
     SECTION("0 split") {
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 0);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 0);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
         }
@@ -68,7 +68,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
     SECTION("1 split") {
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 5);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 5);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
         }
@@ -97,7 +97,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       uint64_t check_point = 10;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 0);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 0);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
           if (i == check_point - 1) {
@@ -118,7 +118,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       uint64_t check_point = 10;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 0);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 0);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
           if (i == check_point - 1) {
@@ -143,7 +143,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       uint64_t check_point2 = 100;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 0);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 0);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
 
@@ -173,7 +173,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       uint64_t check_point2 = 100;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", batchsize, 0);
+        stryke::OrcWriterThread<stryke::OrcWriterMulti, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", false, batchsize, 0);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
 

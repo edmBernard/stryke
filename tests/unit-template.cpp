@@ -125,7 +125,6 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
 TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
 
-
   for (auto &&batchsize : {10, 100, 1000, 10000}) {
     for (auto &&nbr_rows : {10, 100, 1000, 100000}) {
 
@@ -146,5 +145,34 @@ TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
       fs::remove(filename);
     }
   }
+
+}
+
+TEST_CASE("OrcWriterImpl Lock File", "[Simple]") {
+
+  std::string filename = "test.orc";
+
+  SECTION("Without lock file") {
+    {
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, false);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i, (i%2==0));
+        REQUIRE_FALSE(fs::exists(filename + ".lock"));
+      }
+    }
+    REQUIRE_FALSE(fs::exists(filename + ".lock"));
+  }
+  SECTION("With lock file") {
+    {
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, filename, true);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i, (i%2==0));
+        REQUIRE(fs::exists(filename + ".lock"));
+      }
+    }
+    REQUIRE_FALSE(fs::exists(filename + ".lock"));
+  }
+
+  fs::remove(filename);
 
 }

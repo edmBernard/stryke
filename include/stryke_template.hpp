@@ -16,6 +16,9 @@
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
 
+#include <cmath>
+#include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -24,7 +27,6 @@
 #include <string>
 #include <thread>
 #include <tuple>
-#include <cmath>
 
 namespace stryke {
 
@@ -417,22 +419,30 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, uint64_t batchSize = 10000, uint64_t stripeSize = 10000)
-      : column_names(column_names), batchSize(batchSize) {
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, bool create_lock_file = true, uint64_t batchSize = 10000, uint64_t stripeSize = 10000)
+      : column_names(column_names), filename(filename), create_lock_file(create_lock_file), batchSize(batchSize) {
 
     this->fileType = orc::createStructType();
     auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);
 
     options.setStripeSize(stripeSize);
 
-    this->outStream = orc::writeLocalFile(filename);
+    this->outStream = orc::writeLocalFile(this->filename);
     this->writer = orc::createWriter(*this->fileType, outStream.get(), options);
     this->rowBatch = this->writer->createRowBatch(this->batchSize);
+
+    if (this->create_lock_file) {
+      std::ofstream outfile(this->filename + ".lock");
+      outfile.close();
+    }
   }
 
   ~OrcWriterImpl() {
     addToFile();
     this->writer->close();
+    if (this->create_lock_file) {
+      std::filesystem::remove(this->filename + ".lock");
+    }
   }
 
   void write(Types... dataT) {
@@ -473,8 +483,12 @@ private:
   std::vector<std::tuple<Types...>> data; // buffer that holds a batch of rows in tuple
   std::array<std::string, sizeof...(Types)> column_names;
 
+  std::string filename;
+  bool create_lock_file;
+
   uint64_t numValues = 0; // num of lines read in a batch
   uint64_t batchSize;
+
 };
 
 } // namespace stryke
