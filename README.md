@@ -1,5 +1,6 @@
 # Stryke
-A C++ template library build on top of Orc C++ library. Code is available on github [here](https://github.com/edmBernard/Stryke)
+
+A C++ template library build on top of Orc C++ library. Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
 
 > The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. this code will try to make an easy to use writer and try to fix most of the structure at compilation time.
 
@@ -109,7 +110,7 @@ data
 
 **Note**: The multi thread functionnality is performed by a simple FIFO with a provider and a consumer. I the provider is too fast the queue can be full and generate a core dump.
 
-## Compilation
+## Examples and Tests compilation
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
@@ -131,20 +132,16 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
 make
 ```
 
+### Run Tests
+
+```bash
+make test
+```
+
 ### Generate Doxygen documentation
+
+You need to have doxygen and graphviz installed on your computer.
 
 ```bash
 make docs
 ```
-
-
-
-
-
-
-TODO: add string type support
-TODO: add bool type support
-TODO: add Date support in multi file
-
-TODO: Tests
-TODO: add function to get min max sum of a column in a row and type
