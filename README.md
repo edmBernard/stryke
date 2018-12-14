@@ -1,10 +1,13 @@
 # Stryke
 
-A C++ template library build on top of Orc C++ library. There is also a python binding [here](python). Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
+A C++ template library build on top of Orc C++ library. There is also a python binding [here](python). Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template "header-only" library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
 
-> The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. this code will try to make an easy to use writer and try to fix most of the structure at compilation time.
+Apache-Orc is defined as : 
+> the smallest, fastest columnar storage for Hadoop workloads.
 
-We currently only support for the following type :
+The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. This code will try to make an easy to use writer and try to fix most of the structure at compilation time.
+
+We currently only support for the following type for data :
 
 | Type | Stryke | Status |
 |--|--|--|
@@ -27,7 +30,7 @@ We currently only support for the following type :
 |`orc::MAP`||Not Implemented|
 |`orc::UNION`||Not Implemented|
 
-We add Two custom type for date that can be initialized by double, long instead of string
+We add Two custom type for date that can be initialized by double/long instead of string
 
 | Type | Stryke | Status |
 |--|--|--|
@@ -51,7 +54,7 @@ OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", 100000);
 writer.write(std::string("2018-12-10"), 42);
 ```
 
-resulting file read by `orc-content`:
+resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents):
 ```python
 {"date": "2018-12-09", "value": 42}
 ```
@@ -69,13 +72,13 @@ for (int i = 0; i < 100; ++i) {
 }
 ```
 
-resulting file read by `orc-content` (`2018/12/10/date_2018-12-10-0.orc`):
+Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) (`2018/12/10/date_2018-12-10-0.orc`):
 ```python
 {"date": "2018-12-10", "value": 42}
 {"date": "2018-12-10", "value": 43}
 ```
 
-resulting tree created:
+Resulting tree created:
 ```bash
 data
 ├── 2018
@@ -104,6 +107,7 @@ data
 
 ### Threaded file writer
 
+Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate for `OrcWriterThread`. 
 ```cpp
     OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", 1000000, 10);
     for (int i = 0; i < 100; ++i) {
