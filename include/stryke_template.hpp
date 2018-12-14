@@ -73,7 +73,7 @@ public:
 // orc::FLOAT
 // orc::DOUBLE
 // orc::DECIMAL     --> Not Implemented
-// orc::BOOLEAN     --> Not Implemented yet coming soon
+// orc::BOOLEAN
 // orc::DATE
 // orc::TIMESTAMP
 // orc::STRUCT      --> Not Implemented
