@@ -9,7 +9,7 @@ This is the python bing for a C++ template library build on top of Orc C++ libra
 As Stryke is a template Library we have to defined Writer template specialization at compilation. We already define the following type :
 
 | C++ Writer | Corresponding Python Writer |
-|--|--|--|
+|--|--|
 | `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long>` | `stryke.template.WriterPoint1l` |
 | `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double>` | `stryke.template.WriterPoint1d` |
 | `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long, stryke::Long>` | `stryke.template.WriterPoint2l` |
