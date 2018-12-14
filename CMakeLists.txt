@@ -27,6 +27,19 @@ find_package(Catch2 CONFIG REQUIRED)
 #     message(STATUS "${_variableName}=${${_variableName}}")
 # endforeach()
 
+option(BUILD_PYTHON_BINDING "Build the unit tests" OFF)
+if(BUILD_PYTHON_BINDING)
+  # Python
+  find_package(PythonLibs 3 REQUIRED)
+  MESSAGE( " *** PYTHON_INCLUDE_DIRS : " ${PYTHON_INCLUDE_DIRS} )
+  MESSAGE( " *** PYTHON_LIBRARIES : " ${PYTHON_LIBRARIES} )
+  include_directories(${PYTHON_INCLUDE_DIRS})
+
+  # Pybind11
+  find_package(pybind11 CONFIG REQUIRED)
+  include_directories(${pybind11_INCLUDE_DIR})
+endif()
+
 #**************************************************************************************************
 # Include *****************************************************************************************
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
@@ -57,7 +70,7 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 
 
 #**************************************************************************************************
-# Make configuration
+# Build Example
 #**************************************************************************************************
 foreach (example ${examples})
   add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/src/main_${example}.cpp)
@@ -66,7 +79,7 @@ foreach (example ${examples})
 endforeach(example)
 
 #**************************************************************************************************
-# Test configuration
+# Build Tests
 #**************************************************************************************************
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
 if(BUILD_UNIT_TESTS)
@@ -87,6 +100,19 @@ if(BUILD_UNIT_TESTS)
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 endif()
+
+#**************************************************************************************************
+# Build Python Binding
+#**************************************************************************************************
+if(BUILD_PYTHON_BINDING)
+  add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
+  target_link_libraries(stryke PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
+  SET_TARGET_PROPERTIES(stryke PROPERTIES PREFIX "")
+
+  install(TARGETS stryke DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke)
+endif()
+
+
 
 #**************************************************************************************************
 # Documentation generation
