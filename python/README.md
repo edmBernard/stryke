@@ -6,40 +6,37 @@ This is the python bing for a C++ template library build on top of Orc C++ libra
 
 ## Defined Writer
 
-As Stryke is a template Library we have to defined Writer template specialization at compilation. We already define the following type :
+As Stryke is a template Library we have to defined Writer template specialization at compilation.
+For each C++ Writer, we have define some useful datatype. Each C++ Writers are separate by namespace.
+* `OrcWriterImpl` are in `template` namespace
+* `OrcWriterMulitfile` are in `multifile` namespace
+* `OrcWriterThread` are in `thread` namespace
 
-| C++ Writer (in stryke namespace) | Corresponding Python Writer (in stryke namespace)|
+We already define the following type for each Writer :
+
+| C++ Types | Corresponding Python Writer |
 |--|--|
-| `OrcWriterImpl<DateNumber, Long>` | `template.WriterPoint1l` |
-| `OrcWriterImpl<DateNumber, Double>` | `template.WriterPoint1d` |
-| `OrcWriterImpl<DateNumber, Long, Long>` | `template.WriterPoint2l` |
-| `OrcWriterImpl<DateNumber, Double, Double>` | `template.WriterPoint2d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long>` | `template.WriterPoint3l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double>` | `template.WriterPoint3d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long, Long>` | `template.WriterVec2l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double, Double>` | `template.WriterVec2d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long, Long, Long, Long>` | `template.WriterVec3l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double, Double, Double, Double>` | `template.WriterVec3d` |
-| `OrcWriterMultifile<DateNumber, Long>` | `multifile.WriterPoint1l` |
-| `OrcWriterMultifile<DateNumber, Double>` | `multifile.WriterPoint1d` |
-| `OrcWriterMultifile<DateNumber, Long, Long>` | `multifile.WriterPoint2l` |
-| `OrcWriterMultifile<DateNumber, Double, Double>` | `multifile.WriterPoint2d` |
-| `OrcWriterMultifile<DateNumber, Long, Long, Long>` | `multifile.WriterPoint3l` |
-| `OrcWriterMultifile<DateNumber, Double, Double, Double>` | `multifile.WriterPoint3d` |
-| `OrcWriterMultifile<DateNumber, Long, Long, Long, Long>` | `multifile.WriterVec2l` |
-| `OrcWriterMultifile<DateNumber, Double, Double, Double, Double>` | `multifile.WriterVec2d` |
-| `OrcWriterMultifile<DateNumber, Long, Long, Long, Long, Long, Long>` | `multifile.WriterVec3l` |
-| `OrcWriterMultifile<DateNumber, Double, Double, Double, Double, Double, Double>` | `multifile.WriterVec3d` |
-| `OrcWriterThread<DateNumber, Long>` | `thread.WriterPoint1l` |
-| `OrcWriterThread<DateNumber, Double>` | `thread.WriterPoint1d` |
-| `OrcWriterThread<DateNumber, Long, Long>` | `thread.WriterPoint2l` |
-| `OrcWriterThread<DateNumber, Double, Double>` | `thread.WriterPoint2d` |
-| `OrcWriterThread<DateNumber, Long, Long, Long>` | `thread.WriterPoint3l` |
-| `OrcWriterThread<DateNumber, Double, Double, Double>` | `thread.WriterPoint3d` |
-| `OrcWriterThread<DateNumber, Long, Long, Long, Long>` | `thread.WriterVec2l` |
-| `OrcWriterThread<DateNumber, Double, Double, Double, Double>` | `thread.WriterVec2d` |
-| `OrcWriterThread<DateNumber, Long, Long, Long, Long, Long, Long>` | `thread.WriterVec3l` |
-| `OrcWriterThread<DateNumber, Double, Double, Double, Double, Double, Double>` | `thread.WriterVec3d` |
+| `OrcWriterImpl<DateNumber, Long>` | `WriterDatePoint1l` |
+| `OrcWriterImpl<TimestampNumber, Long>` | `WriterTimestampPoint1l` |
+| `OrcWriterImpl<DateNumber, Double>` | `WriterDatePoint1d` |
+| `OrcWriterImpl<TimestampNumber, Double>` | `WriterTimestampPoint1d` |
+| `OrcWriterImpl<DateNumber, Long, Long>` | `WriterDatePoint2l` |
+| `OrcWriterImpl<TimestampNumber, Long, Long>` | `WriterTimestampPoint2l` |
+| `OrcWriterImpl<DateNumber, Double, Double>` | `WriterDatePoint2d` |
+| `OrcWriterImpl<TimestampNumber, Double, Double>` | `WriterTimestampPoint2d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long>` | `WriterDatePoint3l` |
+| `OrcWriterImpl<TimestampNumber, Long, Long, Long>` | `WriterTimestampPoint3l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double>` | `WriterDatePoint3d` |
+| `OrcWriterImpl<TimestampNumber, Double, Double, Double>` | `WriterTimestampPoint3d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long, Long>` | `WriterDateVec2l` |
+| `OrcWriterImpl<TimestampNumber, Long, Long, Long, Long>` | `WriterTimestampVec2l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double, Double>` | `WriterDateVec2d` |
+| `OrcWriterImpl<TimestampNumber, Double, Double, Double, Double>` | `WriterTimestampVec2d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long, Long, Long, Long>` | `WriterDateVec3l` |
+| `OrcWriterImpl<TimestampNumber, Long, Long, Long, Long, Long, Long>` | `WriterTimestampVec3l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateVec3d` |
+| `OrcWriterImpl<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampVec3d` |
+
 
 ## Examples
 

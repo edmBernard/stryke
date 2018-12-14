@@ -236,24 +236,34 @@ PYBIND11_MODULE(stryke, m) {
   auto m_template = m.def_submodule("template");
 
   // 1D Point
-  declare_writer_impl<stryke::DateNumber, stryke::Long>(m_template, "Point1l");
-  declare_writer_impl<stryke::DateNumber, stryke::Double>(m_template, "Point1d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_template, "TimestampPoint1l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long>(m_template, "DatePoint1l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double>(m_template, "TimestampPoint1d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double>(m_template, "DatePoint1d");
 
   // 2D Point
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long>(m_template, "Point2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double>(m_template, "Point2d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_template, "TimestampPoint2l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long>(m_template, "DatePoint2l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_template, "TimestampPoint2d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double>(m_template, "DatePoint2d");
 
   // 3D Point
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_template, "Point3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_template, "Point3d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampPoint3l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_template, "DatePoint3l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampPoint3d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_template, "DatePoint3d");
 
   // Pair of coordinate 2D Point
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "Vec2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "Vec2d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampVec2l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateVec2l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampVec2d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateVec2d");
 
   // Pair of coordinate 3D Point
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "Vec3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "Vec3d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampVec3l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateVec3l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampVec3d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateVec3d");
 
 // ==============================================================
 // Binding for WriterMultifile
@@ -262,24 +272,34 @@ PYBIND11_MODULE(stryke, m) {
   auto m_multifile = m.def_submodule("multifile");
 
   // 1D Point
-  declare_writer_multifile<stryke::DateNumber, stryke::Long>(m_multifile, "Point1l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double>(m_multifile, "Point1d");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Long>(m_multifile, "TimestampPoint1l");
+  declare_writer_multifile<stryke::DateNumber, stryke::Long>(m_multifile, "DatePoint1l");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Double>(m_multifile, "TimestampPoint1d");
+  declare_writer_multifile<stryke::DateNumber, stryke::Double>(m_multifile, "DatePoint1d");
 
   // 2D Point
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long>(m_multifile, "Point2l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double>(m_multifile, "Point2d");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_multifile, "TimestampPoint2l");
+  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long>(m_multifile, "DatePoint2l");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_multifile, "TimestampPoint2d");
+  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double>(m_multifile, "DatePoint2d");
 
   // 3D Point
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "Point3l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "Point3d");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampPoint3l");
+  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DatePoint3l");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampPoint3d");
+  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DatePoint3d");
 
   // Pair of coordinate 2D Point
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "Vec2l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "Vec2d");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampVec2l");
+  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateVec2l");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampVec2d");
+  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateVec2d");
 
   // Pair of coordinate 3D Point
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "Vec3l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "Vec3d");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampVec3l");
+  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateVec3l");
+  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampVec3d");
+  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateVec3d");
 
 // ==============================================================
 // Binding for WriterThread
@@ -288,23 +308,33 @@ PYBIND11_MODULE(stryke, m) {
   auto m_thread = m.def_submodule("thread");
 
   // 1D Point
-  declare_writer_thread<stryke::DateNumber, stryke::Long>(m_thread, "Point1l");
-  declare_writer_thread<stryke::DateNumber, stryke::Double>(m_thread, "Point1d");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long>(m_thread, "TimestampPoint1l");
+  declare_writer_thread<stryke::DateNumber, stryke::Long>(m_thread, "DatePoint1l");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Double>(m_thread, "TimestampPoint1d");
+  declare_writer_thread<stryke::DateNumber, stryke::Double>(m_thread, "DatePoint1d");
 
   // 2D Point
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long>(m_thread, "Point2l");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double>(m_thread, "Point2d");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_thread, "TimestampPoint2l");
+  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long>(m_thread, "DatePoint2l");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_thread, "TimestampPoint2d");
+  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double>(m_thread, "DatePoint2d");
 
   // 3D Point
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_thread, "Point3l");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_thread, "Point3d");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampPoint3l");
+  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DatePoint3l");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampPoint3d");
+  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DatePoint3d");
 
   // Pair of coordinate 2D Point
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "Vec2l");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "Vec2d");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampVec2l");
+  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateVec2l");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampVec2d");
+  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec2d");
 
   // Pair of coordinate 3D Point
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "Vec3l");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "Vec3d");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampVec3l");
+  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateVec3l");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampVec3d");
+  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec3d");
 
 }
