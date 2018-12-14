@@ -85,11 +85,12 @@ public:
 class Long {
 public:
   Long(long data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Long() {
   }
   long data;
+  bool empty = true;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::LONG;
 };
@@ -97,11 +98,12 @@ public:
 class Short {
 public:
   Short(short data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Short() {
   }
   short data;
+  bool empty = true;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::SHORT;
 };
@@ -109,11 +111,12 @@ public:
 class Int {
 public:
   Int(int data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Int() {
   }
   int data;
+  bool empty = true;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::INT;
 };
@@ -147,11 +150,12 @@ public:
 class Double {
 public:
   Double(double data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Double() {
   }
   double data;
+  bool empty = true;
   typedef Double type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DOUBLE;
 };
@@ -159,11 +163,12 @@ public:
 class Float {
 public:
   Float(float data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Float() {
   }
   float data;
+  bool empty = true;
   typedef Double type;
   static const orc::TypeKind TypeKind = orc::TypeKind::FLOAT;
 };
@@ -172,11 +177,12 @@ public:
 class Boolean {
 public:
   Boolean(bool data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Boolean() {
   }
   bool data;
+  bool empty = true;
   typedef Boolean type;
   static const orc::TypeKind TypeKind = orc::TypeKind::BOOLEAN;
 };
@@ -187,10 +193,10 @@ public:
   Date(std::string &&data)
       : data(std::move(data)) {
   }
-  Date() {
-  }
   Date(const char *data)
       : data(std::string(data)) {
+  }
+  Date() {
   }
   std::string data;
   typedef Date type;
@@ -200,11 +206,12 @@ public:
 class DateNumber {
 public:
   DateNumber(long data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   DateNumber() {
   }
   long data;
+  bool empty = true;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
 };
@@ -228,11 +235,12 @@ public:
 class TimestampNumber {
 public:
   TimestampNumber(double data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   TimestampNumber() {
   }
   double data;
+  bool empty = true;
   typedef TimestampNumber type;
   static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
 };
@@ -264,9 +272,14 @@ public:
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      long col = std::get<N>(data[i]).data;
-      longBatch->notNull[i] = 1;
-      longBatch->data[i] = col;
+      auto col = std::get<N>(data[i]);
+      if (col.empty) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        longBatch->notNull[i] = 1;
+        longBatch->data[i] = col.data;
+      }
     }
     longBatch->hasNulls = hasNull;
     longBatch->numElements = numValues;
@@ -283,9 +296,14 @@ public:
     orc::DoubleVectorBatch *dblBatch = dynamic_cast<orc::DoubleVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      double col = std::get<N>(data[i]).data;
-      batch->notNull[i] = 1;
-      dblBatch->data[i] = col;
+      auto col = std::get<N>(data[i]);
+      if (col.empty) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        dblBatch->notNull[i] = 1;
+        dblBatch->data[i] = col.data;
+      }
     }
     dblBatch->hasNulls = hasNull;
     dblBatch->numElements = numValues;
@@ -302,9 +320,14 @@ public:
     orc::LongVectorBatch *boolBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      bool col = std::get<N>(data[i]).data;
-      batch->notNull[i] = 1;
-      boolBatch->data[i] = col;
+      auto col = std::get<N>(data[i]);
+      if (col.empty) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        boolBatch->notNull[i] = 1;
+        boolBatch->data[i] = col.data;
+      }
     }
     boolBatch->hasNulls = hasNull;
     boolBatch->numElements = numValues;
@@ -352,9 +375,14 @@ public:
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      long col = std::get<N>(data[i]).data;
-      batch->notNull[i] = 1;
-      longBatch->data[i] = int64_t(col);
+      auto col = std::get<N>(data[i]);
+      if (col.empty) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        batch->notNull[i] = 1;
+        longBatch->data[i] = int64_t(col.data);
+      }
     }
     longBatch->hasNulls = hasNull;
     longBatch->numElements = numValues;
@@ -409,15 +437,20 @@ public:
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
-      double col = std::get<N>(data[i]).data;
-      batch->notNull[i] = 1;
-      double decimale, integrale;
-      decimale = std::modf(col, &integrale);
-      tsBatch->data[i] = time_t(integrale);
-      if (decimale > 0) {
-        tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
+      auto col = std::get<N>(data[i]);
+      if (col.empty) {
+        batch->notNull[i] = 0;
+        hasNull = true;
       } else {
-        tsBatch->nanoseconds[i] = 0;
+        batch->notNull[i] = 1;
+        double decimale, integrale;
+        decimale = std::modf(col.data, &integrale);
+        tsBatch->data[i] = time_t(integrale);
+        if (decimale > 0) {
+          tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
+        } else {
+          tsBatch->nanoseconds[i] = 0;
+        }
       }
     }
     tsBatch->hasNulls = hasNull;
