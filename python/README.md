@@ -8,38 +8,38 @@ This is the python bing for a C++ template library build on top of Orc C++ libra
 
 As Stryke is a template Library we have to defined Writer template specialization at compilation. We already define the following type :
 
-| C++ Writer | Corresponding Python Writer |
+| C++ Writer (in stryke namespace) | Corresponding Python Writer (in stryke namespace)|
 |--|--|
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long>` | `stryke.template.WriterPoint1l` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double>` | `stryke.template.WriterPoint1d` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long, stryke::Long>` | `stryke.template.WriterPoint2l` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double, stryke::Double>` | `stryke.template.WriterPoint2d` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>` | `stryke.template.WriterPoint3l` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>` | `stryke.template.WriterPoint3d` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.template.WriterVec2l` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.template.WriterVec2d` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.template.WriterVec3l` |
-| `stryke::OrcWriterImpl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.template.WriterVec3d` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Long>` | `stryke.multifile.WriterPoint1l` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Double>` | `stryke.multifile.WriterPoint1d` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Long, stryke::Long>` | `stryke.multifile.WriterPoint2l` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Double, stryke::Double>` | `stryke.multifile.WriterPoint2d` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>` | `stryke.multifile.WriterPoint3l` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>` | `stryke.multifile.WriterPoint3d` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.multifile.WriterVec2l` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.multifile.WriterVec2d` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.multifile.WriterVec3l` |
-| `OrcWriterMultifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.multifile.WriterVec3d` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Long>` | `stryke.thread.WriterPoint1l` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Double>` | `stryke.thread.WriterPoint1d` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Long, stryke::Long>` | `stryke.thread.WriterPoint2l` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Double, stryke::Double>` | `stryke.thread.WriterPoint2d` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>` | `stryke.thread.WriterPoint3l` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>` | `stryke.thread.WriterPoint3d` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.thread.WriterVec2l` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.thread.WriterVec2d` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>` | `stryke.thread.WriterVec3l` |
-| `OrcWriterThread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>` | `stryke.thread.WriterVec3d` |
+| `OrcWriterImpl<DateNumber, Long>` | `template.WriterPoint1l` |
+| `OrcWriterImpl<DateNumber, Double>` | `template.WriterPoint1d` |
+| `OrcWriterImpl<DateNumber, Long, Long>` | `template.WriterPoint2l` |
+| `OrcWriterImpl<DateNumber, Double, Double>` | `template.WriterPoint2d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long>` | `template.WriterPoint3l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double>` | `template.WriterPoint3d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long, Long>` | `template.WriterVec2l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double, Double>` | `template.WriterVec2d` |
+| `OrcWriterImpl<DateNumber, Long, Long, Long, Long, Long, Long>` | `template.WriterVec3l` |
+| `OrcWriterImpl<DateNumber, Double, Double, Double, Double, Double, Double>` | `template.WriterVec3d` |
+| `OrcWriterMultifile<DateNumber, Long>` | `multifile.WriterPoint1l` |
+| `OrcWriterMultifile<DateNumber, Double>` | `multifile.WriterPoint1d` |
+| `OrcWriterMultifile<DateNumber, Long, Long>` | `multifile.WriterPoint2l` |
+| `OrcWriterMultifile<DateNumber, Double, Double>` | `multifile.WriterPoint2d` |
+| `OrcWriterMultifile<DateNumber, Long, Long, Long>` | `multifile.WriterPoint3l` |
+| `OrcWriterMultifile<DateNumber, Double, Double, Double>` | `multifile.WriterPoint3d` |
+| `OrcWriterMultifile<DateNumber, Long, Long, Long, Long>` | `multifile.WriterVec2l` |
+| `OrcWriterMultifile<DateNumber, Double, Double, Double, Double>` | `multifile.WriterVec2d` |
+| `OrcWriterMultifile<DateNumber, Long, Long, Long, Long, Long, Long>` | `multifile.WriterVec3l` |
+| `OrcWriterMultifile<DateNumber, Double, Double, Double, Double, Double, Double>` | `multifile.WriterVec3d` |
+| `OrcWriterThread<DateNumber, Long>` | `thread.WriterPoint1l` |
+| `OrcWriterThread<DateNumber, Double>` | `thread.WriterPoint1d` |
+| `OrcWriterThread<DateNumber, Long, Long>` | `thread.WriterPoint2l` |
+| `OrcWriterThread<DateNumber, Double, Double>` | `thread.WriterPoint2d` |
+| `OrcWriterThread<DateNumber, Long, Long, Long>` | `thread.WriterPoint3l` |
+| `OrcWriterThread<DateNumber, Double, Double, Double>` | `thread.WriterPoint3d` |
+| `OrcWriterThread<DateNumber, Long, Long, Long, Long>` | `thread.WriterVec2l` |
+| `OrcWriterThread<DateNumber, Double, Double, Double, Double>` | `thread.WriterVec2d` |
+| `OrcWriterThread<DateNumber, Long, Long, Long, Long, Long, Long>` | `thread.WriterVec3l` |
+| `OrcWriterThread<DateNumber, Double, Double, Double, Double, Double, Double>` | `thread.WriterVec3d` |
 
 ## Examples
 
