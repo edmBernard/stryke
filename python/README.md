@@ -19,26 +19,26 @@ We already define the following type for each Writer :
 
 | C++ Types | Corresponding Python Writer |
 |--|--|
-| `OrcWriterImpl<DateNumber, Long>` | `WriterDatePoint1l` |
-| `OrcWriterImpl<TimestampNumber, Long>` | `WriterTimestampPoint1l` |
-| `OrcWriterImpl<DateNumber, Double>` | `WriterDatePoint1d` |
-| `OrcWriterImpl<TimestampNumber, Double>` | `WriterTimestampPoint1d` |
-| `OrcWriterImpl<DateNumber, Long, Long>` | `WriterDatePoint2l` |
-| `OrcWriterImpl<TimestampNumber, Long, Long>` | `WriterTimestampPoint2l` |
-| `OrcWriterImpl<DateNumber, Double, Double>` | `WriterDatePoint2d` |
-| `OrcWriterImpl<TimestampNumber, Double, Double>` | `WriterTimestampPoint2d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long>` | `WriterDatePoint3l` |
-| `OrcWriterImpl<TimestampNumber, Long, Long, Long>` | `WriterTimestampPoint3l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double>` | `WriterDatePoint3d` |
-| `OrcWriterImpl<TimestampNumber, Double, Double, Double>` | `WriterTimestampPoint3d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long, Long>` | `WriterDateVec2l` |
-| `OrcWriterImpl<TimestampNumber, Long, Long, Long, Long>` | `WriterTimestampVec2l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double, Double>` | `WriterDateVec2d` |
-| `OrcWriterImpl<TimestampNumber, Double, Double, Double, Double>` | `WriterTimestampVec2d` |
-| `OrcWriterImpl<DateNumber, Long, Long, Long, Long, Long, Long>` | `WriterDateVec3l` |
-| `OrcWriterImpl<TimestampNumber, Long, Long, Long, Long, Long, Long>` | `WriterTimestampVec3l` |
-| `OrcWriterImpl<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateVec3d` |
-| `OrcWriterImpl<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampVec3d` |
+| `<DateNumber, Long>` | `WriterDatePoint1l` |
+| `<TimestampNumber, Long>` | `WriterTimestampPoint1l` |
+| `<DateNumber, Double>` | `WriterDatePoint1d` |
+| `<TimestampNumber, Double>` | `WriterTimestampPoint1d` |
+| `<DateNumber, Long, Long>` | `WriterDatePoint2l` |
+| `<TimestampNumber, Long, Long>` | `WriterTimestampPoint2l` |
+| `<DateNumber, Double, Double>` | `WriterDatePoint2d` |
+| `<TimestampNumber, Double, Double>` | `WriterTimestampPoint2d` |
+| `<DateNumber, Long, Long, Long>` | `WriterDatePoint3l` |
+| `<TimestampNumber, Long, Long, Long>` | `WriterTimestampPoint3l` |
+| `<DateNumber, Double, Double, Double>` | `WriterDatePoint3d` |
+| `<TimestampNumber, Double, Double, Double>` | `WriterTimestampPoint3d` |
+| `<DateNumber, Long, Long, Long, Long>` | `WriterDateVec2l` |
+| `<TimestampNumber, Long, Long, Long, Long>` | `WriterTimestampVec2l` |
+| `<DateNumber, Double, Double, Double, Double>` | `WriterDateVec2d` |
+| `<TimestampNumber, Double, Double, Double, Double>` | `WriterTimestampVec2d` |
+| `<DateNumber, Long, Long, Long, Long, Long, Long>` | `WriterDateVec3l` |
+| `<TimestampNumber, Long, Long, Long, Long, Long, Long>` | `WriterTimestampVec3l` |
+| `<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateVec3d` |
+| `<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampVec3d` |
 
 
 ## Examples
