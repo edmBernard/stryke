@@ -1,6 +1,6 @@
 # Stryke
 
-A C++ template library build on top of Orc C++ library. Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
+A C++ template library build on top of Orc C++ library. There is also a python binding [here](python). Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
 
 > The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. this code will try to make an easy to use writer and try to fix most of the structure at compilation time.
 
@@ -47,8 +47,8 @@ We add Two custom type for date that can be initialized by double, long instead 
 ### Simple writer
 
 ```cpp
-    OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", 100000);
-    writer.write(std::string("2018-12-10"), 42);
+OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", 100000);
+writer.write(std::string("2018-12-10"), 42);
 ```
 
 resulting file read by `orc-content`:

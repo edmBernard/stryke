@@ -34,3 +34,11 @@
 *.exe
 *.out
 *.app
+
+# Python stuff
+__pycache__
+
+# data folder
+data
+*.orc
+*.orc.lock

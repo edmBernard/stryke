@@ -73,7 +73,7 @@ public:
 // orc::FLOAT
 // orc::DOUBLE
 // orc::DECIMAL     --> Not Implemented
-// orc::BOOLEAN     --> Not Implemented yet coming soon
+// orc::BOOLEAN
 // orc::DATE
 // orc::TIMESTAMP
 // orc::STRUCT      --> Not Implemented
@@ -87,6 +87,8 @@ public:
   Long(long data)
       : data(data) {
   }
+  Long() {
+  }
   long data;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::LONG;
@@ -97,6 +99,8 @@ public:
   Short(short data)
       : data(data) {
   }
+  Short() {
+  }
   short data;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::SHORT;
@@ -106,6 +110,8 @@ class Int {
 public:
   Int(int data)
       : data(data) {
+  }
+  Int() {
   }
   int data;
   typedef Long type;
@@ -118,6 +124,8 @@ public:
   String(std::string &&data)
       : data(std::move(data)) {
   }
+  String() {
+  }
   std::string data;
   typedef String type;
   static const orc::TypeKind TypeKind = orc::TypeKind::STRING;
@@ -127,6 +135,8 @@ class Char {
 public:
   Char(char &&data)
       : data(std::move(data)) {
+  }
+  Char() {
   }
   char data;
   typedef String type;
@@ -139,6 +149,8 @@ public:
   Double(double data)
       : data(data) {
   }
+  Double() {
+  }
   double data;
   typedef Double type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DOUBLE;
@@ -148,6 +160,8 @@ class Float {
 public:
   Float(float data)
       : data(data) {
+  }
+  Float() {
   }
   float data;
   typedef Double type;
@@ -160,6 +174,8 @@ public:
   Boolean(bool data)
       : data(data) {
   }
+  Boolean() {
+  }
   bool data;
   typedef Boolean type;
   static const orc::TypeKind TypeKind = orc::TypeKind::BOOLEAN;
@@ -170,6 +186,8 @@ class Date {
 public:
   Date(std::string &&data)
       : data(std::move(data)) {
+  }
+  Date() {
   }
   Date(const char *data)
       : data(std::string(data)) {
@@ -184,6 +202,8 @@ public:
   DateNumber(long data)
       : data(data) {
   }
+  DateNumber() {
+  }
   long data;
   typedef Long type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
@@ -194,6 +214,8 @@ class Timestamp {
 public:
   Timestamp(std::string &&data)
       : data(std::move(data)) {
+  }
+  Timestamp() {
   }
   Timestamp(const char *data)
       : data(std::string(data)) {
@@ -207,6 +229,8 @@ class TimestampNumber {
 public:
   TimestampNumber(double data)
       : data(data) {
+  }
+  TimestampNumber() {
   }
   double data;
   typedef TimestampNumber type;

@@ -1,0 +1,5 @@
+*
+!.gitignore
+!setup.py
+!stryke_binding.cpp
+!README.md
