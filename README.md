@@ -1,8 +1,8 @@
 # Stryke
 
-A C++ template library build on top of Orc C++ library. There is also a python binding [here](python). Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template "header-only" library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
+A C++ template library build on top of Orc C++ library. There is also a [python binding here](python). All code is available on [github](https://github.com/edmBernard/Stryke). It's a template "header-only" library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
 
-Apache-Orc is defined as : 
+Apache-Orc is defined as :
 > the smallest, fastest columnar storage for Hadoop workloads.
 
 The C++ Orc lib is highly dynamic. Data Schema is defined at runtime. As Orc have to be bind by dynamic language like python it's perfect. The goal of this lib is to make a more static/templated C++ lib. This code will try to make an easy to use writer and try to fix most of the structure at compilation time.
@@ -107,7 +107,7 @@ data
 
 ### Threaded file writer
 
-Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate for `OrcWriterThread`. 
+Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate for `OrcWriterThread`.
 ```cpp
     OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", 1000000, 10);
     for (int i = 0; i < 100; ++i) {

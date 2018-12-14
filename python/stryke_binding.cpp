@@ -69,6 +69,7 @@ public:
     if (!tmp)
       return false;
     value.data = PyLong_AsLong(tmp);
+    value.empty = false;
     Py_DECREF(tmp);
     return !(value.data == -1 && !PyErr_Occurred());
   }
@@ -101,6 +102,7 @@ public:
     if (!tmp)
       return false;
     value.data = PyFloat_AsDouble(tmp);
+    value.empty = false;
     Py_DECREF(tmp);
     return !(value.data == -1 && !PyErr_Occurred());
   }
@@ -117,6 +119,7 @@ public:
     } else {
       value.data = false;
     }
+    value.empty = false;
     return !(value.data == false && !PyErr_Occurred());
   }
 };
@@ -147,6 +150,7 @@ public:
     if (!tmp)
       return false;
     value.data = PyLong_AsLong(tmp);
+    value.empty = false;
     Py_DECREF(tmp);
     return !(value.data == -1 && !PyErr_Occurred());
   }
@@ -178,6 +182,7 @@ public:
     if (!tmp)
       return false;
     value.data = PyFloat_AsDouble(tmp);
+    value.empty = false;
     Py_DECREF(tmp);
     return !(value.data == -1 && !PyErr_Occurred());
   }

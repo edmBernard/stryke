@@ -1,6 +1,9 @@
 # Stryke
 
-This is the python bing for a C++ template library build on top of Orc C++ library. Code is available on github [here](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
+This is the python binding for the Stryke build on top of Apache-Orc C++ library. All code is available on [github](https://github.com/edmBernard/Stryke). It's a template library but depend on [Apache-Orc](https://orc.apache.org/).
+
+Apache-Orc is defined as :
+> the smallest, fastest columnar storage for Hadoop workloads.
 
 > The straight forward way to use Orc file in Python is through PySpark.
 
@@ -8,9 +11,9 @@ This is the python bing for a C++ template library build on top of Orc C++ libra
 
 As Stryke is a template Library we have to defined Writer template specialization at compilation.
 For each C++ Writer, we have define some useful datatype. Each C++ Writers are separate by namespace.
-* `OrcWriterImpl` are in `template` namespace
-* `OrcWriterMulitfile` are in `multifile` namespace
-* `OrcWriterThread` are in `thread` namespace
+* `OrcWriterImpl` writers are in `template` namespace
+* `OrcWriterMulitfile` writers are in `multifile` namespace
+* `OrcWriterThread` writers are in `thread` namespace
 
 We already define the following type for each Writer :
 
@@ -42,10 +45,12 @@ We already define the following type for each Writer :
 
 ### Simple writer
 
+#### Date
+
 ```python
 import stryke as sy
-writer = sy.template.WriterPoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
-writer.write(17874, 42)  # at this time Date is the number of date from 1970.
+writer = sy.template.WriterDatePoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
+writer.write(17874, 42)  # Date Type is the number of day since 1970.
 # the file is close at writer destruction
 ```
 
@@ -54,18 +59,34 @@ resulting file read by `orc-content`:
 {"date": "2018-12-09", "value": 42}
 ```
 
+#### Timestamp
+
+```python
+import stryke as sy
+writer = sy.template.WriterTimestampPoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
+writer.write(1544400000, 42)  # Timestamp Type is the number of second since 1970.
+writer.write(1544400000.123456789, 42)  # Timestamp Type is the number of second since 1970.
+# the file is close at writer destruction
+```
+
+resulting file read by `orc-content`:
+```python
+{"Date": "2018-12-10 00:00:00.0", "value": 42}
+{"Date": "2018-12-10 00:00:00.123456716", "value": 42}
+```
+
 ### Multi file writer
 
 `multifile.Writer*` create a file by day in a tree with the pattern `{YYYY}/{MM}/{DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
 ```python
 import stryke as sy
-writer = sy.multifile.WriterPoint1l(["Date", "value"], "data", "date_", sy.WriterOptions())
+writer = sy.multifile.WriterDatePoint1l(["Date", "value"], "data", "date_", sy.WriterOptions())
 for i in range(100):
     writer.write(17875 + i/2., 42 + i)
 # the file is close at writer destruction
 ```
 
-resulting file read by `orc-content` (`2018/12/10/date_2018-12-10-0.orc`):
+resulting file read by `orc-content` (`data/2018/12/10/date_2018-12-10-0.orc`):
 ```python
 {"date": "2018-12-10", "value": 42}
 {"date": "2018-12-10", "value": 43}
@@ -102,7 +123,7 @@ data
 
 ```python
 import stryke as sy
-writer = sy.thread.WriterPoint1l(["Date", "value"], "data", "date_", sy.WriterOptions())
+writer = sy.thread.WriterDatePoint1l(["Date", "value"], "data", "date_", sy.WriterOptions())
 for i in range(100):
     writer.write(17875 + i/2., 42 + i)
 # the file is close at writer destruction
