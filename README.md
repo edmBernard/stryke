@@ -59,6 +59,9 @@ resulting file read by `orc-content`:
 ### Multi file writer
 
 `OrcWriterMulti` create a file by day in a tree with the pattern `{YYYY}/{MM}/{DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
+
+**Note**: The first Type must be a date. Currently, we only support `DateNumber` and `TimestampNumber`.
+
 ```cpp
 OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", 100000, 10);
 for (int i = 0; i < 100; ++i) {

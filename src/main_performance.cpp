@@ -28,7 +28,7 @@ void bench_thread(int number_line, const WriterOptions &options) {
     OrcWriterThread<OrcWriterMulti, DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "thread_", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
-      auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
+      // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
       auto start4 = std::chrono::high_resolution_clock::now();
 
       writer_multi.write(17875 + i / 1000000., 11111.111111 + i / 10000., 17875 + previous_timer);

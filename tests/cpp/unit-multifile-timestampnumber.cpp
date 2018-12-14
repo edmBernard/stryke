@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
+TEST_CASE("OrcWriterMulti<TimestampNumber, ...> Split", "[Multifile]") {
 
   stryke::WriterOptions options;
   options.set_batch_size(1000);
@@ -20,9 +20,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
     std::string root_folder = "data_test";
     SECTION("0 split") {
       {
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
         }
       }
 
@@ -33,9 +33,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
     SECTION("1 split") {
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows / 2.), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows / 2.), i);
         }
 
         tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
@@ -57,9 +57,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
     std::string root_folder = "data_test";
     SECTION("0 split") {
       {
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
         }
       }
 
@@ -71,9 +71,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
       stryke::BasicStats tmp_b;
       {
         options.set_batch_max(5);
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
         }
 
         tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
@@ -98,9 +98,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
       uint64_t check_point = 10;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
           if (i == check_point - 1) {
             writer.close();
             tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
@@ -120,9 +120,9 @@ TEST_CASE("OrcWriterMulti Split", "[Multifile]") {
       uint64_t check_point2 = 100;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterMulti<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        stryke::OrcWriterMulti<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
-          writer.write(17875 + i / (nbr_rows), i);
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
 
           if (i == check_point1 - 1) {
             writer.close();

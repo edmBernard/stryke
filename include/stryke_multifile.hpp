@@ -27,7 +27,18 @@ namespace stryke {
 namespace fs = std::filesystem;
 
 namespace utils {
+  template<typename T>
+  time_t get_time(const T &date);
 
+  template<>
+  inline time_t get_time<DateNumber>(const DateNumber &date) {
+    return date.data * (60 * 60 * 24);
+  }
+
+  template<>
+  inline time_t get_time<TimestampNumber>(const TimestampNumber &date) {
+    return std::trunc(date.data);
+  }
 
 } // namespace utils
 
@@ -62,12 +73,11 @@ public:
 
 private:
   bool get_name(T &date) {
-    time_t mytime = date.data * (60 * 60 * 24);
+    time_t mytime = utils::get_time(date);
     auto mytm = gmtime(&mytime);
 
     fs::path file_folder = this->root_folder / std::to_string(1900 + mytm->tm_year) / std::to_string(1 + mytm->tm_mon) / std::to_string(mytm->tm_mday);
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::to_string(1 + mytm->tm_mon) + "-" + std::to_string(mytm->tm_mday);
-
 
     // Create new filename if date change or if nbr_batch_max is reached
     if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
