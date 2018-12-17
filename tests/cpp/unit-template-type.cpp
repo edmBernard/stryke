@@ -47,6 +47,17 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     REQUIRE(tmp_b.nbr_columns == 3);
     REQUIRE(tmp_b.nbr_rows == 10);
   }
+  SECTION("Test String") {
+    {
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::String> writer({"date", "col1"}, filename, options);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i, std::to_string(i));
+      }
+    }
+    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
+    REQUIRE(tmp_b.nbr_columns == 3);
+    REQUIRE(tmp_b.nbr_rows == 10);
+  }
   SECTION("Test Float") {
     {
       stryke::OrcWriterImpl<stryke::DateNumber, stryke::Float> writer({"date", "col1"}, filename, options);

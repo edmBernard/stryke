@@ -66,8 +66,8 @@ public:
 // orc::INT
 // orc::SHORT
 // orc::LONG
-// orc::STRING      --> Not Implemented yet coming soon
-// orc::CHAR        --> Not Implemented yet coming soon
+// orc::STRING
+// orc::CHAR        --> Not Implemented
 // orc::VARCHAR     --> Not Implemented
 // orc::BINARY      --> Not Implemented
 // orc::FLOAT
@@ -127,6 +127,9 @@ public:
   String(std::string &&data)
       : data(std::move(data)) {
   }
+  String(const char *data)
+      : data(std::string(data)) {
+  }
   String() {
   }
   std::string data;
@@ -134,17 +137,18 @@ public:
   static const orc::TypeKind TypeKind = orc::TypeKind::STRING;
 };
 
-class Char {
-public:
-  Char(char &&data)
-      : data(std::move(data)) {
-  }
-  Char() {
-  }
-  char data;
-  typedef String type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::CHAR;
-};
+// Not working
+// class Char {
+// public:
+//   Char(char data)
+//       : data(1, data) {
+//   }
+//   Char() {
+//   }
+//   std::string data;
+//   typedef String type;
+//   static const orc::TypeKind TypeKind = orc::TypeKind::CHAR;
+// };
 
 // Double Type Category
 class Double {
@@ -268,7 +272,9 @@ class Filler<Types, N, Long> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -288,11 +294,47 @@ public:
 };
 
 template <typename Types, uint64_t N>
+class Filler<Types, N, String> {
+public:
+  static bool fillValue(const std::vector<Types> &data,
+                        orc::StructVectorBatch *batch,
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
+    orc::StringVectorBatch *stringBatch = dynamic_cast<orc::StringVectorBatch *>(batch->fields[N]);
+    bool hasNull = false;
+    for (uint64_t i = 0; i < numValues; ++i) {
+      std::string col = std::get<N>(data[i]).data;
+      if (col.empty()) {
+        batch->notNull[i] = 0;
+        hasNull = true;
+      } else {
+        batch->notNull[i] = 1;
+        if (string_buffer->size() - string_buffer_offset < col.size()) {
+          string_buffer->reserve(string_buffer->size() * 2);
+        }
+        memcpy(string_buffer->data() + string_buffer_offset,
+              col.c_str(),
+              col.size());
+        stringBatch->data[i] = string_buffer->data() + string_buffer_offset;
+        stringBatch->length[i] = static_cast<int64_t>(col.size());
+        string_buffer_offset += col.size();
+      }
+    }
+    stringBatch->hasNulls = hasNull;
+    stringBatch->numElements = numValues;
+    return true;
+  }
+};
+
+template <typename Types, uint64_t N>
 class Filler<Types, N, Double> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::DoubleVectorBatch *dblBatch = dynamic_cast<orc::DoubleVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -316,7 +358,9 @@ class Filler<Types, N, Boolean> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::LongVectorBatch *boolBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -340,7 +384,9 @@ class Filler<Types, N, Date> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -371,7 +417,9 @@ class Filler<Types, N, DateNumber> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::LongVectorBatch *longBatch = dynamic_cast<orc::LongVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -395,7 +443,9 @@ class Filler<Types, N, Timestamp> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     struct tm timeStruct;
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
@@ -433,7 +483,9 @@ class Filler<Types, N, TimestampNumber> {
 public:
   static bool fillValue(const std::vector<Types> &data,
                         orc::StructVectorBatch *batch,
-                        uint64_t numValues) {
+                        uint64_t numValues,
+                        std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
+                        uint64_t &string_buffer_offset) {
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -460,14 +512,14 @@ public:
 };
 
 template <typename T, std::size_t... Indices>
-auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) -> std::vector<bool> {
+auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues, std::unique_ptr<orc::DataBuffer<char>> &string_buffer, uint64_t &string_buffer_offset) -> std::vector<bool> {
   // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
-  return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type::type>::fillValue(data, structBatch, numValues)...};
+  return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type::type>::fillValue(data, structBatch, numValues, string_buffer, string_buffer_offset)...};
 }
 
 template <typename... Types>
-auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch *structBatch, uint64_t numValues) {
-  return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues);
+auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch *structBatch, uint64_t numValues, std::unique_ptr<orc::DataBuffer<char>> &string_buffer, uint64_t &string_buffer_offset) {
+  return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues, string_buffer, string_buffer_offset);
 }
 
 // ==============================================================
@@ -515,6 +567,8 @@ public:
     this->writer = orc::createWriter(*this->fileType, outStream.get(), this->orc_writeroptions);
     this->rowBatch = this->writer->createRowBatch(this->writeroptions.batchSize);
 
+    this->string_buffer = std::make_unique<orc::DataBuffer<char>>(*orc::getDefaultPool(), 4 * 1024 * 1024);  // Create buffer for string data. One buffer store all string data
+
     if (this->writeroptions.create_lock_file) {
       std::ofstream outfile(this->filename + ".lock");
       outfile.close();
@@ -547,12 +601,13 @@ public:
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
 
-    auto ret = utils::fillValues(this->data, structBatch, this->numValues);
+    auto ret = utils::fillValues(this->data, structBatch, this->numValues, this->string_buffer, this->string_buffer_offset);
 
     this->writer->add(*this->rowBatch);
 
     this->data.clear();
     this->numValues = 0;
+    this->string_buffer_offset = 0;
   }
 
 private:
@@ -567,6 +622,9 @@ private:
 
   std::vector<std::tuple<Types...>> data; // buffer that holds a batch of rows in tuple
   std::array<std::string, sizeof...(Types)> column_names;
+
+  std::unique_ptr<orc::DataBuffer<char>> string_buffer;
+  uint64_t string_buffer_offset = 0;
 
   std::string filename;
 
