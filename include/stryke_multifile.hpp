@@ -76,8 +76,12 @@ private:
     time_t mytime = utils::get_time(date);
     auto mytm = gmtime(&mytime);
 
-    fs::path file_folder = this->root_folder / std::to_string(1900 + mytm->tm_year) / std::to_string(1 + mytm->tm_mon) / std::to_string(mytm->tm_mday);
-    std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::to_string(1 + mytm->tm_mon) + "-" + std::to_string(mytm->tm_mday);
+    char month_buffer[12];  // for padding
+    char day_buffer[12];  // for padding
+    sprintf(day_buffer, "%.02d", mytm->tm_mday);
+    sprintf(month_buffer, "%.02d", 1 + mytm->tm_mon);
+    fs::path file_folder = this->root_folder / ("year="+std::to_string(1900 + mytm->tm_year)) / ("month="+std::string(month_buffer)) / ("day="+std::string(day_buffer));
+    std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Create new filename if date change or if nbr_batch_max is reached
     if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
