@@ -61,7 +61,7 @@ resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#
 
 ### Multi file writer
 
-`OrcWriterMulti` create a file by day in a tree with the pattern `{YYYY}/{MM}/{DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
+`OrcWriterMulti` create a file by day in a tree with the pattern `year={YYYY}/month={MM}/day={DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
 
 **Note**: The first Type must be a date. Currently, we only support `DateNumber` and `TimestampNumber`.
 
@@ -81,27 +81,27 @@ Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#
 Resulting tree created:
 ```bash
 data
-├── 2018
-│   └── 12
-│       ├── 10
+├── year=2018
+│   └── month=12
+│       ├── day=10
 │       │   └── date_2018-12-10-0.orc
-│       ├── 11
+│       ├── day=11
 │       │   └── date_2018-12-11-0.orc
 ...
-│       └── 31
+│       └── day=31
 │           └── date_2018-12-31-0.orc
-└── 2019
-    └── 1
-        ├── 1
+└── year=2019
+    └── month=1
+        ├── day=1
         │   └── date_2019-1-1-0.orc
-        ├── 2
+        ├── day=2
         │   └── date_2019-1-2-0.orc
 ...
-        ├── 26
+        ├── day=26
         │   └── date_2019-1-26-0.orc
-        ├── 27
+        ├── day=27
         │   └── date_2019-1-27-0.orc
-        └── 28
+        └── day=28
             └── date_2019-1-28-0.orc
 ```
 

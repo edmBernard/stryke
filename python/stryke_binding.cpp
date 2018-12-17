@@ -348,6 +348,6 @@ PYBIND11_MODULE(stryke, m) {
 
   auto m_custom = m.def_submodule("custom");
 
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long>(m_custom, "TimestampIntDouble");
+  declare_writer_thread<stryke::TimestampNumber, stryke::Int, stryke::Long>(m_custom, "TimestampIntDouble");
 
 }

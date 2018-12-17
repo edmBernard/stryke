@@ -26,7 +26,7 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
         }
       }
 
-      stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+      stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows);
     }
@@ -38,12 +38,12 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
           writer.write(17875 + i / (nbr_rows / 2.), i);
         }
 
-        tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+        tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
         REQUIRE(tmp_b.nbr_columns == 3);
         REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
       }
 
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/11/" + "test_2018-12-11-0.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=11/" + "test_2018-12-11-0.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
     }
@@ -63,7 +63,7 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
         }
       }
 
-      stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+      stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows);
     }
@@ -76,12 +76,12 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
           writer.write(17875 + i / (nbr_rows), i);
         }
 
-        tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+        tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
         REQUIRE(tmp_b.nbr_columns == 3);
         REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
       }
 
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-1.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
     }
@@ -103,14 +103,14 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
           writer.write(17875 + i / (nbr_rows), i);
           if (i == check_point - 1) {
             writer.close();
-            tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+            tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
             REQUIRE(tmp_b.nbr_columns == 3);
             REQUIRE(tmp_b.nbr_rows == check_point);
           }
         }
       }
 
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-1.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows - check_point);
     }
@@ -133,15 +133,15 @@ TEST_CASE("OrcWriterMulti<DateNumber, ...> Split", "[Multifile]") {
           }
         }
       }
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-0.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == check_point1);
 
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-1.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == check_point2 - check_point1);
 
-      tmp_b = stryke::get_basic_stats(root_folder + "/2018/12/10/" + "test_2018-12-10-2.orc");
+      tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-2.orc");
       REQUIRE(tmp_b.nbr_columns == 3);
       REQUIRE(tmp_b.nbr_rows == nbr_rows - check_point2);
     }
