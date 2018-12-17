@@ -73,7 +73,7 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 # Build Example
 #**************************************************************************************************
 foreach (example ${examples})
-  add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/src/main_${example}.cpp)
+  add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/main_${example}.cpp)
   target_compile_options("stryke_${example}" PRIVATE -O3)
   target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 endforeach(example)
@@ -114,8 +114,6 @@ if(BUILD_PYTHON_BINDING)
 
   install(TARGETS stryke DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke)
 endif()
-
-
 
 #**************************************************************************************************
 # Documentation generation

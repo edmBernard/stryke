@@ -40,9 +40,6 @@ We add Two custom type for date that can be initialized by double/long instead o
 
 ## Known limitations
 
-* One column file: At this time we can't create one column file (ex: `OrcWriterImpl<Int>`), it create ambiguous overload between:
-`void write(Types... dataT)` and `void write(std::tuple<Types...> dataT)`
-
 * `close_async` method of `OrcWriterThread`: I made the choice that `close_async` wait the queue to be empty before closing file. If we continue to write data fast enough the file can never close.
 
 ## Examples

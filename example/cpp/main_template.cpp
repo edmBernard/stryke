@@ -21,11 +21,13 @@ int main(int argc, char const *argv[]) {
   std::string filename = "test.orc";
 
   {
-    OrcWriterImpl<DateNumber, Boolean> writer({"date", "col1"}, filename, WriterOptions());
+    OrcWriterImpl<Date, Long> writer({"date", "col1"}, filename, WriterOptions());
     for (int i = 0; i < 10; ++i) {
-      std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(1000));
-      writer.write(i, (i%2==0));
+      // std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(1000));
+      writer.write("", (i%2==0));
+      writer.write("2018-12-12", (i%4==0));
     }
+    // writer.write(21, true);
   }
 
   return 0;

@@ -31,7 +31,7 @@ void bench_thread(int number_line, const WriterOptions &options) {
       // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
       auto start4 = std::chrono::high_resolution_clock::now();
 
-      writer_multi.write(17875 + i / 1000000., 11111.111111 + i / 10000., 17875 + previous_timer);
+      writer_multi.write(17875 + i / 10000., 11111.111111 + i / 10000., 17875 + previous_timer);
 
       previous_timer = (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000.;
       if (previous_timer > max_timer) {
@@ -59,7 +59,7 @@ void bench_multi(int number_line, const WriterOptions &options) {
     for (int i = 0; i < number_line; ++i) {
       auto start4 = std::chrono::high_resolution_clock::now();
 
-      writer_multi.write(17875 + i / 1000000., 11111.111111 + i / 10000., 17875 + previous_timer);
+      writer_multi.write(17875 + i / 10000., 11111.111111 + i / 10000., 17875 + previous_timer);
 
       previous_timer = (std::chrono::high_resolution_clock::now() - start4).count() / 1000000000.;
       if (previous_timer > max_timer) {
@@ -73,7 +73,7 @@ void bench_multi(int number_line, const WriterOptions &options) {
   std::chrono::duration<double, std::milli> elapsed2 = std::chrono::high_resolution_clock::now() - start1;
   std::cout << std::setw(40) << std::left << "multi after full release:  processing time : description : " << elapsed2.count() << " ms\n";
   std::cout << std::setw(40) << std::left << "multi max timer for one row:  processing time : description : " << max_timer << " s\n";
-  fs::remove_all("data");
+  // fs::remove_all("data");
 }
 
 int main(int argc, char const *argv[]) {
