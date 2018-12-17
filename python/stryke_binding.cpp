@@ -342,4 +342,12 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampVec3d");
   declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec3d");
 
+// ==============================================================
+// Custom Binding
+// ==============================================================
+
+  auto m_custom = m.def_submodule("custom");
+
+  declare_writer_thread<stryke::TimestampNumber, stryke::Long>(m_custom, "TimestampIntDouble");
+
 }
