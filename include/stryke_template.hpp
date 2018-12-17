@@ -530,10 +530,10 @@ public:
   }
 
   void write(Types... dataT) {
-    this->write(std::make_tuple(dataT...));
+    this->write_tuple(std::make_tuple(dataT...));
   }
 
-  void write(std::tuple<Types...> dataT) {
+  void write_tuple(std::tuple<Types...> dataT) {
 
     if (this->numValues >= this->writeroptions.batchSize) {
       addToFile();

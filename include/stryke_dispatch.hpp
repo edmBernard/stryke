@@ -45,12 +45,12 @@ public:
   }
 
   void write(T date, Types... dataT) {
-    this->write(std::make_tuple(date, dataT...));
+    this->write_tuple(std::make_tuple(date, dataT...));
   }
 
-  void write(std::tuple<T, Types...> dataT) {
+  void write_tuple(std::tuple<T, Types...> dataT) {
     std::string writers_path = this->get_writer(std::get<0>(dataT));
-    this->writers[writers_path]->write(dataT);
+    this->writers[writers_path]->write_tuple(dataT);
   }
 
 private:

@@ -51,10 +51,10 @@ public:
   }
 
   void write(Types... data) {
-    this->write(std::make_tuple(data...));
+    this->write_tuple(std::make_tuple(data...));
   }
 
-  void write(std::tuple<Types...> data) {
+  void write_tuple(std::tuple<Types...> data) {
     std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
     this->fifo.push(data);
     this->queue_is_not_empty.notify_all();
@@ -102,7 +102,7 @@ public:
         std::tuple<Types...> data = this->fifo.front();
         this->fifo.pop();
         lck.unlock();
-        this->writer->write(data);
+        this->writer->write_tuple(data);
       }
     }
   }

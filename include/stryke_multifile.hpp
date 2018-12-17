@@ -56,12 +56,12 @@ public:
   }
 
   void write(T date, Types... dataT) {
-    this->write(std::make_tuple(date, dataT...));
+    this->write_tuple(std::make_tuple(date, dataT...));
   }
 
-  void write(std::tuple<T, Types...> dataT) {
+  void write_tuple(std::tuple<T, Types...> dataT) {
     this->get_writer(std::get<0>(dataT));
-    this->writers->write(dataT);
+    this->writers->write_tuple(dataT);
     ++this->current_counts;
   }
 

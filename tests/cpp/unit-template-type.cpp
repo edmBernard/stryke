@@ -127,3 +127,30 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
   fs::remove(filename);
 }
+
+TEST_CASE("OrcWriterImpl One Column", "[Simple]") {
+
+  std::string filename = "test.orc";
+  stryke::WriterOptions options;
+  options.set_batch_size(10000);
+  options.set_batch_max(0);
+  options.set_stripe_size(10000);
+
+  SECTION("DateNumber column") {
+    {
+      options.disable_lock_file();
+
+      stryke::OrcWriterImpl<stryke::DateNumber> writer({"date"}, filename, options);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i);
+      }
+    }
+    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
+    REQUIRE(tmp_b.nbr_columns == 2);
+    REQUIRE(tmp_b.nbr_rows == 10);
+  }
+
+  fs::remove(filename);
+
+}
+
