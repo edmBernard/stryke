@@ -15,7 +15,7 @@ def test_batch(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = syt.WriterDatePoint1l(["Date", "value"], filename, options)
+    writer = syt.WriterDateNPoint1l(["Date", "value"], filename, options)
     for i in range(nbre_rows):
         writer.write(i, i)
 
@@ -40,7 +40,7 @@ def test_lock_file(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = syt.WriterDatePoint1l(["Date", "value"], filename, options)
+    writer = syt.WriterDateNPoint1l(["Date", "value"], filename, options)
     for i in range(nbre_rows):
         writer.write(i, i)
 

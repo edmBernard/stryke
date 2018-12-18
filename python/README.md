@@ -19,27 +19,46 @@ We already define the following type for each Writer :
 
 | C++ Types | Corresponding Python Writer |
 |--|--|
-| `<DateNumber, Long>` | `WriterDatePoint1l` |
-| `<TimestampNumber, Long>` | `WriterTimestampPoint1l` |
-| `<DateNumber, Double>` | `WriterDatePoint1d` |
-| `<TimestampNumber, Double>` | `WriterTimestampPoint1d` |
-| `<DateNumber, Long, Long>` | `WriterDatePoint2l` |
-| `<TimestampNumber, Long, Long>` | `WriterTimestampPoint2l` |
-| `<DateNumber, Double, Double>` | `WriterDatePoint2d` |
-| `<TimestampNumber, Double, Double>` | `WriterTimestampPoint2d` |
-| `<DateNumber, Long, Long, Long>` | `WriterDatePoint3l` |
-| `<TimestampNumber, Long, Long, Long>` | `WriterTimestampPoint3l` |
-| `<DateNumber, Double, Double, Double>` | `WriterDatePoint3d` |
-| `<TimestampNumber, Double, Double, Double>` | `WriterTimestampPoint3d` |
-| `<DateNumber, Long, Long, Long, Long>` | `WriterDateVec2l` |
-| `<TimestampNumber, Long, Long, Long, Long>` | `WriterTimestampVec2l` |
-| `<DateNumber, Double, Double, Double, Double>` | `WriterDateVec2d` |
-| `<TimestampNumber, Double, Double, Double, Double>` | `WriterTimestampVec2d` |
-| `<DateNumber, Long, Long, Long, Long, Long, Long>` | `WriterDateVec3l` |
-| `<TimestampNumber, Long, Long, Long, Long, Long, Long>` | `WriterTimestampVec3l` |
-| `<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateVec3d` |
-| `<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampVec3d` |
-
+| `<Date, Long>` | `WriterDatePoint1l` |
+| `<Timestamp, Long>` | `WriterTimestampPoint1l` |
+| `<Date, Double>` | `WriterDatePoint1d` |
+| `<Timestamp, Double>` | `WriterTimestampPoint1d` |
+| `<Date, Long, Long>` | `WriterDatePoint2l` |
+| `<Timestamp, Long, Long>` | `WriterTimestampPoint2l` |
+| `<Date, Double, Double>` | `WriterDatePoint2d` |
+| `<Timestamp, Double, Double>` | `WriterTimestampPoint2d` |
+| `<Date, Long, Long, Long>` | `WriterDatePoint3l` |
+| `<Timestamp, Long, Long, Long>` | `WriterTimestampPoint3l` |
+| `<Date, Double, Double, Double>` | `WriterDatePoint3d` |
+| `<Timestamp, Double, Double, Double>` | `WriterTimestampPoint3d` |
+| `<Date, Long, Long, Long, Long>` | `WriterDateVec2l` |
+| `<Timestamp, Long, Long, Long, Long>` | `WriterTimestampVec2l` |
+| `<Date, Double, Double, Double, Double>` | `WriterDateVec2d` |
+| `<Timestamp, Double, Double, Double, Double>` | `WriterTimestampVec2d` |
+| `<Date, Long, Long, Long, Long, Long, Long>` | `WriterDateVec3l` |
+| `<Timestamp, Long, Long, Long, Long, Long, Long>` | `WriterTimestampVec3l` |
+| `<Date, Double, Double, Double, Double, Double, Double>` | `WriterDateVec3d` |
+| `<Timestamp, Double, Double, Double, Double, Double, Double>` | `WriterTimestampVec3d` |
+| `<DateNumber, Long>` | `WriterDateNPoint1l` |
+| `<TimestampNumber, Long>` | `WriterTimestampNPoint1l` |
+| `<DateNumber, Double>` | `WriterDateNPoint1d` |
+| `<TimestampNumber, Double>` | `WriterTimestampNPoint1d` |
+| `<DateNumber, Long, Long>` | `WriterDateNPoint2l` |
+| `<TimestampNumber, Long, Long>` | `WriterTimestampNPoint2l` |
+| `<DateNumber, Double, Double>` | `WriterDateNPoint2d` |
+| `<TimestampNumber, Double, Double>` | `WriterTimestampNPoint2d` |
+| `<DateNumber, Long, Long, Long>` | `WriterDateNPoint3l` |
+| `<TimestampNumber, Long, Long, Long>` | `WriterTimestampNPoint3l` |
+| `<DateNumber, Double, Double, Double>` | `WriterDateNPoint3d` |
+| `<TimestampNumber, Double, Double, Double>` | `WriterTimestampNPoint3d` |
+| `<DateNumber, Long, Long, Long, Long>` | `WriterDateNVec2l` |
+| `<TimestampNumber, Long, Long, Long, Long>` | `WriterTimestampNVec2l` |
+| `<DateNumber, Double, Double, Double, Double>` | `WriterDateNVec2d` |
+| `<TimestampNumber, Double, Double, Double, Double>` | `WriterTimestampNVec2d` |
+| `<DateNumber, Long, Long, Long, Long, Long, Long>` | `WriterDateNVec3l` |
+| `<TimestampNumber, Long, Long, Long, Long, Long, Long>` | `WriterTimestampNVec3l` |
+| `<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateNVec3d` |
+| `<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampNVec3d` |
 
 ## Examples
 
