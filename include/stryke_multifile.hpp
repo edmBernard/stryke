@@ -21,24 +21,49 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <ctime>
 
 namespace stryke {
 
 namespace fs = std::filesystem;
 
 namespace utils {
-  template<typename T>
-  time_t get_time(const T &date);
+template <typename T>
+time_t get_time(const T &date);
 
-  template<>
-  inline time_t get_time<DateNumber>(const DateNumber &date) {
-    return date.data * (60 * 60 * 24);
-  }
+template <>
+inline time_t get_time<Date>(const Date &date) {
+  struct tm timeStruct;
+  memset(&timeStruct, 0, sizeof(timeStruct));
+  std::cout << "date.data :" << date.data << std::endl;
+  strptime(date.data.c_str(), "%Y-%m-%d", &timeStruct);
+  return timegm(&timeStruct);
+}
 
-  template<>
-  inline time_t get_time<TimestampNumber>(const TimestampNumber &date) {
-    return std::trunc(date.data);
+template <>
+inline time_t get_time<DateNumber>(const DateNumber &date) {
+  return date.data * (60 * 60 * 24);
+}
+
+template <>
+inline time_t get_time<Timestamp>(const Timestamp &date) {
+  struct tm timeStruct;
+
+  memset(&timeStruct, 0, sizeof(timeStruct));
+  char *left = strptime(date.data.c_str(), "%Y-%m-%d %H:%M:%S", &timeStruct);
+  char *tail;
+  double d = strtod(left, &tail);
+  if (tail != left) {
+    return timegm(&timeStruct) + d;
+  } else {
+    return timegm(&timeStruct);
   }
+}
+
+template <>
+inline time_t get_time<TimestampNumber>(const TimestampNumber &date) {
+  return std::trunc(date.data);
+}
 
 } // namespace utils
 
@@ -76,11 +101,11 @@ private:
     time_t mytime = utils::get_time(date);
     auto mytm = gmtime(&mytime);
 
-    char month_buffer[12];  // for padding
-    char day_buffer[12];  // for padding
+    char month_buffer[12]; // for padding
+    char day_buffer[12];   // for padding
     sprintf(day_buffer, "%.02d", mytm->tm_mday);
     sprintf(month_buffer, "%.02d", 1 + mytm->tm_mon);
-    fs::path file_folder = this->root_folder / ("year="+std::to_string(1900 + mytm->tm_year)) / ("month="+std::string(month_buffer)) / ("day="+std::string(day_buffer));
+    fs::path file_folder = this->root_folder / ("year=" + std::to_string(1900 + mytm->tm_year)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Create new filename if date change or if nbr_batch_max is reached

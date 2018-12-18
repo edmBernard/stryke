@@ -399,7 +399,7 @@ public:
         struct tm tm;
         memset(&tm, 0, sizeof(struct tm));
         strptime(col.c_str(), "%Y-%m-%d", &tm);
-        time_t t = mktime(&tm);
+        time_t t = timegm(&tm);
         time_t t1970 = 0;
         double seconds = difftime(t, t1970);
         int64_t days = static_cast<int64_t>(seconds / (60 * 60 * 24));
