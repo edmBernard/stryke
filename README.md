@@ -128,11 +128,16 @@ Stryke depend on:
 
 ### Compile
 
+There is 3 options :
+* BUILD_PYTHON_BINDING
+* BUILD_EXAMPLES
+* BUILD_UNIT_TESTS
+
 ```bash
 mkdir build
 cd build
 # configure make with vcpkg toolchain
-cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
+cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON
 make
 ```
 

@@ -72,16 +72,19 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 #**************************************************************************************************
 # Build Example
 #**************************************************************************************************
-foreach (example ${examples})
-  add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/main_${example}.cpp)
-  target_compile_options("stryke_${example}" PRIVATE -O3)
-  target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
-endforeach(example)
+option(BUILD_EXAMPLES "Build stryke example" OFF)
+if(BUILD_EXAMPLES)
+  foreach (example ${examples})
+    add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/main_${example}.cpp)
+    target_compile_options("stryke_${example}" PRIVATE -O3)
+    target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+  endforeach(example)
+endif()
 
 #**************************************************************************************************
 # Build Tests
 #**************************************************************************************************
-option(BUILD_UNIT_TESTS "Build the unit tests" ON)
+option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 if(BUILD_UNIT_TESTS)
   enable_testing()
 
