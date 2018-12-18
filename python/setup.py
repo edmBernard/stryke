@@ -10,7 +10,6 @@ setup(
     author='Erwan BERNARD',
     author_email='bernard.erwan@gmail.com',
     description="Library to write Orc file",
-    ong_description=open('README.md').read(),
     package_data={'stryke': ['stryke.so']},
     include_package_data=True,
     url='https://github.com/edmBernard/Stryke',
