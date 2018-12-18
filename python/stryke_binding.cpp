@@ -211,7 +211,8 @@ void declare_writer_multifile(py::module &m, const std::string &typestr) {
 
   py::class_<Class>(m, pyclass_name.c_str())
     .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-    .def("write", (void (Class::*)(T...)) &Class::write);
+    .def("write", (void (Class::*)(T...)) &Class::write)
+    .def("close", (void (Class::*)(T...)) &Class::close);
 }
 
 template<typename... T>
@@ -221,7 +222,9 @@ void declare_writer_thread(py::module &m, const std::string &typestr) {
 
   py::class_<Class>(m, pyclass_name.c_str())
     .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-    .def("write", (void (Class::*)(T...)) &Class::write);
+    .def("write", (void (Class::*)(T...)) &Class::write)
+    .def("close_async", (void (Class::*)(T...)) &Class::close_async)
+    .def("close_sync", (void (Class::*)(T...)) &Class::close_sync);
 }
 
 
