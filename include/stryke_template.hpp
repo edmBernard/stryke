@@ -51,10 +51,15 @@ public:
     this->stripeSize = stripeSize;
   }
 
+  void set_cron(int minutes) {
+    this->cron = minutes;
+  }
+
   bool create_lock_file = true;
   uint64_t batchSize = 10000;
   int nbr_batch_max = 0;
   uint64_t stripeSize = 10000;
+  int cron = -1;
 };
 
 // ==============================================================

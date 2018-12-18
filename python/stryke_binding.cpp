@@ -232,7 +232,8 @@ PYBIND11_MODULE(stryke, m) {
     .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file)
     .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
     .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
-    .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size);
+    .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
+    .def("set_cron", &stryke::WriterOptions::set_cron);
 
 // ==============================================================
 // Binding for WriterTemplate

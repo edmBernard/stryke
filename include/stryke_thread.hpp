@@ -42,12 +42,19 @@ class OrcWriterThread {
 public:
   OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, options);
+    this->cron_minute = options.cron;
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
+    if (this->cron_minute > 0) {
+      this->cron_thread = std::thread(&OrcWriterThread::cron, this);
+    }
   }
 
   ~OrcWriterThread() {
     this->stop_thread = true;
     this->writer_thread.join();
+    if (this->cron_minute > 0) {
+      this->cron_thread.join();
+    }
   }
 
   void write(Types... data) {
@@ -56,6 +63,7 @@ public:
 
   void write_tuple(std::tuple<Types...> data) {
     std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
+    std::unique_lock<std::mutex> lck2(this->mx_close);  // lock only to block close method until file is closed
     this->fifo.push(data);
     this->queue_is_not_empty.notify_all();
   }
@@ -107,9 +115,32 @@ public:
     }
   }
 
+  void cron() {
+    bool flipflop = false;
+
+    while (!this->stop_thread) {
+      std::this_thread::sleep_for(std::chrono::seconds(5));
+
+      time_t timer = time(nullptr);
+      struct tm timeStruct;
+      gmtime_r(&timer, &timeStruct);  // I need a "thread-safe" gmtime maybe I will switch to extern lib for time
+
+      if ((timeStruct.tm_hour*60+timeStruct.tm_min) % this->cron_minute == 0) {
+        if (flipflop == false) {
+          this->close_sync();
+          flipflop = true;
+        }
+      } else {
+        flipflop = false;
+      }
+    }
+  }
+
 private:
   std::queue<std::tuple<Types...>> fifo;
   std::thread writer_thread;
+  std::thread cron_thread;
+  int cron_minute;
   std::unique_ptr<Writer<Types...>> writer;
   std::atomic<bool> stop_thread = false;   // simple thread stopping.
   std::atomic<bool> close_writer = false;  // ask writer thread to close writer
