@@ -96,12 +96,15 @@ private:
     auto tp = utils::get_time(date);
     auto ymd = date::year_month_day(date::floor<date::days>(tp));   // calendar date
 
-    auto y   = int(ymd.year());
-    auto m   = unsigned(ymd.month());
-    auto d   = unsigned(ymd.day());
+    char month_buffer[12]; // for padding
+    char day_buffer[12];   // for padding
+    sprintf(day_buffer, "%.02d", unsigned(ymd.day()));
+    sprintf(month_buffer, "%.02d", unsigned(ymd.month()));
 
-    fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::to_string(m)) / ("day=" + std::to_string(d));
-    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::to_string(m) + "-" + std::to_string(d);
+    auto y = int(ymd.year());
+
+    fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
+    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Create new filename if date change or if nbr_batch_max is reached
     if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
