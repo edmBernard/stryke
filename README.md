@@ -15,7 +15,7 @@ We currently only support for the following type for data :
 |`orc::INT`|`stryke::Int`||
 |`orc::SHORT`|`stryke::Short`||
 |`orc::LONG`|`stryke::Long`||
-|`orc::STRING`|||
+|`orc::STRING`|`stryke::String`||
 |`orc::CHAR`||Not Implemented|
 |`orc::VARCHAR`||Not Implemented|
 |`orc::BINARY`||Not Implemented|
