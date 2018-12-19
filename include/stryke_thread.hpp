@@ -123,20 +123,6 @@ public:
     while (!this->stop_thread) {
       std::this_thread::sleep_for(std::chrono::seconds(5));
 
-      // std::istringstream inputStream{ "2012-12-19 09:30:00" };
-      // date::sys_seconds tp;
-      // inputStream >> date::parse("%F %T", tp);
-
-
-      // std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
-      // std::cout << std::chrono::duration_cast<std::chrono::minutes>(tp.time_since_epoch()).count() << std::endl;
-
-      // auto daypoint = date::floor<date::days>(tp);
-      // auto ymd = date::year_month_day(daypoint);   // calendar date
-
-      // std::cout << "ymd.day() :" << unsigned(ymd.day()) << std::endl;
-      // std::cout << "ymd.month() :" << unsigned(ymd.month()) << std::endl;
-
       auto tp = std::chrono::system_clock::now();
       auto daypoint = date::floor<date::days>(tp);
       auto tod = date::make_time(tp - daypoint);
