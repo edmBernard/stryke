@@ -13,6 +13,7 @@
 #ifndef STRYKE_MULTIFILE_HPP_
 #define STRYKE_MULTIFILE_HPP_
 
+#include "date/date.h"
 #include "stryke_template.hpp"
 #include <exception>
 #include <filesystem>
@@ -29,40 +30,34 @@ namespace fs = std::filesystem;
 
 namespace utils {
 template <typename T>
-time_t get_time(const T &date);
+std::chrono::time_point<std::chrono::system_clock> get_time(const T &date);
 
 template <>
-inline time_t get_time<Date>(const Date &date) {
-  struct tm timeStruct;
-  memset(&timeStruct, 0, sizeof(timeStruct));
-  std::cout << "date.data :" << date.data << std::endl;
-  strptime(date.data.c_str(), "%Y-%m-%d", &timeStruct);
-  return timegm(&timeStruct);
+inline std::chrono::time_point<std::chrono::system_clock> get_time<Date>(const Date &date) {
+  std::istringstream inputStream{date.data};
+  date::sys_seconds tp;
+  inputStream >> date::parse("%F", tp);
+  return tp;
 }
 
 template <>
-inline time_t get_time<DateNumber>(const DateNumber &date) {
-  return date.data * (60 * 60 * 24);
+inline std::chrono::time_point<std::chrono::system_clock> get_time<DateNumber>(const DateNumber &date) {
+  std::chrono::time_point<std::chrono::system_clock> p1;
+  return p1 + std::chrono::seconds(date.data * (60 * 60 * 24));
 }
 
 template <>
-inline time_t get_time<Timestamp>(const Timestamp &date) {
-  struct tm timeStruct;
-
-  memset(&timeStruct, 0, sizeof(timeStruct));
-  char *left = strptime(date.data.c_str(), "%Y-%m-%d %H:%M:%S", &timeStruct);
-  char *tail;
-  double d = strtod(left, &tail);
-  if (tail != left) {
-    return timegm(&timeStruct) + d;
-  } else {
-    return timegm(&timeStruct);
-  }
+inline std::chrono::time_point<std::chrono::system_clock> get_time<Timestamp>(const Timestamp &date) {
+  std::istringstream inputStream{date.data};
+  date::sys_seconds tp;
+  inputStream >> date::parse("%F %T", tp);
+  return tp;
 }
 
 template <>
-inline time_t get_time<TimestampNumber>(const TimestampNumber &date) {
-  return std::trunc(date.data);
+inline std::chrono::time_point<std::chrono::system_clock> get_time<TimestampNumber>(const TimestampNumber &date) {
+  std::chrono::time_point<std::chrono::system_clock> p1;
+  return p1 + std::chrono::seconds(long(date.data));
 }
 
 } // namespace utils
@@ -98,15 +93,15 @@ public:
 
 private:
   bool get_name(T &date) {
-    time_t mytime = utils::get_time(date);
-    auto mytm = gmtime(&mytime);
+    auto tp = utils::get_time(date);
+    auto ymd = date::year_month_day(date::floor<date::days>(tp));   // calendar date
 
-    char month_buffer[12]; // for padding
-    char day_buffer[12];   // for padding
-    sprintf(day_buffer, "%.02d", mytm->tm_mday);
-    sprintf(month_buffer, "%.02d", 1 + mytm->tm_mon);
-    fs::path file_folder = this->root_folder / ("year=" + std::to_string(1900 + mytm->tm_year)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
-    std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
+    auto y   = int(ymd.year());
+    auto m   = unsigned(ymd.month());
+    auto d   = unsigned(ymd.day());
+
+    fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::to_string(m)) / ("day=" + std::to_string(d));
+    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::to_string(m) + "-" + std::to_string(d);
 
     // Create new filename if date change or if nbr_batch_max is reached
     if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {

@@ -13,6 +13,7 @@
 #ifndef STRYKE_THREAD_HPP_
 #define STRYKE_THREAD_HPP_
 
+#include "date/date.h"
 #include "stryke_template.hpp"
 #include <atomic>
 #include <condition_variable>
@@ -22,6 +23,7 @@
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -121,11 +123,25 @@ public:
     while (!this->stop_thread) {
       std::this_thread::sleep_for(std::chrono::seconds(5));
 
-      time_t timer = time(nullptr);
-      struct tm timeStruct;
-      gmtime_r(&timer, &timeStruct);  // I need a "thread-safe" gmtime maybe I will switch to extern lib for time
+      // std::istringstream inputStream{ "2012-12-19 09:30:00" };
+      // date::sys_seconds tp;
+      // inputStream >> date::parse("%F %T", tp);
 
-      if ((timeStruct.tm_hour*60+timeStruct.tm_min) % this->cron_minute == 0) {
+
+      // std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
+      // std::cout << std::chrono::duration_cast<std::chrono::minutes>(tp.time_since_epoch()).count() << std::endl;
+
+      // auto daypoint = date::floor<date::days>(tp);
+      // auto ymd = date::year_month_day(daypoint);   // calendar date
+
+      // std::cout << "ymd.day() :" << unsigned(ymd.day()) << std::endl;
+      // std::cout << "ymd.month() :" << unsigned(ymd.month()) << std::endl;
+
+      auto tp = std::chrono::system_clock::now();
+      auto daypoint = date::floor<date::days>(tp);
+      auto tod = date::make_time(tp - daypoint);
+
+      if ((tod.hours().count()*60+tod.minutes().count()) % this->cron_minute == 0) {
         if (flipflop == false) {
           this->close_sync();
           flipflop = true;
