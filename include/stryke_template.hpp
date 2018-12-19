@@ -13,6 +13,7 @@
 #ifndef STRYKE_HPP_
 #define STRYKE_HPP_
 
+#include "date/date.h"
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
 
@@ -24,6 +25,7 @@
 #include <memory>
 #include <queue>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <tuple>
@@ -400,15 +402,13 @@ public:
         batch->notNull[i] = 0;
         hasNull = true;
       } else {
+
+        std::istringstream inputStream{col};
+        date::sys_seconds tp;
+        inputStream >> date::parse("%F", tp);
+
         batch->notNull[i] = 1;
-        struct tm tm;
-        memset(&tm, 0, sizeof(struct tm));
-        strptime(col.c_str(), "%Y-%m-%d", &tm);
-        time_t t = timegm(&tm);
-        time_t t1970 = 0;
-        double seconds = difftime(t, t1970);
-        int64_t days = static_cast<int64_t>(seconds / (60 * 60 * 24));
-        longBatch->data[i] = days;
+        longBatch->data[i] = std::chrono::duration_cast<date::days>(tp.time_since_epoch()).count();
       }
     }
     longBatch->hasNulls = hasNull;
@@ -451,7 +451,6 @@ public:
                         uint64_t numValues,
                         std::unique_ptr<orc::DataBuffer<char>> &string_buffer,
                         uint64_t &string_buffer_offset) {
-    struct tm timeStruct;
     orc::TimestampVectorBatch *tsBatch = dynamic_cast<orc::TimestampVectorBatch *>(batch->fields[N]);
     bool hasNull = false;
     for (uint64_t i = 0; i < numValues; ++i) {
@@ -460,21 +459,25 @@ public:
         batch->notNull[i] = 0;
         hasNull = true;
       } else {
-        memset(&timeStruct, 0, sizeof(timeStruct));
-        char *left = strptime(col.c_str(), "%Y-%m-%d %H:%M:%S", &timeStruct);
-        if (left == nullptr) {
-          batch->notNull[i] = 0;
-        } else {
-          batch->notNull[i] = 1;
-          tsBatch->data[i] = timegm(&timeStruct);
-          char *tail;
+        std::istringstream inputStream{col};
+        date::sys_seconds tp;
+        inputStream >> date::parse("%F %T", tp);
+
+        tsBatch->data[i] = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+
+        char *tail;
+        const char *left = std::strpbrk(col.c_str(), ".");
+        if (left != nullptr) {
           double d = strtod(left, &tail);
           if (tail != left) {
             tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
           } else {
             tsBatch->nanoseconds[i] = 0;
           }
+        } else {
+          tsBatch->nanoseconds[i] = 0;
         }
+
       }
     }
     tsBatch->hasNulls = hasNull;
