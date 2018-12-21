@@ -6,17 +6,17 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <string>
-#include <iostream>
 #include <array>
-
+#include <iostream>
+#include <string>
 
 namespace py = pybind11;
 
 // ==============================================================
 // Type Convertion
 // ==============================================================
-namespace pybind11 { namespace detail {
+namespace pybind11 {
+namespace detail {
 
 // For safety reason as I'm not so sure of my binding,
 // I will comment type with unsafe conversion like Short<->Long
@@ -133,7 +133,7 @@ public:
     PyObject *tmp = PyObject_Str(source);
     if (!tmp)
       return false;
-    PyObject* pyStr = PyUnicode_AsEncodedString(tmp, "utf-8", "Error ~");
+    PyObject *pyStr = PyUnicode_AsEncodedString(tmp, "utf-8", "Error ~");
     value.data = PyBytes_AsString(pyStr);
     Py_DECREF(tmp);
     return !PyErr_Occurred();
@@ -165,7 +165,7 @@ public:
     PyObject *tmp = PyObject_Str(source);
     if (!tmp)
       return false;
-    PyObject* pyStr = PyUnicode_AsEncodedString(tmp, "utf-8", "Error ~");
+    PyObject *pyStr = PyUnicode_AsEncodedString(tmp, "utf-8", "Error ~");
     value.data = PyBytes_AsString(pyStr);
     Py_DECREF(tmp);
     return !PyErr_Occurred();
@@ -188,59 +188,59 @@ public:
   }
 };
 
-}} // namespace pybind11::detail
+} // namespace detail
+} // namespace pybind11
 
 // ==============================================================
 // Template to automate template binding
 // ==============================================================
 
-template<typename... T>
+template <typename... T>
 void declare_writer_impl(py::module &m, const std::string &typestr) {
   using Class = stryke::OrcWriterImpl<T...>;
   std::string pyclass_name = std::string("Writer") + typestr;
 
   py::class_<Class>(m, pyclass_name.c_str())
-    .def(py::init<std::array<std::string, sizeof...(T)>, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("filename"), py::arg("writer_options"))
-    .def("write", (void (Class::*)(T...)) &Class::write);
+      .def(py::init<std::array<std::string, sizeof...(T)>, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("filename"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(T...)) & Class::write);
 }
 
-template<typename... T>
+template <typename... T>
 void declare_writer_multifile(py::module &m, const std::string &typestr) {
   using Class = stryke::OrcWriterMulti<T...>;
   std::string pyclass_name = std::string("Writer") + typestr;
 
   py::class_<Class>(m, pyclass_name.c_str())
-    .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-    .def("write", (void (Class::*)(T...)) &Class::write)
-    .def("close", (void (Class::*)(T...)) &Class::close);
+      .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(T...)) & Class::write)
+      .def("close", (void (Class::*)(T...)) & Class::close);
 }
 
-template<typename... T>
+template <typename... T>
 void declare_writer_thread(py::module &m, const std::string &typestr) {
   using Class = stryke::OrcWriterThread<stryke::OrcWriterMulti, T...>;
   std::string pyclass_name = std::string("Writer") + typestr;
 
   py::class_<Class>(m, pyclass_name.c_str())
-    .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-    .def("write", (void (Class::*)(T...)) &Class::write)
-    .def("close_async", (void (Class::*)(T...)) &Class::close_async)
-    .def("close_sync", (void (Class::*)(T...)) &Class::close_sync);
+      .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(T...)) & Class::write)
+      .def("close_async", (void (Class::*)(T...)) & Class::close_async)
+      .def("close_sync", (void (Class::*)(T...)) & Class::close_sync);
 }
-
 
 PYBIND11_MODULE(stryke, m) {
 
   py::class_<stryke::WriterOptions>(m, "WriterOptions")
-    .def(py::init<>())
-    .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file)
-    .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
-    .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
-    .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
-    .def("set_cron", &stryke::WriterOptions::set_cron);
+      .def(py::init<>())
+      .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file)
+      .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
+      .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
+      .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
+      .def("set_cron", &stryke::WriterOptions::set_cron);
 
-// ==============================================================
-// Binding for WriterTemplate
-// ==============================================================
+  // ==============================================================
+  // Binding for WriterTemplate
+  // ==============================================================
 
   auto m_template = m.def_submodule("template");
 
@@ -303,9 +303,9 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateVec3d");
   declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateNVec3d");
 
-// ==============================================================
-// Binding for WriterMultifile
-// ==============================================================
+  // ==============================================================
+  // Binding for WriterMultifile
+  // ==============================================================
 
   auto m_multifile = m.def_submodule("multifile");
 
@@ -359,9 +359,9 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_multifile<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateVec3d");
   declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateNVec3d");
 
-// ==============================================================
-// Binding for WriterThread
-// ==============================================================
+  // ==============================================================
+  // Binding for WriterThread
+  // ==============================================================
 
   auto m_thread = m.def_submodule("thread");
 
@@ -415,12 +415,11 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_thread<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec3d");
   declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateNVec3d");
 
-// ==============================================================
-// Custom Binding
-// ==============================================================
+  // ==============================================================
+  // Custom Binding
+  // ==============================================================
 
   auto m_custom = m.def_submodule("custom");
 
   declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Long>(m_custom, "TimestampIntDouble");
-
 }
