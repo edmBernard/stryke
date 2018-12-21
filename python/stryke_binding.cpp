@@ -244,6 +244,15 @@ PYBIND11_MODULE(stryke, m) {
 
   auto m_template = m.def_submodule("template");
 
+  // Basic type
+  declare_writer_impl<stryke::Long>(m_template, "Long1");
+  declare_writer_impl<stryke::Double>(m_template, "Double1");
+  declare_writer_impl<stryke::Boolean>(m_template, "Boolean1");
+  declare_writer_impl<stryke::Date>(m_template, "Date1");
+  declare_writer_impl<stryke::DateNumber>(m_template, "DateN1");
+  declare_writer_impl<stryke::Timestamp>(m_template, "Timestamp1");
+  declare_writer_impl<stryke::TimestampNumber>(m_template, "TimestampN1");
+
   // 1D Point
   declare_writer_impl<stryke::Timestamp, stryke::Long>(m_template, "TimestampPoint1l");
   declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_template, "TimestampNPoint1l");

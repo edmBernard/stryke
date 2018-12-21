@@ -3,6 +3,8 @@ import python.stryke as sy
 from python.stryke import template as syt
 import pytest
 from path import Path
+from datetime import datetime
+
 
 @pytest.mark.parametrize("batchsize, nbre_rows", [
     (10, 10),
@@ -15,7 +17,7 @@ def test_batch(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = syt.WriterDateNPoint1l(["Date", "value"], filename, options)
+    writer = syt.WriterTimestampNPoint1l(["Date", "value"], filename, options)
     for i in range(nbre_rows):
         writer.write(i, -i)
 
@@ -52,25 +54,4 @@ def test_lock_file(batchsize, nbre_rows):
     assert Path(filename).exists()
     assert not Path(filename + ".lock").exists()
 
-@pytest.mark.parametrize("batchsize, nbre_rows", [
-    (10, 10),
-    (100, 100),
-    (1000, 1000),
-    (10000, 10000)
-])
-def test_lock_file(batchsize, nbre_rows):
-    filename = "test.orc"
-    options = sy.WriterOptions()
-    options.set_batch_size(batchsize)
 
-    writer = syt.WriterDateNPoint1d(["Date", "value"], filename, options)
-    for i in range(nbre_rows):
-        writer.write(i, i)
-
-    assert Path(filename).exists()
-    assert Path(filename + ".lock").exists()
-
-    del writer
-
-    assert Path(filename).exists()
-    assert not Path(filename + ".lock").exists()
