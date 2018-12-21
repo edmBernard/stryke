@@ -39,13 +39,13 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   SECTION("Test Long") {
     {
       stryke::OrcWriterImpl<stryke::DateNumber, stryke::Long> writer({"date", "col1"}, filename, options);
-      for (int i = 0; i < 10; ++i) {
+      for (int i = -10; i < 10; ++i) {
         writer.write(i, i);
       }
     }
     stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
     REQUIRE(tmp_b.nbr_columns == 3);
-    REQUIRE(tmp_b.nbr_rows == 10);
+    REQUIRE(tmp_b.nbr_rows == 20);
   }
   SECTION("Test String") {
     {

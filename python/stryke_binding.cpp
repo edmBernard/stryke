@@ -38,7 +38,7 @@ namespace pybind11 { namespace detail {
 //       return false;
 //     value.data = PyLong_AsLong(tmp);  // it's maybe not safe to convert long to int
 //     Py_DECREF(tmp);
-//     return !(value.data == -1 && !PyErr_Occurred());
+//     return !(value.data == -1 && PyErr_Occurred());
 //   }
 // };
 
@@ -55,7 +55,7 @@ namespace pybind11 { namespace detail {
 //       return false;
 //     value.data = PyLong_AsLong(tmp);  // it's maybe not safe to convert long to short
 //     Py_DECREF(tmp);
-//     return !(value.data == -1 && !PyErr_Occurred());
+//     return !(value.data == -1 && PyErr_Occurred());
 //   }
 // };
 
@@ -71,7 +71,7 @@ public:
     value.data = PyLong_AsLong(tmp);
     value.empty = false;
     Py_DECREF(tmp);
-    return !(value.data == -1 && !PyErr_Occurred());
+    return !(value.data == -1 && PyErr_Occurred());
   }
 };
 
@@ -88,7 +88,7 @@ public:
 //       return false;
 //     value.data = PyFloat_AsDouble(tmp);  // it's maybe not safe to convert double to float
 //     Py_DECREF(tmp);
-//     return !(value.data == -1 && !PyErr_Occurred());
+//     return !(value.data == -1 && PyErr_Occurred());
 //   }
 // };
 
@@ -104,7 +104,7 @@ public:
     value.data = PyFloat_AsDouble(tmp);
     value.empty = false;
     Py_DECREF(tmp);
-    return !(value.data == -1 && !PyErr_Occurred());
+    return !(value.data == -1 && PyErr_Occurred());
   }
 };
 
@@ -120,7 +120,7 @@ public:
       value.data = false;
     }
     value.empty = false;
-    return !(value.data == false && !PyErr_Occurred());
+    return !(value.data == false && PyErr_Occurred());
   }
 };
 
@@ -152,7 +152,7 @@ public:
     value.data = PyLong_AsLong(tmp);
     value.empty = false;
     Py_DECREF(tmp);
-    return !(value.data == -1 && !PyErr_Occurred());
+    return !(value.data == -1 && PyErr_Occurred());
   }
 };
 
@@ -184,7 +184,7 @@ public:
     value.data = PyFloat_AsDouble(tmp);
     value.empty = false;
     Py_DECREF(tmp);
-    return !(value.data == -1 && !PyErr_Occurred());
+    return !(value.data == -1 && PyErr_Occurred());
   }
 };
 
