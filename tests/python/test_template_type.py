@@ -112,9 +112,9 @@ def test_DateN1_string(orc_file, orc_options):
 
 def test_Timestamp1(orc_file, orc_options):
     writer = syt.WriterTimestamp1(["col1"], orc_file, orc_options)
-    writer.write(1)  # write null value
-    writer.write(1.123456789)  # write null value
-    writer.write("2018-12-10")  # write null value
+    writer.write(1)  # write 1970-01-01 00:00:00.0 value
+    writer.write(1.123456789)  # write 1970-01-01 00:00:00.123456789 value
+    writer.write("2018-12-10")  # write 1970-01-01 00:00:00.0 value
     writer.write("2018-12-10 12:12:12")
     writer.write("2018-12-10 12:12:12.123456789")
     writer.write(datetime.now())
