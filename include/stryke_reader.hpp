@@ -67,12 +67,18 @@ stryke::Int get_value<stryke::Int>(orc::StructVectorBatch *structBatch, uint64_t
 template <>
 stryke::Double get_value<stryke::Double>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::DoubleVectorBatch *col1 = dynamic_cast<orc::DoubleVectorBatch *>(structBatch->fields[index_col]);
-  return long(col1->data[index_row]);
+  return col1->data[index_row];
 }
 template <>
 stryke::Float get_value<stryke::Float>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::DoubleVectorBatch *col1 = dynamic_cast<orc::DoubleVectorBatch *>(structBatch->fields[index_col]);
-  return long(col1->data[index_row]);
+  return col1->data[index_row];
+}
+
+template <>
+stryke::Boolean get_value<stryke::Boolean>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+  orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
+  return col1->data[index_row];
 }
 
 template <>
