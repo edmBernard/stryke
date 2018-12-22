@@ -132,7 +132,10 @@ public:
 class String {
 public:
   String(std::string &&data)
-      : data(std::move(data)) {
+      : data(std::forward<std::string>(data)) {
+  }
+  String(const std::string &data)
+      : data(data) {
   }
   String(const char *data)
       : data(std::string(data)) {
@@ -202,7 +205,10 @@ public:
 class Date {
 public:
   Date(std::string &&data)
-      : data(std::move(data)) {
+      : data(std::forward<std::string>(data)) {
+  }
+  Date(const std::string &data)
+      : data(data) {
   }
   Date(const char *data)
       : data(std::string(data)) {
@@ -231,7 +237,10 @@ public:
 class Timestamp {
 public:
   Timestamp(std::string &&data)
-      : data(std::move(data)) {
+      : data(std::forward<std::string>(data)) {
+  }
+  Timestamp(const std::string &data)
+      : data(data) {
   }
   Timestamp() {
   }
