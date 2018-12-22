@@ -58,11 +58,11 @@ stryke::Int get_value<stryke::Int>(orc::StructVectorBatch *structBatch, uint64_t
   return col1->data[index_row];
 }
 
-// template <>
-// stryke::String get_value<stryke::String>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
-//   orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
-//   return col1->data[index_row];
-// }
+template <>
+stryke::String get_value<stryke::String>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+  orc::StringVectorBatch *col1 = dynamic_cast<orc::StringVectorBatch *>(structBatch->fields[index_col]);
+  return std::string(col1->data[index_row], col1->length[index_row]);
+}
 
 template <>
 stryke::Double get_value<stryke::Double>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
