@@ -1,8 +1,8 @@
 #include "catch.hpp"
-#include "stryke_multifile.hpp"
-#include "stryke_read_for_test.hpp"
-#include "stryke_template.hpp"
-#include "stryke_thread.hpp"
+#include "stryke/multifile.hpp"
+#include "utils_for_test.hpp"
+#include "stryke/core.hpp"
+#include "stryke/thread.hpp"
 #include <filesystem>
 #include <vector>
 

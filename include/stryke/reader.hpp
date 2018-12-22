@@ -16,7 +16,7 @@
 #include "date/date.h"
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
-#include "stryke_template.hpp"
+#include "stryke/core.hpp"
 
 #include <iostream>
 #include <sstream>

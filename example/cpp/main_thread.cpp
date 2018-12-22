@@ -10,9 +10,9 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 
-#include "stryke_thread.hpp"
-#include "stryke_multifile.hpp"
-#include "stryke_template.hpp"
+#include "stryke/thread.hpp"
+#include "stryke/multifile.hpp"
+#include "stryke/core.hpp"
 
 using namespace stryke;
 

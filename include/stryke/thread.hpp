@@ -14,7 +14,7 @@
 #define STRYKE_THREAD_HPP_
 
 #include "date/date.h"
-#include "stryke_template.hpp"
+#include "stryke/core.hpp"
 #include <atomic>
 #include <condition_variable>
 #include <exception>

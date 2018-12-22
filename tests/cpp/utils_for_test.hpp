@@ -10,12 +10,12 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_BASICSTATS_HPP_
-#define STRYKE_BASICSTATS_HPP_
+#ifndef STRYKE_UTILS_FOR_TEST_HPP_
+#define STRYKE_UTILS_FOR_TEST_HPP_
 
 #include "orc/OrcFile.hh"
 #include "orc/Reader.hh"
-#include "stryke_template.hpp"
+#include "stryke/core.hpp"
 
 #include <string>
 
@@ -61,4 +61,4 @@ inline ColumnsStats get_column_stats<Int>(std::string filename, uint32_t index) 
 
 } // namespace Stryke
 
-#endif // !STRYKE_BASICSTATS_HPP_
+#endif // !STRYKE_UTILS_FOR_TEST_HPP_

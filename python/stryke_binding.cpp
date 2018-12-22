@@ -1,7 +1,7 @@
 
-#include "stryke_multifile.hpp"
-#include "stryke_template.hpp"
-#include "stryke_thread.hpp"
+#include "stryke/multifile.hpp"
+#include "stryke/core.hpp"
+#include "stryke/thread.hpp"
 #include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>

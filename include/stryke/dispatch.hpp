@@ -13,7 +13,7 @@
 #ifndef STRYKE_DISPATCH_HPP_
 #define STRYKE_DISPATCH_HPP_
 
-#include "stryke_template.hpp"
+#include "stryke/core.hpp"
 #include <exception>
 #include <filesystem>
 #include <fstream>

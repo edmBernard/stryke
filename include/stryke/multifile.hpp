@@ -14,7 +14,7 @@
 #define STRYKE_MULTIFILE_HPP_
 
 #include "date/date.h"
-#include "stryke_template.hpp"
+#include "stryke/core.hpp"
 #include <exception>
 #include <filesystem>
 #include <fstream>
