@@ -73,7 +73,7 @@ void bench_multi(int number_line, const WriterOptions &options) {
   std::chrono::duration<double, std::milli> elapsed2 = std::chrono::high_resolution_clock::now() - start1;
   std::cout << std::setw(40) << std::left << "multi after full release:  processing time : description : " << elapsed2.count() << " ms\n";
   std::cout << std::setw(40) << std::left << "multi max timer for one row:  processing time : description : " << max_timer << " s\n";
-  // fs::remove_all("data");
+  fs::remove_all("data");
 }
 
 int main(int argc, char const *argv[]) {

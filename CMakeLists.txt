@@ -54,11 +54,11 @@ SET(SOURCES
 )
 
 set(examples
-  main_performance
-  main_thread
-  main_multifile
-  main_dispatch
-  main_template
+  performance
+  thread
+  multifile
+  dispatch
+  core_writer
   reader_basic_type
   writer_rainbow
   reader_rainbow
