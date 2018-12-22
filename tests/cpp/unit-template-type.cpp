@@ -6,6 +6,39 @@
 
 namespace fs = std::filesystem;
 
+
+template<typename T, typename U>
+void test_simple_writer_impl(std::vector<U> input, std::string filename, stryke::WriterOptions options) {
+
+  {
+    stryke::OrcWriterImpl<T> writer({"col1"}, filename, options);
+
+    for (auto && i: input) {
+      writer.write(i);
+    }
+  }
+  stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
+  REQUIRE(tmp_b.nbr_columns == 2);
+  REQUIRE(tmp_b.nbr_rows == input.size());
+
+  auto result = stryke::orcReader<T>(filename);
+  int count = 0;
+  for (auto && i: input) {
+    REQUIRE(std::get<0>(result[count]).data == i);
+    ++count;
+  }
+}
+
+template<typename T, typename U>
+void test_simple_writer(std::string filename, stryke::WriterOptions options) {
+  std::vector<U> input;
+  for (U i = -10; i < 10; ++i) {
+    input.push_back(i);
+  }
+  test_simple_writer_impl<T, U>(input, filename, options);
+}
+
+
 TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
   std::string filename = "test.orc";
@@ -16,149 +49,33 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
   options.set_stripe_size(10000);
 
   SECTION("Test Int") {
-    std::vector<int> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::Int> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Int>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::Int, int>(filename, options);
   }
+
   SECTION("Test Short") {
-    std::vector<short> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::Short> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Short>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::Int, short>(filename, options);
   }
+
   SECTION("Test Long") {
-    std::vector<long> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::Long> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Long>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::Long, long>(filename, options);
   }
+
   SECTION("Test String") {
     std::vector<std::string> input;
     for (int i = -10; i < 10; ++i) {
       input.push_back(std::to_string(i));
     }
-
-    {
-      stryke::OrcWriterImpl<stryke::String> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::String>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer_impl<stryke::String, std::string>(input, filename, options);
   }
+
   SECTION("Test Float") {
-    std::vector<float> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i / 1000.);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::Float> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Float>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::Float, float>(filename, options);
   }
+
   SECTION("Test Double") {
-    std::vector<double> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i / 1000.);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::Double> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Double>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::Double, double>(filename, options);
   }
+
   SECTION("Test Bool") {
     std::vector<bool> input;
     for (int i = -10; i < 10; ++i) {
@@ -169,7 +86,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
       stryke::OrcWriterImpl<stryke::Boolean> writer({"col1"}, filename, options);
 
       for (auto && i: input) {
-        writer.write(bool(i));
+        writer.write(bool(i));  // Add bool because vector<bool> are bitfield
       }
     }
     stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
@@ -183,54 +100,19 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
       ++count;
     }
   }
+
   SECTION("Test Date") {
     std::vector<std::string> input;
     for (int i = -10; i < 10; ++i) {
       input.push_back("1990-12-18");
     }
-
-    {
-      stryke::OrcWriterImpl<stryke::Date> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::Date>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer_impl<stryke::Date, std::string>(input, filename, options);
   }
+
   SECTION("Test DateNumber") {
-    std::vector<long> input;
-    for (int i = -10; i < 10; ++i) {
-      input.push_back(i);
-    }
-
-    {
-      stryke::OrcWriterImpl<stryke::DateNumber> writer({"col1"}, filename, options);
-
-      for (auto && i: input) {
-        writer.write(i);
-      }
-    }
-    stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-    REQUIRE(tmp_b.nbr_columns == 2);
-    REQUIRE(tmp_b.nbr_rows == input.size());
-
-    auto result = stryke::orcReader<stryke::DateNumber>(filename);
-    int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+    test_simple_writer<stryke::DateNumber, long>(filename, options);
   }
+
   SECTION("Test Timestamp") {
 
     SECTION("Without nanosecond") {
@@ -238,46 +120,15 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
       for (int i = -10; i < 10; ++i) {
         input.push_back("1990-12-18 12:26:20");
       }
-
-      {
-        stryke::OrcWriterImpl<stryke::Timestamp> writer({"col1"}, filename, options);
-      for (auto && i: input) {
-        writer.write(i);
-      }
-      }
-      stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-      REQUIRE(tmp_b.nbr_columns == 2);
-      REQUIRE(tmp_b.nbr_rows == input.size());
-
-      auto result = stryke::orcReader<stryke::Timestamp>(filename);
-      int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
+      test_simple_writer_impl<stryke::Timestamp, std::string>(input, filename, options);
     }
-    }
+
     SECTION("With nanosecond") {
       std::vector<std::string> input;
       for (int i = -10; i < 10; ++i) {
         input.push_back("1990-12-18 12:26:20.123456789");
       }
-
-      {
-        stryke::OrcWriterImpl<stryke::Timestamp> writer({"col1"}, filename, options);
-      for (auto &&i: input) {
-        writer.write(i);
-      }
-      }
-      stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
-      REQUIRE(tmp_b.nbr_columns == 2);
-      REQUIRE(tmp_b.nbr_rows == input.size());
-
-      auto result = stryke::orcReader<stryke::Timestamp>(filename);
-      int count = 0;
-    for (auto && i: input) {
-      REQUIRE(std::get<0>(result[count]).data == i);
-      ++count;
-    }
+      test_simple_writer_impl<stryke::Timestamp, std::string>(input, filename, options);
     }
   }
 
