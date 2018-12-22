@@ -54,11 +54,14 @@ SET(SOURCES
 )
 
 set(examples
-  performance
-  thread
-  multifile
-  dispatch
-  template
+  main_performance
+  main_thread
+  main_multifile
+  main_dispatch
+  main_template
+  reader_basic_type
+  writer_rainbow
+  reader_rainbow
 )
 
 #**************************************************************************************************
@@ -75,7 +78,7 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 option(BUILD_EXAMPLES "Build stryke example" OFF)
 if(BUILD_EXAMPLES)
   foreach (example ${examples})
-    add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/main_${example}.cpp)
+    add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/${example}.cpp)
     target_compile_options("stryke_${example}" PRIVATE -O3)
     target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
   endforeach(example)

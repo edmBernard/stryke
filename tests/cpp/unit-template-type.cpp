@@ -118,7 +118,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     SECTION("Without nanosecond") {
       std::vector<std::string> input;
       for (int i = -10; i < 10; ++i) {
-        input.push_back("1990-12-18 12:26:20");
+        input.push_back("2018-12-18 12:26:20");
       }
       test_simple_writer_impl<stryke::Timestamp, std::string>(input, filename, options);
     }
@@ -126,7 +126,7 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     SECTION("With nanosecond") {
       std::vector<std::string> input;
       for (int i = -10; i < 10; ++i) {
-        input.push_back("1990-12-18 12:26:20.123456789");
+        input.push_back("2018-12-18 12:26:20.123456789");
       }
       test_simple_writer_impl<stryke::Timestamp, std::string>(input, filename, options);
     }
