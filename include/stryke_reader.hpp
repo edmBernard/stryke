@@ -3,7 +3,7 @@
 //
 //  https://github.com/edmBernard/Stryke
 //
-//  Created by Erwan BERNARD on 08/12/2018.
+//  Created by Erwan BERNARD on 22/12/2018.
 //
 //  Copyright (c) 2018 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
@@ -128,7 +128,7 @@ namespace utils {
 
 template <typename T, std::size_t... Indices>
 auto for_each_impl(std::index_sequence<Indices...>, orc::StructVectorBatch *structBatch, uint64_t row) -> T {
-  return {get_value<typename std::tuple_element<Indices, T>::type::type>(structBatch, Indices, row)...};
+  return {get_value<typename std::tuple_element<Indices, T>::type>(structBatch, Indices, row)...};
 }
 
 template <typename... Types>
@@ -139,7 +139,7 @@ auto for_each(orc::StructVectorBatch *structBatch, uint64_t row) -> std::tuple<T
 } // namespace utils
 
 template <typename... Types>
-std::vector<std::tuple<Types...>> OrcReader(std::string filename) {
+std::vector<std::tuple<Types...>> orcReader(std::string filename) {
   std::vector<std::tuple<Types...>> output;
 
   orc::ReaderOptions options;
