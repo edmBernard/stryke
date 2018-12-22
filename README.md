@@ -40,6 +40,8 @@ We add Two custom type for date that can be initialized by double/long instead o
 
 ## Known limitations/Bugs
 
+* As Stryke is a template Library we have to defined Writer template specialization at compilation. This imply we can't define the schema at runtime (ex: in program argument). If you want these functionnalities the regular C++ Orc lib would be more suitable.
+
 * `close_async` method of `OrcWriterThread`: I made the choice that `close_async` wait the queue to be empty before closing file. If we continue to write data fast enough the file can never close.
 
 * It seem that orc was not able to store timestamp with -1 second on there itegrale part and nanosecond "1969-12-31 23:59:59.001" will be saved as "1970-01-01 00:00:00.001"
