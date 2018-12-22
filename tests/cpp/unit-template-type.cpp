@@ -141,12 +141,12 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
     REQUIRE(tmp_b.nbr_columns == 2);
     REQUIRE(tmp_b.nbr_rows == 20);
 
-    // auto result = stryke::orcReader<stryke::Boolean>(filename);
-    // int count = 0;
-    // for (int i = -10; i < 10; ++i) {
-    //   REQUIRE(std::get<0>(result[count]).data == (i % 2 == 0));
-    //   ++count;
-    // }
+    auto result = stryke::orcReader<stryke::Boolean>(filename);
+    int count = 0;
+    for (int i = -10; i < 10; ++i) {
+      REQUIRE(std::get<0>(result[count]).data == (i % 2 == 0));
+      ++count;
+    }
   }
   SECTION("Test Date") {
     {
