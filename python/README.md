@@ -11,7 +11,7 @@ Apache-Orc is defined as :
 
 As Stryke is a template Library we have to defined Writer template specialization at compilation.
 For each C++ Writer, we have define some useful datatype. Each C++ Writers are separate by namespace.
-* `OrcWriterImpl` writers are in `template` namespace
+* `OrcWriterImpl` writers are in `simple` namespace
 * `OrcWriterMulitfile` writers are in `multifile` namespace
 * `OrcWriterThread` writers are in `thread` namespace
 
@@ -68,7 +68,7 @@ We already define the following type for each Writer :
 
 ```python
 import stryke as sy
-writer = sy.template.WriterDatePoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
+writer = sy.simple.WriterDatePoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
 writer.write(17874, 42)  # Date Type is the number of day since 1970.
 # the file is close at writer destruction
 ```
@@ -82,7 +82,7 @@ resulting file read by `orc-content`:
 
 ```python
 import stryke as sy
-writer = sy.template.WriterTimestampPoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
+writer = sy.simple.WriterTimestampPoint1l(["Date", "value"], "example.orc", sy.WriterOptions())
 writer.write(1544400000, 42)  # Timestamp Type is the number of second since 1970.
 writer.write(1544400000.123456789, 42)  # Timestamp Type is the number of second since 1970.
 # the file is close at writer destruction

@@ -242,66 +242,66 @@ PYBIND11_MODULE(stryke, m) {
   // Binding for WriterTemplate
   // ==============================================================
 
-  auto m_template = m.def_submodule("template");
+  auto m_simple = m.def_submodule("simple");
 
   // Basic type
-  declare_writer_impl<stryke::Long>(m_template, "Long1");
-  declare_writer_impl<stryke::Double>(m_template, "Double1");
-  declare_writer_impl<stryke::Boolean>(m_template, "Boolean1");
-  declare_writer_impl<stryke::Date>(m_template, "Date1");
-  declare_writer_impl<stryke::DateNumber>(m_template, "DateN1");
-  declare_writer_impl<stryke::Timestamp>(m_template, "Timestamp1");
-  declare_writer_impl<stryke::TimestampNumber>(m_template, "TimestampN1");
+  declare_writer_impl<stryke::Long>(m_simple, "Long1");
+  declare_writer_impl<stryke::Double>(m_simple, "Double1");
+  declare_writer_impl<stryke::Boolean>(m_simple, "Boolean1");
+  declare_writer_impl<stryke::Date>(m_simple, "Date1");
+  declare_writer_impl<stryke::DateNumber>(m_simple, "DateN1");
+  declare_writer_impl<stryke::Timestamp>(m_simple, "Timestamp1");
+  declare_writer_impl<stryke::TimestampNumber>(m_simple, "TimestampN1");
 
   // 1D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long>(m_template, "TimestampPoint1l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_template, "TimestampNPoint1l");
-  declare_writer_impl<stryke::Date, stryke::Long>(m_template, "DatePoint1l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long>(m_template, "DateNPoint1l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double>(m_template, "TimestampPoint1d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double>(m_template, "TimestampNPoint1d");
-  declare_writer_impl<stryke::Date, stryke::Double>(m_template, "DatePoint1d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double>(m_template, "DateNPoint1d");
+  declare_writer_impl<stryke::Timestamp, stryke::Long>(m_simple, "TimestampPoint1l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_simple, "TimestampNPoint1l");
+  declare_writer_impl<stryke::Date, stryke::Long>(m_simple, "DatePoint1l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long>(m_simple, "DateNPoint1l");
+  declare_writer_impl<stryke::Timestamp, stryke::Double>(m_simple, "TimestampPoint1d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double>(m_simple, "TimestampNPoint1d");
+  declare_writer_impl<stryke::Date, stryke::Double>(m_simple, "DatePoint1d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double>(m_simple, "DateNPoint1d");
 
   // 2D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long>(m_template, "TimestampPoint2l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_template, "TimestampNPoint2l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long>(m_template, "DatePoint2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long>(m_template, "DateNPoint2l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double>(m_template, "TimestampPoint2d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_template, "TimestampNPoint2d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double>(m_template, "DatePoint2d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double>(m_template, "DateNPoint2d");
+  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long>(m_simple, "TimestampPoint2l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_simple, "TimestampNPoint2l");
+  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long>(m_simple, "DatePoint2l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long>(m_simple, "DateNPoint2l");
+  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double>(m_simple, "TimestampPoint2d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_simple, "TimestampNPoint2d");
+  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double>(m_simple, "DatePoint2d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double>(m_simple, "DateNPoint2d");
 
   // 3D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampPoint3l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampNPoint3l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long>(m_template, "DatePoint3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateNPoint3l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampPoint3d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampNPoint3d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double>(m_template, "DatePoint3d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateNPoint3d");
+  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampPoint3l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNPoint3l");
+  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DatePoint3l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNPoint3l");
+  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampPoint3d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNPoint3d");
+  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DatePoint3d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNPoint3d");
 
   // Pair of coordinate 2D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampVec2l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampNVec2l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateVec2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateNVec2l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampVec2d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampNVec2d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateVec2d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateNVec2d");
+  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampVec2l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNVec2l");
+  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateVec2l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNVec2l");
+  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampVec2d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNVec2d");
+  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateVec2d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNVec2d");
 
   // Pair of coordinate 3D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampVec3l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "TimestampNVec3l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateVec3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_template, "DateNVec3l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampVec3d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "TimestampNVec3d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateVec3d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_template, "DateNVec3d");
+  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampVec3l");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNVec3l");
+  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateVec3l");
+  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNVec3l");
+  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampVec3d");
+  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNVec3d");
+  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateVec3d");
+  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNVec3d");
 
   // ==============================================================
   // Binding for WriterMultifile

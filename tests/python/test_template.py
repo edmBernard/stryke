@@ -1,6 +1,5 @@
 
 import python.stryke as sy
-from python.stryke import template as syt
 import pytest
 from path import Path
 from datetime import datetime
@@ -17,7 +16,7 @@ def test_batch(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = syt.WriterTimestampNPoint1l(["Date", "value"], filename, options)
+    writer = sy.simple.WriterTimestampNPoint1l(["Date", "value"], filename, options)
     for i in range(nbre_rows):
         writer.write(i, -i)
 
@@ -42,7 +41,7 @@ def test_lock_file(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = syt.WriterDateNPoint1l(["Date", "value"], filename, options)
+    writer = sy.simple.WriterDateNPoint1l(["Date", "value"], filename, options)
     for i in range(nbre_rows):
         writer.write(i, i)
 

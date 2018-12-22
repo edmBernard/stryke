@@ -4,10 +4,10 @@
 
 __version__ = "0.1"
 
-from .stryke import template
+from .stryke import simple
 from .stryke import multifile
 from .stryke import thread
 from .stryke import custom
 from .stryke import WriterOptions
 
-__all__ = ['thread', 'multifile', 'template', 'custom', 'WriterOptions']
+__all__ = ['thread', 'multifile', 'simple', 'custom', 'WriterOptions']
