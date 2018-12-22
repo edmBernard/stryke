@@ -130,7 +130,7 @@ stryke::Timestamp get_value<stryke::Timestamp>(orc::StructVectorBatch *structBat
 template <>
 stryke::TimestampNumber get_value<stryke::TimestampNumber>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::TimestampVectorBatch *date = dynamic_cast<orc::TimestampVectorBatch *>(structBatch->fields[index_col]);
-  return date->data[index_row];
+  return date->data[index_row] + date->nanoseconds[index_row] / 1000000000.;
 }
 
 namespace utils {
