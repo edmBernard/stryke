@@ -120,6 +120,7 @@ stryke::Timestamp get_value<stryke::Timestamp>(orc::StructVectorBatch *structBat
   output << " " << std::setw(2) << std::setfill('0') << tod.hours().count();
   output << ":" << std::setw(2) << std::setfill('0') << tod.minutes().count();
   output << ":" << std::setw(2) << std::setfill('0') << tod.seconds().count();
+  output << "." << date->nanoseconds[index_row];
 
   return output.str();
 }
