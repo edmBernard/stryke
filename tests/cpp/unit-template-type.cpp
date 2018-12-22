@@ -115,6 +115,33 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
   SECTION("Test Timestamp") {
 
+    SECTION("Without hour") {
+      std::vector<std::string> input;
+      std::vector<std::string> expected_output;
+      for (int i = -10; i < 10; ++i) {
+        input.push_back("2018-12-18");
+        expected_output.push_back("2018-12-18 00:00:00");
+      }
+
+      {
+        stryke::OrcWriterImpl<stryke::Timestamp> writer({"col1"}, filename, options);
+
+        for (auto && i: input) {
+          writer.write(i);
+        }
+      }
+      stryke::BasicStats tmp_b = stryke::get_basic_stats(filename);
+      REQUIRE(tmp_b.nbr_columns == 2);
+      REQUIRE(tmp_b.nbr_rows == input.size());
+
+      auto result = stryke::orcReader<stryke::Timestamp>(filename);
+      int count = 0;
+      for (auto && i: expected_output) {
+        REQUIRE(std::get<0>(result[count]).data == i);
+        ++count;
+      }
+    }
+
     SECTION("Without nanosecond") {
       std::vector<std::string> input;
       for (int i = -10; i < 10; ++i) {

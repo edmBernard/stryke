@@ -468,9 +468,15 @@ public:
         batch->notNull[i] = 0;
         hasNull = true;
       } else {
-        std::istringstream inputStream{col};
         date::sys_seconds tp;
+        std::istringstream inputStream{col};
         inputStream >> date::parse("%F %T", tp);
+
+        if (inputStream.fail()) {
+          inputStream.clear();
+          inputStream.seekg (0, inputStream.beg);
+          inputStream >> date::parse("%F", tp);
+        }
 
         tsBatch->data[i] = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
         char *tail;
