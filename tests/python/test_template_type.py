@@ -19,15 +19,28 @@ def orc_options():
 
 def test_WriterLong1(orc_file, orc_options):
     writer = sy.simple.WriterLong1(["col1"], orc_file, orc_options)
-    writer.write(1)
-    writer.write("1")
-    writer.write("+1")
-    writer.write("+1 ")
-    writer.write(-1)
-    writer.write("-1")
-    writer.write("-1 ")
+    data_input = [
+        1,
+        "1",
+        "+1",
+        "+1 ",
+        -1,
+        "-1",
+        "-1 "
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerLong1(orc_file)
+
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == int(i)
 
 
 @pytest.mark.xfail(strict=True, raises=TypeError)
@@ -40,20 +53,32 @@ def test_WriterLong1_special_character(orc_file, orc_options):
 
 def test_Double1(orc_file, orc_options):
     writer = sy.simple.WriterDouble1(["col1"], orc_file, orc_options)
-    writer.write(1)
-    writer.write(-1)
-    writer.write(1.0)
-    writer.write(-1.0)
-    writer.write(0.123456)
-    writer.write(-0.123456)
-    writer.write("1")
-    writer.write("-1")
-    writer.write("1.0")
-    writer.write("-1.0")
-    writer.write("0.123456")
-    writer.write("-0.123456")
+    data_input = [
+        1,
+        -1,
+        1.0,
+        -1.0,
+        0.123456,
+        -0.123456,
+        "1",
+        "-1",
+        "1.0",
+        "-1.0",
+        "0.123456",
+        "-0.123456"
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerDouble1(orc_file)
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == float(i)
 
 
 @pytest.mark.xfail(strict=True, raises=TypeError)
@@ -66,12 +91,25 @@ def test_WriterDouble1_special_character(orc_file, orc_options):
 
 def test_Boolean1(orc_file, orc_options):
     writer = sy.simple.WriterBoolean1(["col1"], orc_file, orc_options)
-    writer.write(1)
-    writer.write(0)
-    writer.write(True)
-    writer.write(False)
+    data_input = [
+        1,
+        0,
+        True,
+        False,
+        []
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerBoolean1(orc_file)
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == bool(i)
 
 
 @pytest.mark.xfail(strict=True, raises=TypeError)
@@ -84,21 +122,45 @@ def test_WriterBoolean1_special_character(orc_file, orc_options):
 
 def test_Date1(orc_file, orc_options):
     writer = sy.simple.WriterDate1(["col1"], orc_file, orc_options)
-    writer.write("2018-12-10")
-    writer.write("2018-12-10 12:12:12")
-    writer.write("2018-12-10 12:12:12.123456789")
-    writer.write(datetime.now())
-    writer.write(str(datetime.now()))
+    data_input = [
+        "2018-12-10",
+        "2018-12-10 12:12:12",
+        "2018-12-10 12:12:12.123456789",
+        datetime.now(),
+        str(datetime.now())
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerDate1(orc_file)
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == str(i)[:10]
 
 
 def test_DateN1(orc_file, orc_options):
     writer = sy.simple.WriterDateN1(["col1"], orc_file, orc_options)
-    writer.write(1)
-    writer.write(datetime.now().timestamp() / (60*60*24))
+    data_input = [
+        1,
+        datetime.now().timestamp() / (60*60*24)
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerDateN1(orc_file)
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == int(i)
 
 
 @pytest.mark.xfail(strict=True, raises=TypeError)
@@ -111,23 +173,47 @@ def test_DateN1_string(orc_file, orc_options):
 
 def test_Timestamp1(orc_file, orc_options):
     writer = sy.simple.WriterTimestamp1(["col1"], orc_file, orc_options)
-    writer.write(1)  # write 1970-01-01 00:00:00.0 value
-    writer.write(1.123456789)  # write 1970-01-01 00:00:00.123456789 value
-    writer.write("2018-12-10")  # write 1970-01-01 00:00:00.0 value
-    writer.write("2018-12-10 12:12:12")
-    writer.write("2018-12-10 12:12:12.123456789")
-    writer.write(datetime.now())
+    data_input = [
+        (1, "1970-01-01 00:00:00"),
+        (1.123456789, "1970-01-01 00:00:00.123456789"),
+        ("2018-12-10", "1970-01-01 00:00:00"),
+        ("2018-12-10 12:12:12", "2018-12-10 12:12:12"),
+        ("2018-12-10 12:12:12.123456789", "2018-12-10 12:12:12.123456789")
+    ]
+
+    for i in data_input:
+        writer.write(i[0])
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerTimestamp1(orc_file)
+
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == i[1]
 
 
 def test_TimestampN1(orc_file, orc_options):
     writer = sy.simple.WriterTimestampN1(["col1"], orc_file, orc_options)
-    writer.write(1)
-    writer.write(1.123456789)
-    writer.write(datetime.now().timestamp())
+    data_input = [
+        1,
+        1.123456789,
+        datetime.now().timestamp()
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
     del writer
     assert Path(orc_file).exists()
+
+    data = sy.simple.readerTimestampN1(orc_file)
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == float(i)
 
 
 @pytest.mark.xfail(strict=True, raises=TypeError)

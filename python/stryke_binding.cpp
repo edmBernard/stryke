@@ -1,6 +1,7 @@
 
-#include "stryke/multifile.hpp"
 #include "stryke/core.hpp"
+#include "stryke/multifile.hpp"
+#include "stryke/reader.hpp"
 #include "stryke/thread.hpp"
 #include <Python.h>
 #include <pybind11/pybind11.h>
@@ -73,6 +74,10 @@ public:
     Py_DECREF(tmp);
     return !((value.data == -1) && (PyErr_Occurred() != NULL));
   }
+
+  static handle cast(stryke::Long src, return_value_policy, handle) {
+    return PyLong_FromLong(src.data);
+  }
 };
 
 // For safety reason as I'm not so sure of my binding,
@@ -106,6 +111,10 @@ public:
     Py_DECREF(tmp);
     return !((value.data == -1.0) && (PyErr_Occurred() != NULL));
   }
+
+  static handle cast(stryke::Double src, return_value_policy, handle) {
+    return PyFloat_FromDouble(src.data);
+  }
 };
 
 template <>
@@ -121,6 +130,14 @@ public:
     }
     value.empty = false;
     return !((value.data == false) && (PyErr_Occurred() != NULL));
+  }
+
+  static handle cast(stryke::Boolean src, return_value_policy, handle) {
+    if (src.data == true) {
+      return Py_True;
+    } else {
+      return Py_False;
+    }
   }
 };
 
@@ -138,6 +155,10 @@ public:
     Py_DECREF(tmp);
     return !PyErr_Occurred();
   }
+
+  static handle cast(stryke::Date src, return_value_policy, handle) {
+    return PyUnicode_FromString(src.data.c_str());
+  }
 };
 
 template <>
@@ -153,6 +174,10 @@ public:
     value.empty = false;
     Py_DECREF(tmp);
     return !((value.data == -1) && (PyErr_Occurred() != NULL));
+  }
+
+  static handle cast(stryke::DateNumber src, return_value_policy, handle) {
+    return PyLong_FromLong(src.data);
   }
 };
 
@@ -170,6 +195,10 @@ public:
     Py_DECREF(tmp);
     return !PyErr_Occurred();
   }
+
+  static handle cast(stryke::Timestamp src, return_value_policy, handle) {
+    return PyUnicode_FromString(src.data.c_str());
+  }
 };
 
 template <>
@@ -185,6 +214,10 @@ public:
     value.empty = false;
     Py_DECREF(tmp);
     return !((value.data == -1.0) && (PyErr_Occurred() != NULL));
+  }
+
+  static handle cast(stryke::TimestampNumber src, return_value_policy, handle) {
+    return PyFloat_FromDouble(src.data);
   }
 };
 
@@ -252,6 +285,15 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_impl<stryke::DateNumber>(m_simple, "DateN1");
   declare_writer_impl<stryke::Timestamp>(m_simple, "Timestamp1");
   declare_writer_impl<stryke::TimestampNumber>(m_simple, "TimestampN1");
+  // Reader
+  m_simple.def("readerLong1", &stryke::orcReader<stryke::Long>, "Reader for single column Long");
+  m_simple.def("readerDouble1", &stryke::orcReader<stryke::Double>, "Reader for single column Double");
+  m_simple.def("readerBoolean1", &stryke::orcReader<stryke::Boolean>, "Reader for single column Boolean");
+  m_simple.def("readerDate1", &stryke::orcReader<stryke::Date>, "Reader for single column Date");
+  m_simple.def("readerDateN1", &stryke::orcReader<stryke::DateNumber>, "Reader for single column DateN");
+  m_simple.def("readerTimestamp1", &stryke::orcReader<stryke::Timestamp>, "Reader for single column Timestamp");
+  m_simple.def("readerTimestampN1", &stryke::orcReader<stryke::TimestampNumber>, "Reader for single column TimestampN");
+
 
   // 1D Point
   declare_writer_impl<stryke::Timestamp, stryke::Long>(m_simple, "TimestampPoint1l");
@@ -422,4 +464,6 @@ PYBIND11_MODULE(stryke, m) {
   auto m_custom = m.def_submodule("custom");
 
   declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Long>(m_custom, "TimestampIntDouble");
+
+
 }
