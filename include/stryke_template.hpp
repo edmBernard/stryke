@@ -473,13 +473,12 @@ public:
         inputStream >> date::parse("%F %T", tp);
 
         tsBatch->data[i] = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
-
         char *tail;
         const char *left = std::strpbrk(col.c_str(), ".");
         if (left != nullptr) {
           double d = strtod(left, &tail);
           if (tail != left) {
-            tsBatch->nanoseconds[i] = static_cast<long>(d * 1000000000.0);
+            tsBatch->nanoseconds[i] = static_cast<int64_t>(d * 1000000000.0);
           } else {
             tsBatch->nanoseconds[i] = 0;
           }
@@ -514,9 +513,13 @@ public:
         batch->notNull[i] = 1;
         double decimale, integrale;
         decimale = std::modf(col.data, &integrale);
-        tsBatch->data[i] = time_t(integrale);
+        if (decimale < 0) {
+          decimale += 1;
+          integrale -= 1;
+        }
+        tsBatch->data[i] = int64_t(integrale);
         if (decimale > 0) {
-          tsBatch->nanoseconds[i] = static_cast<long>(decimale * 1000000000.0);
+          tsBatch->nanoseconds[i] = static_cast<int64_t>(decimale * 1000000000.0);
         } else {
           tsBatch->nanoseconds[i] = 0;
         }
