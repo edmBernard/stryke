@@ -118,22 +118,20 @@ public:
   }
 
   void cron() {
-    bool flipflop = false;
+    long previous_minute_count = 0;
 
     while (!this->stop_thread) {
-      std::this_thread::sleep_for(std::chrono::seconds(5));
 
       auto tp = std::chrono::system_clock::now();
       auto daypoint = date::floor<date::days>(tp);
       auto tod = date::make_time(tp - daypoint);
 
-      if ((tod.hours().count()*60+tod.minutes().count()) % this->cron_minute == 0) {
-        if (flipflop == false) {
+      auto minute_count = tod.hours().count()*60+tod.minutes().count();
+      if ((minute_count) % this->cron_minute == 0) {
+        if (previous_minute_count != minute_count) {
           this->close_sync();
-          flipflop = true;
+          previous_minute_count = minute_count;
         }
-      } else {
-        flipflop = false;
       }
     }
   }
