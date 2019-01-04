@@ -54,14 +54,15 @@ SET(SOURCES
 )
 
 set(examples
-  performance
-  thread
-  multifile
-  dispatch
   core_writer
+  dispatch
+  merge_file
+  multifile
+  performance
   reader_basic_type
-  writer_rainbow
   reader_rainbow
+  thread
+  writer_rainbow
 )
 
 #**************************************************************************************************
