@@ -133,9 +133,9 @@ Stryke depend on:
 ### Compile
 
 There is 3 options :
-* BUILD_PYTHON_BINDING
-* BUILD_EXAMPLES
-* BUILD_UNIT_TESTS
+* BUILD_PYTHON_BINDING (default: OFF)
+* BUILD_EXAMPLES (default: OFF)
+* BUILD_UNIT_TESTS (default: OFF)
 
 ```bash
 mkdir build
