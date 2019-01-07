@@ -1,27 +1,52 @@
 sudo: false
 
-language: cpp
+language: python
 
-os:
-  - ubuntu
+git:
+  depth: 1
 
-compiler:
-  - gcc
+matrix:
+  include:
 
-addons:
-  apt:
-    packages:
-      -g++-8
+    - os: linux
+      compiler: gcc
+      python: 3.6-dev
+      env:
+          - COMPILER=g++-8
+          - CXXFLAGS=-std=c++17
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8', 'git']
+
 
 install:
-- "[ $CXX g++ ] && export CXX=g++-8 || true"
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - uname -a
+  - $CXX --version
+
+  # install vcpkg and dependencies
+  - pwd
+  - git clone https://github.com/Microsoft/vcpkg.git
+  - cd vcpkg
+  - ./bootstrap-vcpkg.sh
+  - ./vcpkg install catch2 orc pybind11 zstd
+  - cd ..
+  - pip install path.py
 
 script:
-  - cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ..
+  # build and install stryke cpp
+  - pwd
+  - mkdir -p build && cd build
+  - cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON
   - make
   - make install
-  - make test
-  - python3 setup.py install
+  # - python3 setup.py install
+
+  # Test CPP
+  - ./unit-test
+  - cd ..
+  # Test Python
   - python3 -m pytest tests/python
 
 
