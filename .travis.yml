@@ -1,0 +1,30 @@
+sudo: false
+
+language: cpp
+
+os:
+  - ubuntu
+
+compiler:
+  - gcc
+
+addons:
+  apt:
+    packages:
+      -g++-8
+
+install:
+- "[ $CXX g++ ] && export CXX=g++-8 || true"
+
+script:
+  - cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ..
+  - make
+  - make install
+  - make test
+  - python3 setup.py install
+  - python3 -m pytest tests/python
+
+
+
+
+
