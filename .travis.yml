@@ -1,36 +1,12 @@
 sudo: false
 
-language: python
+language: cpp
 
 git:
   depth: 1
 
 matrix:
   include:
-
-    - os: linux
-      dist: trusty
-      compiler: gcc
-      python: 3.5-dev
-      env:
-          - COMPILER=g++-7
-          - CXXFLAGS=-std=c++17
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'git']
-
-    - os: linux
-      dist: trusty
-      compiler: gcc
-      python: 3.6-dev
-      env:
-          - COMPILER=g++-7
-          - CXXFLAGS=-std=c++17
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'git']
 
     - os: linux
       dist: trusty
