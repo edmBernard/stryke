@@ -32,7 +32,7 @@ matrix:
 
 
 before_install:
-  - if [[ ( "$TRAVIS_OS_NAME" == "linux" ) && ( "$PCL_VERSION" == "1.7" ) ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       eval "${MATRIX_EVAL}";
     fi
   - uname -a
