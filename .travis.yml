@@ -9,39 +9,43 @@ matrix:
   include:
 
     - os: linux
-      dist: trusty
-      compiler: gcc
-      python: 3.5-dev
-      env:
-          - COMPILER=g++-8
-          - CXXFLAGS=-std=c++17
+      python: "3.5"
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'git']
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+      - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
 
     - os: linux
-      dist: trusty
-      compiler: gcc
-      python: 3.6-dev
-      env:
-          - COMPILER=g++-8
-          - CXXFLAGS=-std=c++17
+      python: "3.6"
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'git']
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+      - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
 
 
 before_install:
-  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - if [[ ( "$TRAVIS_OS_NAME" == "linux" ) && ( "$PCL_VERSION" == "1.7" ) ]]; then
+      eval "${MATRIX_EVAL}";
+    fi
   - uname -a
   - $CXX --version
+  - $CC --version
   - python --version
   - python3 --version
 
 
 install:
+  # install dependencies for python tests
+  - python3 -m pip install path.py
+
   # install vcpkg and dependencies
   - pwd
   - git clone https://github.com/Microsoft/vcpkg.git
@@ -50,8 +54,6 @@ install:
   - ./vcpkg install catch2 orc pybind11 zstd
   - cd ..
 
-  # install dependencies for python tests
-  - python3 -m pip install path.py
 
 
 script:
