@@ -9,7 +9,7 @@ matrix:
   include:
 
     - os: linux
-      dist: xenial
+      dist: trusty
       compiler: gcc
       python: 3.5-dev
       env:
@@ -21,7 +21,7 @@ matrix:
           packages: ['g++-7', 'git']
 
     - os: linux
-      dist: xenial
+      dist: trusty
       compiler: gcc
       python: 3.6-dev
       env:
@@ -33,7 +33,7 @@ matrix:
           packages: ['g++-7', 'git']
 
     - os: linux
-      dist: xenial
+      dist: trusty
       compiler: gcc
       python: 3.5-dev
       env:
@@ -45,7 +45,7 @@ matrix:
           packages: ['g++-8', 'git']
 
     - os: linux
-      dist: xenial
+      dist: trusty
       compiler: gcc
       python: 3.6-dev
       env:
@@ -57,11 +57,13 @@ matrix:
           packages: ['g++-8', 'git']
 
 
-install:
+before_install:
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   - uname -a
   - $CXX --version
 
+
+install:
   # install vcpkg and dependencies
   - pwd
   - git clone https://github.com/Microsoft/vcpkg.git
@@ -69,7 +71,10 @@ install:
   - ./bootstrap-vcpkg.sh
   - ./vcpkg install catch2 orc pybind11 zstd
   - cd ..
+
+  # install dependencies for python tests
   - pip install path.py
+
 
 script:
   # build and install stryke cpp
