@@ -49,7 +49,7 @@ install:
   - cd ..
 
   # install dependencies for python tests
-  - pip install path.py
+  - pip3 install path.py
 
 
 script:
@@ -64,10 +64,7 @@ script:
   # Test CPP
   - ./unit-test
   - cd ..
+
   # Test Python
   - python3 -m pytest tests/python
-
-
-
-
 
