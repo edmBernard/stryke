@@ -11,7 +11,7 @@ matrix:
     - os: linux
       dist: xenial
       compiler: gcc
-      python: 3.5
+      python: 3.5-dev
       env:
           - COMPILER=g++-7
           - CXXFLAGS=-std=c++17
@@ -23,7 +23,7 @@ matrix:
     - os: linux
       dist: xenial
       compiler: gcc
-      python: 3.6
+      python: 3.6-dev
       env:
           - COMPILER=g++-7
           - CXXFLAGS=-std=c++17
@@ -35,7 +35,7 @@ matrix:
     - os: linux
       dist: xenial
       compiler: gcc
-      python: 3.5
+      python: 3.5-dev
       env:
           - COMPILER=g++-8
           - CXXFLAGS=-std=c++17
@@ -47,7 +47,7 @@ matrix:
     - os: linux
       dist: xenial
       compiler: gcc
-      python: 3.6
+      python: 3.6-dev
       env:
           - COMPILER=g++-8
           - CXXFLAGS=-std=c++17
