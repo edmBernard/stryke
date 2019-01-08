@@ -37,6 +37,8 @@ before_install:
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   - uname -a
   - $CXX --version
+  - python --version
+  - python3 --version
 
 
 install:
@@ -49,7 +51,7 @@ install:
   - cd ..
 
   # install dependencies for python tests
-  - pip3 install path.py
+  - python3 -m pip install path.py
 
 
 script:
