@@ -9,8 +9,45 @@ matrix:
   include:
 
     - os: linux
+      dist: xenial
       compiler: gcc
-      python: 3.6-dev
+      python: 3.5
+      env:
+          - COMPILER=g++-7
+          - CXXFLAGS=-std=c++17
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'git']
+
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      python: 3.6
+      env:
+          - COMPILER=g++-7
+          - CXXFLAGS=-std=c++17
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7', 'git']
+
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      python: 3.5
+      env:
+          - COMPILER=g++-8
+          - CXXFLAGS=-std=c++17
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8', 'git']
+
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      python: 3.6
       env:
           - COMPILER=g++-8
           - CXXFLAGS=-std=c++17
