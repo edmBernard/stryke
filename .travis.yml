@@ -1,6 +1,5 @@
 sudo: false
 
-language: python
 
 git:
   depth: 1
@@ -9,7 +8,7 @@ matrix:
   include:
 
     - os: linux
-      python: "3.5-dev"
+      language: cpp
       addons:
         apt:
           sources:
@@ -22,6 +21,7 @@ matrix:
 
     - os: linux
       python: "3.6-dev"
+      language: python
       addons:
         apt:
           sources:
@@ -31,6 +31,7 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
         - CXXFLAGS=-std=c++17
+        - PYTHON="3.6-dev"
 
 
 before_install:
@@ -46,8 +47,9 @@ before_install:
 
 install:
   # install dependencies for python tests
-  - python3 -m pip install path.py
-
+  - if [[ "$PYTHON" ]]; then
+      python3 -m pip install path.py ;
+    fi
   # install vcpkg and dependencies
   - pwd
   - git clone https://github.com/Microsoft/vcpkg.git
@@ -62,9 +64,14 @@ script:
   # build and install stryke cpp
   - pwd
   - mkdir -p build && cd build
-  - cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON
-  - make
-  - make install
+  - if [[ "$PYTHON" ]]; then
+      cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
+      make
+      make install
+    elif
+      cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
+      make
+    fi
   # - python3 setup.py install
 
   # Test CPP
@@ -72,5 +79,7 @@ script:
   - cd ..
 
   # Test Python
-  - python3 -m pytest tests/python
+  - if [[ "$PYTHON" ]]; then
+      python3 -m pytest tests/python ;
+    fi
 
