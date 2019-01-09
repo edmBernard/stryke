@@ -68,7 +68,7 @@ script:
       cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
       make ;
       make install ;
-    elif
+    else
       cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
       make ;
     fi
