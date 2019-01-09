@@ -66,11 +66,11 @@ script:
   - mkdir -p build && cd build
   - if [[ "$PYTHON" ]]; then
       cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
-      make
-      make install
+      make ;
+      make install ;
     elif
       cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON ;
-      make
+      make ;
     fi
   # - python3 setup.py install
 
