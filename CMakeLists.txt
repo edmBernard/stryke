@@ -85,7 +85,7 @@ if(BUILD_EXAMPLES)
   foreach (example ${examples})
     add_executable("stryke_${example}" ${CMAKE_CURRENT_SOURCE_DIR}/example/cpp/${example}.cpp)
     target_compile_options("stryke_${example}" PRIVATE -O3)
-    target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
+    target_link_libraries("stryke_${example}" PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
   endforeach(example)
 endif()
 
@@ -119,10 +119,9 @@ endif()
 # Build Python Binding
 #**************************************************************************************************
 if(BUILD_PYTHON_BINDING)
-  # pybind11_add_module(stryke MODULE ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
   add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
-  set_target_properties(stryke PROPERTIES PREFIX "")
   target_link_libraries(stryke PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
+  set_target_properties(stryke PROPERTIES PREFIX "")
 
   install(TARGETS stryke DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke)
 endif()
