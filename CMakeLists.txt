@@ -7,7 +7,12 @@ cmake_minimum_required(VERSION 3.5)
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0007 NEW)
 endif(COMMAND cmake_policy)
+
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
 
 #**************************************************************************************************
 # Find Package ************************************************************************************
@@ -29,15 +34,14 @@ find_package(Catch2 CONFIG REQUIRED)
 
 option(BUILD_PYTHON_BINDING "Build the unit tests" OFF)
 if(BUILD_PYTHON_BINDING)
-  # Python
-  find_package(PythonLibs 3 REQUIRED)
+
+  # Pybind11
+  # Pybind11 also set PYTHON_INCLUDE_DIRS and PYTHON_LIBRARIES
+  find_package(pybind11 CONFIG REQUIRED)
+  include_directories(${pybind11_INCLUDE_DIR})
   MESSAGE( " *** PYTHON_INCLUDE_DIRS : " ${PYTHON_INCLUDE_DIRS} )
   MESSAGE( " *** PYTHON_LIBRARIES : " ${PYTHON_LIBRARIES} )
   include_directories(${PYTHON_INCLUDE_DIRS})
-
-  # Pybind11
-  find_package(pybind11 CONFIG REQUIRED)
-  include_directories(${pybind11_INCLUDE_DIR})
 endif()
 
 #**************************************************************************************************
@@ -117,7 +121,7 @@ endif()
 if(BUILD_PYTHON_BINDING)
   add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
   target_link_libraries(stryke PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
-  SET_TARGET_PROPERTIES(stryke PROPERTIES PREFIX "")
+  set_target_properties(stryke PROPERTIES PREFIX "")
 
   install(TARGETS stryke DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke)
 endif()

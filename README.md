@@ -125,9 +125,10 @@ We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 Stryke depend on:
 * [Catch2](https://github.com/catchorg/Catch2)
 * [Apache-Orc](https://orc.apache.org/)
+* [Pybind11](https://github.com/pybind/pybind11) (for python binding)
 
 ```
-./vcpkg install catch2 orc
+./vcpkg install catch2 orc pybind11 zstd
 ```
 
 ### Compile
