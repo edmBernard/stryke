@@ -65,6 +65,9 @@ public:
   }
   Long() {
   }
+  operator long() const {
+    return data;
+  }
   long data;
   bool empty = true;
   typedef Long type;
@@ -78,6 +81,9 @@ public:
   }
   Short() {
   }
+  operator short() const {
+    return data;
+  }
   short data;
   bool empty = true;
   typedef Long type;
@@ -90,6 +96,9 @@ public:
       : data(data), empty(false) {
   }
   Int() {
+  }
+  operator int() const {
+    return data;
   }
   int data;
   bool empty = true;
@@ -110,6 +119,9 @@ public:
       : data(std::string(data)) {
   }
   String() {
+  }
+  operator std::string() const {
+    return data;
   }
   std::string data;
   typedef String type;
@@ -137,6 +149,9 @@ public:
   }
   Double() {
   }
+  operator double() const {
+    return data;
+  }
   double data;
   bool empty = true;
   typedef Double type;
@@ -149,6 +164,9 @@ public:
       : data(data), empty(false) {
   }
   Float() {
+  }
+  operator float() const {
+    return data;
   }
   float data;
   bool empty = true;
@@ -163,6 +181,9 @@ public:
       : data(data), empty(false) {
   }
   Boolean() {
+  }
+  operator bool() const {
+    return data;
   }
   bool data;
   bool empty = true;
@@ -184,6 +205,9 @@ public:
   }
   Date() {
   }
+  operator std::string() const {
+    return data;
+  }
   std::string data;
   typedef Date type;
   static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
@@ -195,6 +219,9 @@ public:
       : data(data), empty(false) {
   }
   DateNumber() {
+  }
+  operator long() const {
+    return data;
   }
   long data;
   bool empty = true;
@@ -216,6 +243,9 @@ public:
   Timestamp(const char *data)
       : data(std::string(data)) {
   }
+  operator std::string() const {
+    return data;
+  }
   std::string data;
   typedef Timestamp type;
   static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
@@ -227,6 +257,9 @@ public:
       : data(data), empty(false) {
   }
   TimestampNumber() {
+  }
+  operator double() const {
+    return data;
   }
   double data;
   bool empty = true;
@@ -299,8 +332,8 @@ public:
           string_buffer->reserve(string_buffer->size() * 2);
         }
         memcpy(string_buffer->data() + string_buffer_offset,
-              col.c_str(),
-              col.size());
+               col.c_str(),
+               col.size());
         stringBatch->data[i] = string_buffer->data() + string_buffer_offset;
         stringBatch->length[i] = static_cast<int64_t>(col.size());
         string_buffer_offset += col.size();
@@ -443,7 +476,7 @@ public:
 
         if (inputStream.fail()) {
           inputStream.clear();
-          inputStream.seekg (0, inputStream.beg);
+          inputStream.seekg(0, inputStream.beg);
           inputStream >> date::parse("%F", tp);
         }
 
@@ -460,7 +493,6 @@ public:
         } else {
           tsBatch->nanoseconds[i] = 0;
         }
-
       }
     }
     tsBatch->hasNulls = hasNull;
@@ -562,7 +594,7 @@ public:
     this->writer = orc::createWriter(*this->fileType, outStream.get(), this->orc_writeroptions);
     this->rowBatch = this->writer->createRowBatch(this->writeroptions.batchSize);
 
-    this->string_buffer = std::make_unique<orc::DataBuffer<char>>(*orc::getDefaultPool(), 4 * 1024 * 1024);  // Create buffer for string data. One buffer store all string data
+    this->string_buffer = std::make_unique<orc::DataBuffer<char>>(*orc::getDefaultPool(), 4 * 1024 * 1024); // Create buffer for string data. One buffer store all string data
 
     if (this->writeroptions.create_lock_file) {
       std::ofstream outfile(this->filename + ".lock");

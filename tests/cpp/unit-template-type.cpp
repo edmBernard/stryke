@@ -38,6 +38,68 @@ void test_simple_writer(std::string filename, stryke::WriterOptions options) {
   test_simple_writer_impl<T, U>(input, filename, options);
 }
 
+template<typename stdType, typename strykeType>
+void test_type_cast(stdType input) {
+  strykeType b(input);
+  REQUIRE(input == b);
+  REQUIRE(input == stdType(b));
+}
+
+template<typename strykeType>
+void test_type_cast_with_string(std::string input) {
+  strykeType b(input);
+  REQUIRE(input == std::string(b));
+}
+
+TEST_CASE("OrcWriterImpl Types implicit cast", "[Simple]") {
+
+  SECTION("Test Int") {
+    test_type_cast<int, stryke::Int>(12345);
+  }
+
+  SECTION("Test Short") {
+    test_type_cast<short, stryke::Short>(12345);
+  }
+
+  SECTION("Test Long") {
+    test_type_cast<long, stryke::Long>(12345);
+  }
+
+  SECTION("Test String") {
+    test_type_cast_with_string<stryke::String>("my super string");
+  }
+
+  SECTION("Test Float") {
+    test_type_cast<float, stryke::Float>(1234567.12345678);
+  }
+
+  SECTION("Test Double") {
+    test_type_cast<double, stryke::Double>(1234567.12345678);
+  }
+
+  SECTION("Test Bool") {
+    test_type_cast<bool, stryke::Boolean>(1234567.12345678);
+  }
+
+  SECTION("Test Date") {
+    test_type_cast_with_string<stryke::Date>("2018-01-11");
+  }
+
+  SECTION("Test DateNumber") {
+    test_type_cast<long, stryke::DateNumber>(1234567);
+  }
+
+  SECTION("Test Timestamp") {
+    test_type_cast_with_string<stryke::Date>("2018-01-11 22:10:10");
+  }
+
+  SECTION("Test TimestampNumber") {
+    test_type_cast<double, stryke::TimestampNumber>(1234567.1234567);
+  }
+
+}
+
+
 
 TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
@@ -191,3 +253,4 @@ TEST_CASE("OrcWriterImpl Types", "[Simple]") {
 
   fs::remove(filename);
 }
+
