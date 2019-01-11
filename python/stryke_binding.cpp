@@ -1,6 +1,7 @@
 
 #include "stryke/core.hpp"
 #include "stryke/multifile.hpp"
+#include "stryke/options.hpp"
 #include "stryke/reader.hpp"
 #include "stryke/thread.hpp"
 #include <Python.h>
@@ -294,7 +295,6 @@ PYBIND11_MODULE(stryke, m) {
   m_simple.def("readerTimestamp1", &stryke::orcReader<stryke::Timestamp>, "Reader for single column Timestamp");
   m_simple.def("readerTimestampN1", &stryke::orcReader<stryke::TimestampNumber>, "Reader for single column TimestampN");
 
-
   // 1D Point
   declare_writer_impl<stryke::Timestamp, stryke::Long>(m_simple, "TimestampPoint1l");
   declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_simple, "TimestampNPoint1l");
@@ -464,6 +464,4 @@ PYBIND11_MODULE(stryke, m) {
   auto m_custom = m.def_submodule("custom");
 
   declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Long>(m_custom, "TimestampIntDouble");
-
-
 }

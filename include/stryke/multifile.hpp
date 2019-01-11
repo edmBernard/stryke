@@ -15,6 +15,8 @@
 
 #include "date/date.h"
 #include "stryke/core.hpp"
+#include "stryke/options.hpp"
+#include <ctime>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -22,7 +24,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <ctime>
 
 namespace stryke {
 
@@ -94,7 +95,7 @@ public:
 private:
   bool get_name(T &date) {
     auto tp = utils::get_time(date);
-    auto ymd = date::year_month_day(date::floor<date::days>(tp));   // calendar date
+    auto ymd = date::year_month_day(date::floor<date::days>(tp)); // calendar date
 
     char month_buffer[12]; // for padding
     char day_buffer[12];   // for padding

@@ -1,8 +1,8 @@
 #include "catch.hpp"
 #include "stryke/multifile.hpp"
-#include "utils_for_test.hpp"
-#include "stryke/core.hpp"
 #include "stryke/thread.hpp"
+#include "stryke/options.hpp"
+#include "utils_for_test.hpp"
 #include <filesystem>
 #include <vector>
 
@@ -76,7 +76,6 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(17875 + i / (nbr_rows), i);
         }
-
       }
 
       tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
@@ -125,7 +124,8 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
           if (i == check_point - 1) {
 
             writer.close_async();
-            while (!writer.has_closed()) {}
+            while (!writer.has_closed()) {
+            }
 
             tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
             REQUIRE(tmp_b.nbr_columns == 3);
@@ -181,7 +181,8 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
 
             writer.close_async();
 
-            while (!writer.has_closed()) {}
+            while (!writer.has_closed()) {
+            }
 
             tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
             REQUIRE(tmp_b.nbr_columns == 3);
@@ -192,7 +193,8 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
 
             writer.close_async();
 
-            while (!writer.has_closed()) {}
+            while (!writer.has_closed()) {
+            }
 
             tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
             REQUIRE(tmp_b.nbr_columns == 3);

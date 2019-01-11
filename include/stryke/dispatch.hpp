@@ -14,6 +14,7 @@
 #define STRYKE_DISPATCH_HPP_
 
 #include "stryke/core.hpp"
+#include "stryke/options.hpp"
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -27,7 +28,6 @@ namespace stryke {
 namespace fs = std::filesystem;
 
 namespace utils {
-
 
 } // namespace utils
 
@@ -58,11 +58,11 @@ private:
     time_t mytime = date.data * (60 * 60 * 24);
     auto mytm = gmtime(&mytime);
 
-    char month_buffer[12];  // for padding
-    char day_buffer[12];  // for padding
+    char month_buffer[12]; // for padding
+    char day_buffer[12];   // for padding
     sprintf(day_buffer, "%.02d", mytm->tm_mday);
     sprintf(month_buffer, "%.02d", 1 + mytm->tm_mon);
-    fs::path file_folder = this->root_folder / ("year="+std::to_string(1900 + mytm->tm_year)) / ("month="+std::string(month_buffer)) / ("day="+std::string(day_buffer));
+    fs::path file_folder = this->root_folder / ("year=" + std::to_string(1900 + mytm->tm_year)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
     std::string prefix_with_date = this->file_prefix + std::to_string(1900 + mytm->tm_year) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Add suffix to avoid file erasing

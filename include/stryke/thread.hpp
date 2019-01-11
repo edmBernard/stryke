@@ -14,7 +14,7 @@
 #define STRYKE_THREAD_HPP_
 
 #include "date/date.h"
-#include "stryke/core.hpp"
+#include "stryke/options.hpp"
 #include <atomic>
 #include <condition_variable>
 #include <exception>
@@ -23,6 +23,7 @@
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -65,7 +66,7 @@ public:
 
   void write_tuple(std::tuple<Types...> data) {
     std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
-    std::unique_lock<std::mutex> lck2(this->mx_close);  // lock only to block close method until file is closed
+    std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
     this->fifo.push(data);
     this->queue_is_not_empty.notify_all();
   }
@@ -78,15 +79,15 @@ public:
   //! if we continue to write data fast enough the file can never close.
   void close_async() {
     this->writer_closed = false;
-    this->close_writer = true;  // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all();  // command to unlock writer thread if queue is already empty
+    this->close_writer = true;             // ask writer thread to close writer
+    this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already empty
   }
 
   void close_sync() {
-    this->writer_closed = false;  // unecessary but iso with async close
-    this->close_writer = true;    // ask writer thread to close writer
-    this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already empty
-    std::unique_lock<std::mutex> lck(this->mx_close);  // lock only to block close method until file is closed
+    this->writer_closed = false;                      // unecessary but iso with async close
+    this->close_writer = true;                        // ask writer thread to close writer
+    this->queue_is_not_empty.notify_all();            // command to unlock writer thread if queue is already empty
+    std::unique_lock<std::mutex> lck(this->mx_close); // lock only to block close method until file is closed
     while (!this->fifo.empty()) {
       this->writer_is_closed.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
     }
@@ -94,13 +95,13 @@ public:
 
   void consumer() {
     while (!this->stop_thread) {
-      std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock);  // lock to protect read and write on queue
+      std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock); // lock to protect read and write on queue
       if (this->fifo.empty()) {
         if (this->close_writer) {
           this->writer->close();
           this->close_writer = false;
-          this->writer_closed = true;  // variable for check after async close
-          this->writer_is_closed.notify_all();  // signal to unlock sync close
+          this->writer_closed = true;          // variable for check after async close
+          this->writer_is_closed.notify_all(); // signal to unlock sync close
         }
         lck.lock();
         this->queue_is_not_empty.wait_for(lck, std::chrono::duration<double, std::milli>(100)); // calling wait if lock.mutex() is not locked by the current thread is undefined behavior.
@@ -126,7 +127,7 @@ public:
       auto daypoint = date::floor<date::days>(tp);
       auto tod = date::make_time(tp - daypoint);
 
-      auto minute_count = tod.hours().count()*60+tod.minutes().count();
+      auto minute_count = tod.hours().count() * 60 + tod.minutes().count();
       if ((minute_count) % this->cron_minute == 0) {
         if (previous_minute_count != minute_count) {
           this->close_sync();
@@ -142,11 +143,11 @@ private:
   std::thread cron_thread;
   int cron_minute;
   std::unique_ptr<Writer<Types...>> writer;
-  std::atomic<bool> stop_thread = false;   // simple thread stopping.
-  std::atomic<bool> close_writer = false;  // ask writer thread to close writer
-  std::atomic<bool> writer_closed = true;  // variable for check after async close
-  std::mutex mx_queue;  // lock to protect read and write on queue
-  std::mutex mx_close;  // lock only to block close method until file is closed
+  std::atomic<bool> stop_thread = false;  // simple thread stopping.
+  std::atomic<bool> close_writer = false; // ask writer thread to close writer
+  std::atomic<bool> writer_closed = true; // variable for check after async close
+  std::mutex mx_queue;                    // lock to protect read and write on queue
+  std::mutex mx_close;                    // lock only to block close method until file is closed
   std::condition_variable queue_is_not_empty;
   std::condition_variable writer_is_closed;
 };

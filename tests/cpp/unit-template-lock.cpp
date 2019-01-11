@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "utils_for_test.hpp"
 #include "stryke/core.hpp"
+#include "stryke/options.hpp"
 #include <filesystem>
 
 namespace fs = std::filesystem;

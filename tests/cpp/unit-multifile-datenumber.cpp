@@ -2,6 +2,7 @@
 #include "stryke/multifile.hpp"
 #include "utils_for_test.hpp"
 #include "stryke/core.hpp"
+#include "stryke/options.hpp"
 #include <filesystem>
 #include <vector>
 
