@@ -10,12 +10,13 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_HPP_
-#define STRYKE_HPP_
+#ifndef STRYKE_CORE_HPP_
+#define STRYKE_CORE_HPP_
 
 #include "date/date.h"
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
+#include "stryke/options.hpp"
 
 #include <cmath>
 #include <filesystem>
@@ -31,38 +32,6 @@
 #include <tuple>
 
 namespace stryke {
-
-class WriterOptions {
-public:
-  WriterOptions() {
-  }
-
-  void disable_lock_file(bool disable_lock_file = true) {
-    this->create_lock_file = !disable_lock_file;
-  }
-
-  void set_batch_size(uint64_t batchSize) {
-    this->batchSize = batchSize;
-  }
-
-  void set_batch_max(int nbr_batch_max) {
-    this->nbr_batch_max = nbr_batch_max;
-  }
-
-  void set_stripe_size(uint64_t stripeSize) {
-    this->stripeSize = stripeSize;
-  }
-
-  void set_cron(int minutes) {
-    this->cron = minutes;
-  }
-
-  bool create_lock_file = true;
-  uint64_t batchSize = 10000;
-  int nbr_batch_max = 0;
-  uint64_t stripeSize = 10000;
-  int cron = -1;
-};
 
 // ==============================================================
 // Type Implementation
@@ -659,4 +628,4 @@ private:
 
 } // namespace stryke
 
-#endif // !STRYKE_HPP_
+#endif // !STRYKE_CORE_HPP_
