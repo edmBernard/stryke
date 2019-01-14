@@ -10,7 +10,7 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 
-#include "stryke/core.hpp"
+#include "stryke/type.hpp"
 #include "stryke/csv.hpp"
 #include "date/date.h"
 #include <iostream>

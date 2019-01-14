@@ -17,6 +17,8 @@
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
 #include "stryke/options.hpp"
+#include "stryke/type.hpp"
+
 
 #include <cmath>
 #include <filesystem>
@@ -57,215 +59,69 @@ namespace stryke {
 // orc::MAP         --> Not Implemented
 // orc::UNION       --> Not Implemented
 
-// Long Type Category
-class Long {
-public:
-  Long(long data)
-      : data(data), empty(false) {
-  }
-  Long() {
-  }
-  operator long() const {
-    return data;
-  }
-  long data;
-  bool empty = true;
-  typedef Long type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::LONG;
-};
+// We replace TypeKind method in stryke::Type by an external get_orc_type to get stryke::Type without orc dependencies
+template <typename Type>
+inline orc::TypeKind const get_orc_type();
 
-class Short {
-public:
-  Short(short data)
-      : data(data), empty(false) {
-  }
-  Short() {
-  }
-  operator short() const {
-    return data;
-  }
-  short data;
-  bool empty = true;
-  typedef Long type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::SHORT;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Long>() {
+  return orc::TypeKind::LONG;
+}
 
-class Int {
-public:
-  Int(int data)
-      : data(data), empty(false) {
-  }
-  Int() {
-  }
-  operator int() const {
-    return data;
-  }
-  int data;
-  bool empty = true;
-  typedef Long type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::INT;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Short>() {
+  return orc::TypeKind::SHORT;
+}
 
-// String Type Category
-class String {
-public:
-  String(std::string &&data)
-      : data(std::forward<std::string>(data)) {
-  }
-  String(const std::string &data)
-      : data(data) {
-  }
-  String(const char *data)
-      : data(std::string(data)) {
-  }
-  String() {
-  }
-  operator std::string() const {
-    return data;
-  }
-  std::string data;
-  typedef String type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::STRING;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Int>() {
+  return orc::TypeKind::INT;
+}
 
-// Not working
-// class Char {
-// public:
-//   Char(char data)
-//       : data(1, data) {
-//   }
-//   Char() {
-//   }
-//   std::string data;
-//   typedef String type;
-//   static const orc::TypeKind TypeKind = orc::TypeKind::CHAR;
-// };
+template <>
+inline orc::TypeKind const get_orc_type<stryke::String>() {
+  return orc::TypeKind::STRING;
+}
 
-// Double Type Category
-class Double {
-public:
-  Double(double data)
-      : data(data), empty(false) {
-  }
-  Double() {
-  }
-  operator double() const {
-    return data;
-  }
-  double data;
-  bool empty = true;
-  typedef Double type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::DOUBLE;
-};
+// template <>
+// inline orc::TypeKind const get_orc_type<stryke::Char>() {
+//   return orc::TypeKind::CHAR;
+// }
 
-class Float {
-public:
-  Float(float data)
-      : data(data), empty(false) {
-  }
-  Float() {
-  }
-  operator float() const {
-    return data;
-  }
-  float data;
-  bool empty = true;
-  typedef Double type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::FLOAT;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Double>() {
+  return orc::TypeKind::DOUBLE;
+}
 
-// Boolean Type Category
-class Boolean {
-public:
-  Boolean(bool data)
-      : data(data), empty(false) {
-  }
-  Boolean() {
-  }
-  operator bool() const {
-    return data;
-  }
-  bool data;
-  bool empty = true;
-  typedef Boolean type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::BOOLEAN;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Float>() {
+  return orc::TypeKind::FLOAT;
+}
 
-// Date Type Category
-class Date {
-public:
-  Date(std::string &&data)
-      : data(std::forward<std::string>(data)) {
-  }
-  Date(const std::string &data)
-      : data(data) {
-  }
-  Date(const char *data)
-      : data(std::string(data)) {
-  }
-  Date() {
-  }
-  operator std::string() const {
-    return data;
-  }
-  std::string data;
-  typedef Date type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Boolean>() {
+  return orc::TypeKind::BOOLEAN;
+}
 
-class DateNumber {
-public:
-  DateNumber(long data)
-      : data(data), empty(false) {
-  }
-  DateNumber() {
-  }
-  operator long() const {
-    return data;
-  }
-  long data;
-  bool empty = true;
-  typedef Long type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::DATE;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Date>() {
+  return orc::TypeKind::DATE;
+}
 
-// Timestamp Type Category
-class Timestamp {
-public:
-  Timestamp(std::string &&data)
-      : data(std::forward<std::string>(data)) {
-  }
-  Timestamp(const std::string &data)
-      : data(data) {
-  }
-  Timestamp() {
-  }
-  Timestamp(const char *data)
-      : data(std::string(data)) {
-  }
-  operator std::string() const {
-    return data;
-  }
-  std::string data;
-  typedef Timestamp type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::DateNumber>() {
+  return orc::TypeKind::DATE;
+}
 
-class TimestampNumber {
-public:
-  TimestampNumber(double data)
-      : data(data), empty(false) {
-  }
-  TimestampNumber() {
-  }
-  operator double() const {
-    return data;
-  }
-  double data;
-  bool empty = true;
-  typedef TimestampNumber type;
-  static const orc::TypeKind TypeKind = orc::TypeKind::TIMESTAMP;
-};
+template <>
+inline orc::TypeKind const get_orc_type<stryke::Timestamp>() {
+  return orc::TypeKind::TIMESTAMP;
+}
+
+template <>
+inline orc::TypeKind const get_orc_type<stryke::TimestampNumber>() {
+  return orc::TypeKind::TIMESTAMP;
+}
 
 namespace utils {
 
@@ -555,7 +411,7 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
 
 template <typename T>
 bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
-  struct_type->addStructField(column_name, orc::createPrimitiveType(T::TypeKind));
+  struct_type->addStructField(column_name, orc::createPrimitiveType(get_orc_type<T>()));
   return true;
 }
 
