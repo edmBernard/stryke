@@ -34,23 +34,23 @@ namespace stryke {
 
 namespace utils {
 // ==============================================================
-//  Create Cast Implementation: function to Cast tuple in json
+//  Fill file with data
 // ==============================================================
 
 template <typename Types, uint64_t N>
-bool addData(std::ofstream &writer, const Types &data, std::string column_name) {
+bool addData(std::ofstream &writer, const Types &data) {
   writer << std::get<N>(data) << ";";
   return true;
 }
 
 template <typename... Types, std::size_t... Indices>
-auto fillcsvImpl(std::index_sequence<Indices...>, std::ofstream &writer, std::tuple<Types...> &data, std::array<std::string, sizeof...(Types)> column_names) -> std::vector<bool> {
-  return {addData<std::tuple<Types...>, Indices>(writer, data, column_names[Indices])...};
+auto fillcsvImpl(std::index_sequence<Indices...>, std::ofstream &writer, std::tuple<Types...> &data) -> std::vector<bool> {
+  return {addData<std::tuple<Types...>, Indices>(writer, data)...};
 }
 
 template <typename... Types>
-auto fillcsv(std::ofstream &writer, std::tuple<Types...> &data, std::array<std::string, sizeof...(Types)> column_names) {
-  return fillcsvImpl<Types...>(std::index_sequence_for<Types...>(), writer, data, column_names);
+auto fillcsv(std::ofstream &writer, std::tuple<Types...> &data) {
+  return fillcsvImpl<Types...>(std::index_sequence_for<Types...>(), writer, data);
 }
 
 } // namespace utils
@@ -71,6 +71,13 @@ public:
 
     this->writer = std::ofstream(filename);
 
+    // Add column name
+    for (auto& i : this->column_names) {
+      this->writer << i << ";";
+    }
+    this->writer << "\n";
+
+    // create lock file
     if (this->writeroptions.create_lock_file) {
       std::ofstream outfile(this->filename + ".lock");
       outfile.close();
@@ -89,7 +96,7 @@ public:
   }
 
   void write_tuple(std::tuple<Types...> dataT) {
-    auto ret = utils::fillcsv(this->writer, dataT, this->column_names);
+    auto ret = utils::fillcsv(this->writer, dataT);
     this->writer << "\n";
   }
 
