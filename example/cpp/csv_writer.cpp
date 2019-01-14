@@ -11,7 +11,7 @@
 //
 
 #include "stryke/type.hpp"
-#include "stryke/csv.hpp"
+#include "stryke/csv/core.hpp"
 #include "date/date.h"
 #include <iostream>
 #include <sstream>
