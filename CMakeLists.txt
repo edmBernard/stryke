@@ -59,6 +59,7 @@ SET(SOURCES
 
 set(examples
   core_writer
+  csv_writer
   dispatch
   merge_file
   multifile
