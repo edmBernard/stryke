@@ -88,8 +88,6 @@ public:
 
   void close() {
     this->writers.reset();
-    this->current_prefix_with_date = std::string();
-    this->current_counts = 0;
   }
 
 private:
@@ -104,15 +102,18 @@ private:
 
     auto y = int(ymd.year());
 
-    fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
     std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Create new filename if date change or if nbr_batch_max is reached
-    if (this->current_prefix_with_date.empty() || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
-      this->current_suffix = 0;
+    if (!this->writers || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
+
+      if (this->current_prefix_with_date != prefix_with_date) {
+        this->current_suffix = 0;
+      }
       this->current_prefix_with_date = prefix_with_date;
 
       // Find the right suffix to avoid erasing existing file we check existance
+      fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
       do {
         this->current_filename = file_folder / (this->current_prefix_with_date + "-" + std::to_string(this->current_suffix++) + ".orc");
       } while (fs::exists(this->current_filename));
