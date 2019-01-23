@@ -16,7 +16,7 @@
 #include "date/date.h"
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
-#include "stryke/core.hpp"
+#include "stryke/type.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -165,6 +165,55 @@ std::vector<std::tuple<Types...>> orcReader(std::string filename) {
   }
   return output;
 }
+
+template <typename... Types>
+class OrcReader {
+  std::string filename;
+
+public:
+  OrcReader(std::string filename) : filename(filename) {
+  }
+
+  void get_type() {
+    orc::ReaderOptions options;
+    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
+
+    std::cout << "reader->getType().getFieldName(1) : " << reader->getType().getFieldName(1) << std::endl;
+  }
+
+  std::array<std::string, sizeof...(Types)> get_cols_name() {
+    orc::ReaderOptions options;
+    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
+
+    std::array<std::string, sizeof...(Types)> ret;
+
+    for (std::size_t i = 0; i < sizeof...(Types); ++i) {
+      ret[i] = reader->getType().getFieldName(i);
+    }
+
+    return ret;
+  }
+
+  std::vector<std::tuple<Types...>> get_data() {
+    std::vector<std::tuple<Types...>> output;
+
+    orc::ReaderOptions options;
+    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
+    std::unique_ptr<orc::RowReader> rowReader = reader->createRowReader();
+    std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
+
+    while (rowReader->next(*batch)) {
+      orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
+
+      for (uint64_t r = 0; r < batch->numElements; ++r) {
+        output.push_back(utils::for_each<Types...>(structBatch, r));
+      }
+    }
+    return output;
+  }
+
+
+};
 
 } // namespace stryke
 
