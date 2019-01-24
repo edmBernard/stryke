@@ -174,13 +174,6 @@ public:
   OrcReader(std::string filename) : filename(filename) {
   }
 
-  void get_type() {
-    orc::ReaderOptions options;
-    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
-
-    std::cout << "reader->getType().getFieldName(1) : " << reader->getType().getFieldName(1) << std::endl;
-  }
-
   std::array<std::string, sizeof...(Types)> get_cols_name() {
     orc::ReaderOptions options;
     std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
@@ -212,6 +205,13 @@ public:
     return output;
   }
 
+  void get_stripe_stats() {
+    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
+    for (int i = 0; i < reader->getNumberOfStripes; ++i) {
+      auto tmp = reader->getStripe(i);
+
+    }
+  }
 
 };
 
