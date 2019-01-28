@@ -115,7 +115,11 @@ private:
       // Find the right suffix to avoid erasing existing file we check existance
       fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer));
       do {
-        this->current_filename = file_folder / (this->current_prefix_with_date + "-" + std::to_string(this->current_suffix++) + ".orc");
+        if (this->writeroptions.suffix_timestamp) {
+          this->current_filename = file_folder / (this->current_prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".orc");
+        } else {
+          this->current_filename = file_folder / (this->current_prefix_with_date + "-" + std::to_string(this->current_suffix++) + ".orc");
+        }
       } while (fs::exists(this->current_filename));
 
       return true;

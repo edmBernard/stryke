@@ -267,6 +267,7 @@ PYBIND11_MODULE(stryke, m) {
   py::class_<stryke::WriterOptions>(m, "WriterOptions")
       .def(py::init<>())
       .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file)
+      .def("enable_suffix_timestamp", &stryke::WriterOptions::enable_suffix_timestamp)
       .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
       .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
       .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
@@ -463,5 +464,5 @@ PYBIND11_MODULE(stryke, m) {
 
   auto m_custom = m.def_submodule("custom");
 
-  declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Long>(m_custom, "TimestampIntDouble");
+  declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Double>(m_custom, "TimestampIntDouble");
 }

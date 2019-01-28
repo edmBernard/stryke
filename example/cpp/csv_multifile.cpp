@@ -18,7 +18,10 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  CsvWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", WriterOptions());
+  WriterOptions options;
+  options.enable_suffix_timestamp();
+
+  CsvWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", options);
   for (int i = 0; i < 10100; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(17875 + i/100000., i);

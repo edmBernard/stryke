@@ -26,6 +26,10 @@ public:
     this->create_lock_file = !disable_lock_file;
   }
 
+  void enable_suffix_timestamp(bool enable_suffix_timestamp = true) {
+    this->suffix_timestamp = enable_suffix_timestamp;
+  }
+
   void set_batch_size(uint64_t batchSize) {
     this->batchSize = batchSize;
   }
@@ -43,6 +47,7 @@ public:
   }
 
   bool create_lock_file = true;
+  bool suffix_timestamp = false;
   uint64_t batchSize = 10000;
   int nbr_batch_max = 0;
   uint64_t stripeSize = 10000;
