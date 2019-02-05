@@ -262,12 +262,13 @@ void declare_writer_thread(py::module &m, const std::string &typestr) {
       .def("close_sync", (void (Class::*)(T...)) & Class::close_sync);
 }
 
+
 PYBIND11_MODULE(stryke, m) {
 
   py::class_<stryke::WriterOptions>(m, "WriterOptions")
       .def(py::init<>())
-      .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file)
-      .def("enable_suffix_timestamp", &stryke::WriterOptions::enable_suffix_timestamp)
+      .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file, py::arg("disable_lock_file") = true)
+      .def("enable_suffix_timestamp", &stryke::WriterOptions::enable_suffix_timestamp, py::arg("enable_suffix_timestamp") = true)
       .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
       .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
       .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
