@@ -60,6 +60,46 @@ We already define the following type for each Writer :
 | `<DateNumber, Double, Double, Double, Double, Double, Double>` | `WriterDateNVec3d` |
 | `<TimestampNumber, Double, Double, Double, Double, Double, Double>` | `WriterTimestampNVec3d` |
 
+## Compilation, Installation and Tests
+
+We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
+
+Stryke depend on:
+* [Catch2](https://github.com/catchorg/Catch2)
+* [Apache-Orc](https://orc.apache.org/)
+* [Pybind11](https://github.com/pybind/pybind11)
+
+```
+./vcpkg install catch2 orc pybind11 zstd
+```
+
+### Compile C++ code and Python binding
+
+```bash
+#from root folder
+mkdir build
+cd build
+# configure make with vcpkg toolchain
+cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON
+make install
+```
+
+The shared library (`stryke.so`) with the binding will be store in `python/stryke` folder.
+
+### Install Binding
+
+```bash
+# from python folder
+python3 setup.py install
+```
+
+### Run Python Tests
+
+```bash
+python3 -m pytest tests/python
+```
+
+
 ## Examples
 
 ### Simple writer
@@ -150,41 +190,3 @@ for i in range(100):
 
 **Note**: The multi thread functionnality is performed by a simple FIFO with a provider and a consumer. I the provider is too fast the queue can be full and generate a core dump.
 
-## Compilation, Installation and Tests
-
-We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
-
-Stryke depend on:
-* [Catch2](https://github.com/catchorg/Catch2)
-* [Apache-Orc](https://orc.apache.org/)
-* [Pybind11](https://github.com/pybind/pybind11)
-
-```
-./vcpkg install catch2 orc pybind11 zstd
-```
-
-### Compile C++ code and Python binding
-
-```bash
-#from root folder
-mkdir build
-cd build
-# configure make with vcpkg toolchain
-cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON
-make install
-```
-
-The shared library (`stryke.so`) with the binding will be store in `python/stryke` folder.
-
-### Install Binding
-
-```bash
-# from python folder
-python3 setup.py install
-```
-
-### Run Python Tests
-
-```bash
-python3 -m pytest tests/python
-```

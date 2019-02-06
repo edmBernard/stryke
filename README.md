@@ -46,12 +46,13 @@ We add Two custom type for date that can be initialized by double/long instead o
 
 * It seem that orc was not able to store timestamps with -1 second "1969-12-31 23:59:59.001" will be saved as "1970-01-01 00:00:00.001"
 
+
 ## Examples
 
 ### Simple writer
 
 ```cpp
-OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", 100000);
+OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", WriterOptions());
 writer.write(std::string("2018-12-10"), 42);
 ```
 
@@ -67,7 +68,7 @@ resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#
 **Note**: The first Type must be a date. Currently, we only support `DateNumber` and `TimestampNumber`.
 
 ```cpp
-OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", 100000, 10);
+OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", WriterOptions());
 for (int i = 0; i < 100; ++i) {
     writer.write(17875 + i/2., 42 + i);
 }
@@ -110,7 +111,7 @@ data
 
 Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate for `OrcWriterThread`.
 ```cpp
-    OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", 1000000, 10);
+    OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", WriterOptions());
     for (int i = 0; i < 100; ++i) {
         writer.write(17875 + i/2., 42 + i);
     }
@@ -118,7 +119,8 @@ Orc write in file by Batch. To avoid the writing time during a batch to periodic
 
 **Note**: The multi thread functionnality is performed by a simple FIFO with a provider and a consumer. I the provider is too fast the queue can be full and generate a core dump.
 
-## Examples and Tests compilation
+
+## Compilation, Tests and Documentations
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
@@ -131,7 +133,7 @@ Stryke depend on:
 ./vcpkg install catch2 orc pybind11 zstd
 ```
 
-### Compile
+### Compile Example, Test and/or Python binding
 
 There is 3 options :
 * BUILD_PYTHON_BINDING (default: OFF)
