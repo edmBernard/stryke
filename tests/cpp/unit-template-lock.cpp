@@ -36,6 +36,30 @@ TEST_CASE("OrcWriterImpl Lock File", "[Simple]") {
     }
     REQUIRE_FALSE(fs::exists(filename + ".lock"));
   }
+  SECTION("With lock file") {
+    fs::path folder("data");
+    {
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, folder, filename, options);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i, (i%2==0));
+        REQUIRE(fs::exists(folder / (filename + ".lock")));
+      }
+    }
+    REQUIRE_FALSE(fs::exists(folder / (filename + ".lock")));
+    fs::remove_all(folder);
+  }
+  SECTION("With lock file") {
+    fs::path folder("data");
+    {
+      stryke::OrcWriterImpl<stryke::DateNumber, stryke::Boolean> writer({"date", "col1"}, (folder / filename).string(), options);
+      for (int i = 0; i < 10; ++i) {
+        writer.write(i, (i%2==0));
+        REQUIRE(fs::exists(folder / (filename + ".lock")));
+      }
+    }
+    REQUIRE_FALSE(fs::exists(folder / (filename + ".lock")));
+    fs::remove_all(folder);
+  }
 
   fs::remove(filename);
 

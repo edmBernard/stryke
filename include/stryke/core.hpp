@@ -469,7 +469,7 @@ public:
     addToFile();
     this->writer->close();
     if (this->writeroptions.create_lock_file) {
-      std::filesystem::remove(this->filename + ".lock");
+      std::filesystem::remove(this->root_folder / (this->filename + ".lock"));
     }
   }
 
