@@ -19,7 +19,13 @@ void test_write_folder(std::string folder, std::string filename) {
     REQUIRE(tmp_b.nbr_columns == 3);
     REQUIRE(tmp_b.nbr_rows == 1);
     fs::remove(fs::path(folder) / filename);
+    fs::path tmp = fs::path(folder) / filename;
+    while (!tmp.empty()) {
+      fs::remove(tmp);
+      tmp = tmp.parent_path();
+    }
 }
+
 
 TEST_CASE("OrcWriterImpl folder", "[Simple]") {
 
@@ -27,17 +33,17 @@ TEST_CASE("OrcWriterImpl folder", "[Simple]") {
       test_write_folder("",  "test.orc");
     }
     SECTION("1 level folder string") {
-      test_write_folder("data",  "test.orc");
+      test_write_folder("data_test_folder",  "test.orc");
     }
     SECTION("2 level folder string") {
-      test_write_folder("data/subdata", "test.orc");
+      test_write_folder("data_test_folder/subdata_test_folder", "test.orc");
     }
 
     SECTION("1 level folder in filename string") {
-      test_write_folder("",  "data/test.orc");
+      test_write_folder("",  "data_test_folder/test.orc");
     }
     SECTION("2 level folder in filename string") {
-      test_write_folder("",  "data/subdata/test.orc");
+      test_write_folder("",  "data_test_folder/subdata_test_folder/test.orc");
     }
 
 }

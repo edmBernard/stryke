@@ -53,44 +53,46 @@ TEST_CASE("OrcWriterDispatch<TimestampNumber, ...> Split", "[Multifile]") {
     fs::remove_all(root_folder);
   }
 
-  // SECTION("Split by number of batch") {
-  //   uint64_t nbr_rows = 10000;
+  SECTION("Split by number of batch") {
+    uint64_t nbr_rows = 10000;
 
-  //   std::string root_folder = "data_test";
-  //   SECTION("0 split") {
-  //     {
-  //       stryke::OrcWriterDispatch<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
-  //       for (uint64_t i = 0; i < nbr_rows; ++i) {
-  //         writer.write(1544400000 + 86400 * i / (nbr_rows), i);
-  //       }
-  //     }
+    std::string root_folder = "data_test";
+    SECTION("0 split") {
+      {
+        stryke::OrcWriterDispatch<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+        for (uint64_t i = 0; i < nbr_rows; ++i) {
+          writer.write(1544400000 + 86400 * i / (nbr_rows), i);
+        }
+      }
 
-  //     stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
-  //     REQUIRE(tmp_b.nbr_columns == 3);
-  //     REQUIRE(tmp_b.nbr_rows == nbr_rows);
-  //   }
-  //   SECTION("1 split") {
-  //     stryke::BasicStats tmp_b;
-  //     {
-  //       options.set_batch_max(5);
-  //       stryke::OrcWriterDispatch<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
-  //       for (uint64_t i = 0; i < nbr_rows; ++i) {
-  //         writer.write(1544400000 + 86400 * i / (nbr_rows), i);
-  //       }
+      stryke::BasicStats tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
+      REQUIRE(tmp_b.nbr_columns == 3);
+      REQUIRE(tmp_b.nbr_rows == nbr_rows);
+    }
 
-  //     }
+    // Note: on dispatch Writer split by number of batch was not implemented yet.
+    // SECTION("1 split") {
+    //   stryke::BasicStats tmp_b;
+    //   {
+    //     options.set_batch_max(5);
+    //     stryke::OrcWriterDispatch<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test_", options);
+    //     for (uint64_t i = 0; i < nbr_rows; ++i) {
+    //       writer.write(1544400000 + 86400 * i / (nbr_rows), i);
+    //     }
 
-  //     tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
-  //     REQUIRE(tmp_b.nbr_columns == 3);
-  //     REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
+    //   }
 
-  //     tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
-  //     REQUIRE(tmp_b.nbr_columns == 3);
-  //     REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
-  //   }
+    //   tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-0.orc");
+    //   REQUIRE(tmp_b.nbr_columns == 3);
+    //   REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
 
-  //   fs::remove_all(root_folder);
-  // }
+    //   tmp_b = stryke::get_basic_stats(root_folder + "/year=2018/month=12/day=10/" + "test_2018-12-10-1.orc");
+    //   REQUIRE(tmp_b.nbr_columns == 3);
+    //   REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
+    // }
+
+    fs::remove_all(root_folder);
+  }
 
   SECTION("Split by force") {
     uint64_t nbr_rows = 10000;

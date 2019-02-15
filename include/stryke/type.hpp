@@ -252,6 +252,9 @@ public:
   typedef TimestampNumber type;
 };
 
+template <typename...>
+struct FolderEncode {};
+
 } // namespace stryke
 
 #endif // !STRYKE_TYPE_HPP_
