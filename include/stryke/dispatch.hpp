@@ -76,45 +76,19 @@ inline std::array<std::string, 3> tp2ymd(std::chrono::time_point<std::chrono::sy
 
 template <typename T>
 bool addFolder(T value, std::string column_name, fs::path &folder) {
-  std::ostringstream oss;
-  oss << column_name << "=" << value.data;
-  folder /= oss.str();
+  if constexpr (T::is_date) {
+    auto ymd = tp2ymd(get_time(value));
+    folder /= "year=" + std::get<0>(ymd);
+    folder /= "month=" + std::get<1>(ymd);
+    folder /= "day=" + std::get<2>(ymd);
+  } else {
+    std::ostringstream oss;
+    oss << column_name << "=" << value.data;
+    folder /= oss.str();
+  }
   return true;
 };
 
-// I don't found a better way to do this multispecialisation without breaking readability
-template <>
-inline bool addFolder(Date value, std::string column_name, fs::path &folder) {
-    auto ymd = tp2ymd(get_time(value));
-    folder /= "year=" + std::get<0>(ymd);
-    folder /= "month=" + std::get<1>(ymd);
-    folder /= "day=" + std::get<2>(ymd);
-    return true;
-};
-template <>
-inline bool addFolder(DateNumber value, std::string column_name, fs::path &folder) {
-    auto ymd = tp2ymd(get_time(value));
-    folder /= "year=" + std::get<0>(ymd);
-    folder /= "month=" + std::get<1>(ymd);
-    folder /= "day=" + std::get<2>(ymd);
-    return true;
-};
-template <>
-inline bool addFolder(Timestamp value, std::string column_name, fs::path &folder) {
-    auto ymd = tp2ymd(get_time(value));
-    folder /= "year=" + std::get<0>(ymd);
-    folder /= "month=" + std::get<1>(ymd);
-    folder /= "day=" + std::get<2>(ymd);
-    return true;
-};
-template <>
-inline bool addFolder(TimestampNumber value, std::string column_name, fs::path &folder) {
-    auto ymd = tp2ymd(get_time(value));
-    folder /= "year=" + std::get<0>(ymd);
-    folder /= "month=" + std::get<1>(ymd);
-    folder /= "day=" + std::get<2>(ymd);
-    return true;
-};
 
 template <typename... Types, std::size_t... Indices>
 auto createFolderImpl(std::index_sequence<Indices...>, std::tuple<Types...> const &data, std::array<std::string, sizeof...(Types)> column_names, fs::path &folder) -> std::vector<bool> {
@@ -128,37 +102,17 @@ auto createFolder(std::tuple<Types...> const &data, std::array<std::string, size
 
 template <typename T>
 bool addFileSuffix(T value, std::string &suffix) {
-  std::ostringstream oss;
-  oss << "-" << value.data;
-  suffix += oss.str();
+  if constexpr (T::is_date) {
+    auto ymd = tp2ymd(get_time(value));
+    suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
+  } else {
+    std::ostringstream oss;
+    oss << "-" << value.data;
+    suffix += oss.str();
+  }
   return true;
 }
 
-// I don't found a better way to do this multispecialisation without breaking readability
-template <>
-inline bool addFileSuffix(Date value, std::string &suffix) {
-  auto ymd = tp2ymd(get_time(value));
-  suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
-  return true;
-}
-template <>
-inline bool addFileSuffix(DateNumber value, std::string &suffix) {
-  auto ymd = tp2ymd(get_time(value));
-  suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
-  return true;
-}
-template <>
-inline bool addFileSuffix(Timestamp value, std::string &suffix) {
-  auto ymd = tp2ymd(get_time(value));
-  suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
-  return true;
-}
-template <>
-inline bool addFileSuffix(TimestampNumber value, std::string &suffix) {
-  auto ymd = tp2ymd(get_time(value));
-  suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
-  return true;
-}
 
 template <typename... Types, std::size_t... Indices>
 auto createFileSuffixImpl(std::index_sequence<Indices...>, std::tuple<Types...> const &data, std::string &suffix) -> std::vector<bool> {
@@ -252,15 +206,6 @@ protected:
   fs::path root_folder;
   std::string file_prefix;
 };
-
-
-// template <typename... Types>
-// class OrcWriterDispatch<Types...> : public OrcWriterDispatch<FolderEncode<>, Types...> {
-// public:
-//   OrcWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-//       : OrcWriterDispatch<FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
-//   }
-// };
 
 } // namespace stryke
 
