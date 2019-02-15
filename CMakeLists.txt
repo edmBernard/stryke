@@ -62,6 +62,7 @@ set(examples
   csv_writer
   csv_multifile
   dispatch
+  dispatch_folder
   merge_file
   multifile
   performance

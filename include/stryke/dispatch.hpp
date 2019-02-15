@@ -99,4 +99,4 @@ private:
 
 } // namespace stryke
 
-#endif // !STRYKE_MULTIFILE_HPP_
+#endif // !STRYKE_DISPATCH_HPP_
