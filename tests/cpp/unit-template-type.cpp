@@ -51,7 +51,7 @@ void test_type_cast_with_string(std::string input) {
   REQUIRE(input == std::string(b));
 }
 
-TEST_CASE("OrcWriterImpl Types implicit cast", "[Simple]") {
+TEST_CASE("Types implicit cast", "[Simple]") {
 
   SECTION("Test Int") {
     test_type_cast<int, stryke::Int>(12345);

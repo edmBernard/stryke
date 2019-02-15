@@ -35,6 +35,7 @@
 
 namespace stryke {
 
+namespace fs = std::filesystem;
 // ==============================================================
 // Type Implementation
 // ==============================================================
@@ -438,24 +439,30 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 template <typename... Types>
 class OrcWriterImpl {
 public:
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
-      : writeroptions(options), column_names(column_names), filename(filename) {
-
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
+      : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
     this->fileType = orc::createStructType();
     auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);
 
     this->orc_writeroptions.setStripeSize(writeroptions.stripeSize);
-
-    this->outStream = orc::writeLocalFile(this->filename);
+    fs::path folder_path = (this->root_folder / this->filename).parent_path();
+    if (!folder_path.empty()) {
+      fs::create_directories(folder_path);
+    }
+    this->outStream = orc::writeLocalFile(this->root_folder / this->filename);
     this->writer = orc::createWriter(*this->fileType, outStream.get(), this->orc_writeroptions);
     this->rowBatch = this->writer->createRowBatch(this->writeroptions.batchSize);
 
     this->string_buffer = std::make_unique<orc::DataBuffer<char>>(*orc::getDefaultPool(), 4 * 1024 * 1024); // Create buffer for string data. One buffer store all string data
 
     if (this->writeroptions.create_lock_file) {
-      std::ofstream outfile(this->filename + ".lock");
+      std::ofstream outfile(this->root_folder / (this->filename + ".lock"));
       outfile.close();
     }
+  }
+
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
+      : OrcWriterImpl(column_names, "", filename, options) {
   }
 
   ~OrcWriterImpl() {
@@ -494,6 +501,7 @@ public:
   }
 
 private:
+
   std::unique_ptr<orc::Type> fileType;
 
   WriterOptions writeroptions;
@@ -509,6 +517,7 @@ private:
   std::unique_ptr<orc::DataBuffer<char>> string_buffer;
   uint64_t string_buffer_offset = 0;
 
+  fs::path root_folder;
   std::string filename;
 
   uint64_t numValues = 0; // num of lines read in a batch
