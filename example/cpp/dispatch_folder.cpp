@@ -12,14 +12,14 @@
 
 #include "stryke/type.hpp"
 #include "stryke/options.hpp"
-#include "stryke/dispatch_folder.hpp"
+#include "stryke/dispatch.hpp"
 
 
 using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterDispatchFolder<FolderEncode<Int>, DateNumber, Int, Int> writer({"direction", "date", "value", "direction"}, "data", "date_", WriterOptions());
+  OrcWriterDispatch<FolderEncode<Int>, DateNumber, Int, Int> writer({"direction", "date", "value", "direction"}, "data", "date_", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(i%2, 17875 + i/100000., i, i%2);
@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
       }
   }
 
-  OrcWriterDispatchFolder<FolderEncode<>, DateNumber, Int, Int, Int> writer2({"date", "direction", "value", "direction"}, "data2", "date_", WriterOptions());
+  OrcWriterDispatch<FolderEncode<>, DateNumber, Int, Int, Int> writer2({"date", "direction", "value", "direction"}, "data2", "date_", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer2.write(17875 + i/100000., i%2, i, i%2);
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]) {
       }
   }
 
-  OrcWriterDispatchFolder<DateNumber, Int, Int, Int> writer3({"date", "direction", "value", "direction"}, "data3", "date_", WriterOptions());
+  OrcWriterDispatch<DateNumber, Int, Int, Int> writer3({"date", "direction", "value", "direction"}, "data3", "date_", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer3.write(17875 + i/100000., i%2, i, i%2);
