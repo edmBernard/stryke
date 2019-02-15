@@ -19,21 +19,30 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterDispatchFolder<FolderEncode<Int>, DateNumber, Int> writer({"direction", "date", "value"}, "data", "date_", WriterOptions());
+  OrcWriterDispatchFolder<FolderEncode<Int>, DateNumber, Int, Int> writer({"direction", "date", "value", "direction"}, "data", "date_", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
-      writer.write(i%2, 17875 + i/100000., i);
+      writer.write(i%2, 17875 + i/100000., i, i%2);
       if (i == 10) {
         writer.close();
       }
   }
 
-  OrcWriterDispatchFolder<FolderEncode<>, DateNumber, Int, Int> writer2({"direction", "date", "value"}, "data2", "date_", WriterOptions());
+  OrcWriterDispatchFolder<FolderEncode<>, DateNumber, Int, Int, Int> writer2({"date", "direction", "value", "direction"}, "data2", "date_", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
-      writer2.write(17875 + i/100000., i%2, i);
+      writer2.write(17875 + i/100000., i%2, i, i%2);
       if (i == 10) {
         writer2.close();
+      }
+  }
+
+  OrcWriterDispatchFolder<DateNumber, Int, Int, Int> writer3({"date", "direction", "value", "direction"}, "data3", "date_", WriterOptions());
+  for (int i = 0; i < 20; ++i) {
+      std::cout << "42 + i :" << i << std::endl;
+      writer3.write(17875 + i/100000., i%2, i, i%2);
+      if (i == 10) {
+        writer3.close();
       }
   }
 

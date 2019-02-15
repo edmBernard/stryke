@@ -23,8 +23,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -50,7 +50,25 @@ auto createFolder(std::tuple<Types...> const &data, std::array<std::string, size
   return createFolderImpl(std::index_sequence_for<Types...>(), data, column_names, folder);
 }
 
+template <typename T>
+bool addFileSuffix(T value, std::string &suffix) {
+  std::ostringstream oss;
+  oss << "-" << value.data;
+  suffix += oss.str();
+  return true;
 }
+
+template <typename... Types, std::size_t... Indices>
+auto createFileSuffixImpl(std::index_sequence<Indices...>, std::tuple<Types...> const &data, std::string &suffix) -> std::vector<bool> {
+  return {addFileSuffix(std::get<Indices>(data), suffix)...};
+}
+
+template <typename... Types>
+auto createFileSuffix(std::tuple<Types...> const &data, std::string &suffix) {
+  return createFileSuffixImpl(std::index_sequence_for<Types...>(), data, suffix);
+}
+
+} // namespace utils
 
 namespace fs = std::filesystem;
 
@@ -86,7 +104,7 @@ public:
     this->counts.clear();
   }
 
-private:
+protected:
   std::string get_writer(std::tuple<TypesFolder...> datafolder, T date) {
     // Process Date
     auto tp = utils::get_time(date);
@@ -97,14 +115,14 @@ private:
     sprintf(month_buffer, "%.02d", unsigned(ymd.month()));
     auto y = int(ymd.year());
 
-    // for (int i = 0; i < this->column_names_folder.size(); ++i) {
-    //   std::cout << "this->column_names_folder[i] : " << this->column_names_folder[i] << std::endl;
-    // }
-    // Get prefix_with_date
-    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
-
+    // Create folder with column data
     fs::path datafolder_path;
     utils::createFolder(datafolder, this->column_names_folder, datafolder_path);
+
+    // Get prefix_with_date
+    std::string datafolder_filesuffix;
+    utils::createFileSuffix(datafolder, datafolder_filesuffix);
+    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer) + datafolder_filesuffix;
 
     // Get folder with date
     fs::path file_folder = this->root_folder / ("year=" + std::to_string(y)) / ("month=" + std::string(month_buffer)) / ("day=" + std::string(day_buffer)) / datafolder_path;
@@ -135,8 +153,23 @@ private:
   std::string file_prefix;
 };
 
+
 template <typename T, typename... Types>
-class OrcWriterDispatchFolder<T, Types...> : OrcWriterDispatchFolder<FolderEncode<>, T, Types...> {};
+class OrcWriterDispatchFolder<T, Types...> : public OrcWriterDispatchFolder<FolderEncode<>, T, Types...> {
+public:
+  OrcWriterDispatchFolder(std::array<std::string, 1 + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : OrcWriterDispatchFolder<FolderEncode<>, T, Types...>(column_names, root_folder, file_prefix, options) {
+  }
+
+  void write(T date, Types... dataT) {
+    this->write_tuple(std::make_tuple(date, dataT...));
+  }
+
+  void write_tuple(std::tuple<T, Types...> dataT) {
+    std::string writers_path = this->get_writer(std::tuple<>(), std::get<0>(dataT));
+    this->writers[writers_path]->write_tuple(dataT);
+  }
+};
 
 } // namespace stryke
 
