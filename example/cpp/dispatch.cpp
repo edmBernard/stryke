@@ -18,10 +18,10 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterDispatch<DateNumber, Int> writer({"date", "value"}, "data", "date_", WriterOptions());
+  OrcWriterDispatch<FolderEncode<DateNumber>, DateNumber, Int> writer({"date", "date", "value"}, "data", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
-      writer.write(17875 + i/100000., i);
+      writer.write(17875 + i/100000., 17875 + i/100000., i);
       if (i == 10) {
         writer.close();
       }

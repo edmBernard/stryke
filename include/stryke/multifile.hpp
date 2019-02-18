@@ -31,10 +31,10 @@ namespace fs = std::filesystem;
 
 namespace utils {
 template <typename T>
-std::chrono::time_point<std::chrono::system_clock> get_time(const T &date);
+std::chrono::time_point<std::chrono::system_clock> get_time_v1(const T &date);
 
 template <>
-inline std::chrono::time_point<std::chrono::system_clock> get_time<Date>(const Date &date) {
+inline std::chrono::time_point<std::chrono::system_clock> get_time_v1<Date>(const Date &date) {
   std::istringstream inputStream{date.data};
   date::sys_seconds tp;
   inputStream >> date::parse("%F", tp);
@@ -42,13 +42,13 @@ inline std::chrono::time_point<std::chrono::system_clock> get_time<Date>(const D
 }
 
 template <>
-inline std::chrono::time_point<std::chrono::system_clock> get_time<DateNumber>(const DateNumber &date) {
+inline std::chrono::time_point<std::chrono::system_clock> get_time_v1<DateNumber>(const DateNumber &date) {
   std::chrono::time_point<std::chrono::system_clock> p1;
   return p1 + std::chrono::seconds(date.data * (60 * 60 * 24));
 }
 
 template <>
-inline std::chrono::time_point<std::chrono::system_clock> get_time<Timestamp>(const Timestamp &date) {
+inline std::chrono::time_point<std::chrono::system_clock> get_time_v1<Timestamp>(const Timestamp &date) {
   std::istringstream inputStream{date.data};
   date::sys_seconds tp;
   inputStream >> date::parse("%F %T", tp);
@@ -56,7 +56,7 @@ inline std::chrono::time_point<std::chrono::system_clock> get_time<Timestamp>(co
 }
 
 template <>
-inline std::chrono::time_point<std::chrono::system_clock> get_time<TimestampNumber>(const TimestampNumber &date) {
+inline std::chrono::time_point<std::chrono::system_clock> get_time_v1<TimestampNumber>(const TimestampNumber &date) {
   std::chrono::time_point<std::chrono::system_clock> p1;
   return p1 + std::chrono::seconds(long(date.data));
 }
@@ -92,7 +92,7 @@ public:
 
 private:
   bool get_name(T &date) {
-    auto tp = utils::get_time(date);
+    auto tp = utils::get_time_v1(date);
     auto ymd = date::year_month_day(date::floor<date::days>(tp)); // calendar date
 
     char month_buffer[12]; // for padding
