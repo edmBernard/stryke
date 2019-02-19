@@ -10,8 +10,8 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_DATE_HPP_
-#define STRYKE_DATE_HPP_
+#ifndef STRYKE_SEQUENTIAL_HPP_
+#define STRYKE_SEQUENTIAL_HPP_
 
 #include "date/date.h"
 #include "stryke/core.hpp"
@@ -81,4 +81,4 @@ private:
 
 } // namespace stryke
 
-#endif // !STRYKE_DATE_HPP_
+#endif // !STRYKE_SEQUENTIAL_HPP_

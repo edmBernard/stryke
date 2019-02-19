@@ -70,6 +70,7 @@ set(examples
   reader_basic_type
   reader_rainbow
   sequential
+  sequential_date
   thread
   writer_rainbow
 )
