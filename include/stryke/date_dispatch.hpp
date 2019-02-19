@@ -47,11 +47,9 @@ class OrcWriterDate<T, FolderEncode<TypesFolder...>, Types...> {
 public:
   OrcWriterDate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
-    std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(Types) + 1);
+    std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(Types));
-    for (auto i : this->column_names_full) {
-      std::cout << "i : " << i << std::endl;
-    }
+
     this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
   }
 
