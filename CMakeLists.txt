@@ -69,6 +69,7 @@ set(examples
   performance
   reader_basic_type
   reader_rainbow
+  sequential
   thread
   writer_rainbow
 )
