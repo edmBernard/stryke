@@ -31,22 +31,22 @@
 namespace stryke {
 
 template <typename T, typename... Types>
-class OrcWriterDate : public OrcWriterDate<T, FolderEncode<>, Types...> {
+class OrcWriterDispatchDate : public OrcWriterDispatchDate<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterDate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-      : OrcWriterDate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  OrcWriterDispatchDate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : OrcWriterDispatchDate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
 
 // I don't find a better way. I was not able to implement it with heritage from OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
 template <typename T, typename... TypesFolder, typename... Types>
-class OrcWriterDate<T, FolderEncode<TypesFolder...>, Types...> {
+class OrcWriterDispatchDate<T, FolderEncode<TypesFolder...>, Types...> {
 
   std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>> writer;
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;
 
 public:
-  OrcWriterDate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  OrcWriterDispatchDate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(Types));
