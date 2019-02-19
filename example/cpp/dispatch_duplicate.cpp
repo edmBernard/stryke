@@ -12,14 +12,14 @@
 
 #include "stryke/type.hpp"
 #include "stryke/options.hpp"
-#include "stryke/dispatch_date.hpp"
+#include "stryke/variation/dispatch_duplicate.hpp"
 
 
 using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterDispatchDate<DateNumber, FolderEncode<Int>, Int, Int> writer({"date", "direction", "value", "direction"}, "data", "date", WriterOptions());
+  OrcWriterDispatchDuplicate<DateNumber, FolderEncode<Int>, Int, Int> writer({"date", "direction", "value", "direction"}, "data", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(17875 + i/100000., i%2, i, i%2);
@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
         writer.close();
       }
   }
-  OrcWriterDispatchDate<DateNumber, FolderEncode<>, Int, Int> writer2({"date", "value", "direction"}, "data2", "date", WriterOptions());
+  OrcWriterDispatchDuplicate<DateNumber, FolderEncode<>, Int, Int> writer2({"date", "value", "direction"}, "data2", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer2.write(17875 + i/100000., i, i%2);
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[]) {
         writer2.close();
       }
   }
-  OrcWriterDispatchDate<DateNumber, Int, Int> writer3({"date", "value", "direction"}, "data3", "date", WriterOptions());
+  OrcWriterDispatchDuplicate<DateNumber, Int, Int> writer3({"date", "value", "direction"}, "data3", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer3.write(17875 + i/100000., i, i%2);

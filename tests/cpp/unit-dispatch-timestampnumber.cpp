@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "stryke/dispatch_date.hpp"
+#include "stryke/variation/dispatch_duplicate.hpp"
 #include "utils_for_test.hpp"
 #include "stryke/core.hpp"
 #include "stryke/options.hpp"
@@ -8,7 +8,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
+TEST_CASE("OrcWriterDispatchDuplicate<TimestampNumber, ...> Split", "[Multifile]") {
 
   stryke::WriterOptions options;
   options.set_batch_size(1000);
@@ -21,7 +21,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
     std::string root_folder = "data_test";
     SECTION("0 split") {
       {
-        stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+        stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(1544400000 + 86400 * i / (nbr_rows), i);
         }
@@ -34,7 +34,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
     SECTION("1 split") {
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+        stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(1544400000 + 86400 * i / (nbr_rows / 2.), i);
         }
@@ -59,7 +59,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
     std::string root_folder = "data_test";
     SECTION("0 split") {
       {
-        stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+        stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(1544400000 + 86400 * i / (nbr_rows), i);
         }
@@ -75,7 +75,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
     //   stryke::BasicStats tmp_b;
     //   {
     //     options.set_batch_max(5);
-    //     stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+    //     stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
     //     for (uint64_t i = 0; i < nbr_rows; ++i) {
     //       writer.write(1544400000 + 86400 * i / (nbr_rows), i);
     //     }
@@ -103,7 +103,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
       uint64_t check_point = 10;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+        stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(1544400000 + 86400 * i / (nbr_rows), i);
           if (i == check_point - 1) {
@@ -125,7 +125,7 @@ TEST_CASE("OrcWriterDispatchDate<TimestampNumber, ...> Split", "[Multifile]") {
       uint64_t check_point2 = 100;
       stryke::BasicStats tmp_b;
       {
-        stryke::OrcWriterDispatchDate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
+        stryke::OrcWriterDispatchDuplicate<stryke::TimestampNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
         for (uint64_t i = 0; i < nbr_rows; ++i) {
           writer.write(1544400000 + 86400 * i / (nbr_rows), i);
 

@@ -62,7 +62,7 @@ set(examples
   csv_writer
   csv_multifile
   dispatch
-  dispatch_date
+  dispatch_duplicate
   dispatch_folder
   merge_file
   multifile
@@ -70,7 +70,7 @@ set(examples
   reader_basic_type
   reader_rainbow
   sequential
-  sequential_date
+  sequential_duplicate
   thread
   writer_rainbow
 )
