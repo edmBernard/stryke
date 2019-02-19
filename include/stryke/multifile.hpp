@@ -73,7 +73,7 @@ private:
 
     auto y = int(ymd.year());
 
-    std::string prefix_with_date = this->file_prefix + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
+    std::string prefix_with_date = this->file_prefix + "-" + std::to_string(y) + "-" + std::string(month_buffer) + "-" + std::string(day_buffer);
 
     // Create new filename if date change or if nbr_batch_max is reached
     if (!this->writers || this->current_prefix_with_date != prefix_with_date || (this->writeroptions.nbr_batch_max > 0 && this->current_counts >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
