@@ -485,6 +485,7 @@ public:
 
     this->data.push_back(dataT);
     ++this->numValues;
+    ++this->total_line;
   }
 
   void addToFile() {
@@ -498,6 +499,10 @@ public:
     this->data.clear();
     this->numValues = 0;
     this->string_buffer_offset = 0;
+  }
+
+  uint64_t const &get_count() const {
+    return this->total_line;
   }
 
 private:
@@ -520,7 +525,8 @@ private:
   fs::path root_folder;
   std::string filename;
 
-  uint64_t numValues = 0; // num of lines read in a batch
+  uint64_t numValues = 0; // num of lines in batch writer
+  uint64_t total_line = 0; // num of lines in batch writer + number of line already write in file
 };
 
 } // namespace stryke
