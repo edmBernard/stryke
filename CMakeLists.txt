@@ -109,6 +109,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-lock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-folder-creation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder-encoding.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-split.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-closing.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-multifile-datenumber.cpp

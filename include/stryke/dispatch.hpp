@@ -181,8 +181,11 @@ protected:
     // Get folder with date
     fs::path file_folder = this->root_folder / datafolder_path;
 
-    if (this->writers.count(prefix_with_date) == 0) {
-      this->counts[prefix_with_date] = -1;
+    if (this->writers.count(prefix_with_date) == 0 || (this->writeroptions.nbr_batch_max > 0 && this->writers[prefix_with_date]->get_count() >= this->writeroptions.batchSize * this->writeroptions.nbr_batch_max)) {
+
+      if (this->writers.count(prefix_with_date) == 0) {
+        this->counts[prefix_with_date] = -1;
+      }
 
       fs::path filename;
       do {
