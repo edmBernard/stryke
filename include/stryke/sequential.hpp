@@ -30,6 +30,25 @@
 
 namespace stryke {
 
+namespace utils {
+
+template <typename T>
+bool compare(T value1, T value2) {
+  return value1 == value2;
+}
+
+template <>
+bool compare(TimestampNumber value1, TimestampNumber value2) {
+  return long(value1/86400) == long(value2/86400);
+}
+
+template <>
+bool compare(Double value1, Double value2) {
+  return long(value1) == long(value2);
+}
+
+} // namespace utils
+
 template <typename T, typename... Types>
 class OrcWriterSequential : public OrcWriterSequential<T, FolderEncode<>, Types...> {
 public:
@@ -63,7 +82,7 @@ public:
 
 private:
   void get_writer(T data) {
-    if (data != this->current_data || !this->writer) {
+    if (!utils::compare(data, this->current_data) || !this->writer) {
       this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>>(this->column_names_full, this->root_folder, this->file_prefix, this->writeroptions);
       this->current_data = data;
     }
@@ -76,7 +95,6 @@ private:
   std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>> writer;
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names_full;
   T current_data;
-
 };
 
 } // namespace stryke

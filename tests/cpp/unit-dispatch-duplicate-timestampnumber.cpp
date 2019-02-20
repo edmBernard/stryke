@@ -8,7 +8,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterDispatchDuplicate<TimestampNumber, ...> Split", "[Multifile]") {
+TEST_CASE("OrcWriterDispatchDuplicate<TimestampNumber, ...> Split", "[Dispatch][Duplicate]") {
 
   stryke::WriterOptions options;
   options.set_batch_size(1000);

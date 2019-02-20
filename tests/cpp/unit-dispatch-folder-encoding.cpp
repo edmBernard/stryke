@@ -8,7 +8,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterDispatch Data in folder name", "[Multifile]") {
+TEST_CASE("OrcWriterDispatch Data in folder name", "[Dispatch]") {
 
   stryke::WriterOptions options;
   std::string root_folder = "data_test";

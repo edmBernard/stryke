@@ -27,7 +27,7 @@ void test_write_folder(std::string folder, std::string filename) {
 }
 
 
-TEST_CASE("OrcWriterImpl folder", "[Simple]") {
+TEST_CASE("OrcWriterImpl folder", "[Core]") {
 
     SECTION("Empty folder string") {
       test_write_folder("",  "test.orc");

@@ -107,11 +107,12 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-type.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-batch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-lock.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-impl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-folder-creation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder-encoding.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-closing.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-multifile-datenumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-multifile-timestampnumber.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-timestampnumber.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread.cpp
   )
 

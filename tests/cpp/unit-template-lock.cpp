@@ -6,7 +6,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterImpl Lock File", "[Simple]") {
+TEST_CASE("OrcWriterImpl Lock File", "[Core]") {
 
   std::string filename = "test.orc";
   stryke::WriterOptions options;
