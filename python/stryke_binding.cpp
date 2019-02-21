@@ -1,9 +1,12 @@
 
 #include "stryke/core.hpp"
-#include "stryke/multifile.hpp"
+#include "stryke/dispatch.hpp"
+#include "stryke/sequential.hpp"
 #include "stryke/options.hpp"
 #include "stryke/reader.hpp"
 #include "stryke/thread.hpp"
+#include "stryke/miscellaneous/dispatch_duplicate.hpp"
+#include "stryke/miscellaneous/sequential_duplicate.hpp"
 #include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -239,40 +242,75 @@ void declare_writer_impl(py::module &m, const std::string &typestr) {
       .def("write", (void (Class::*)(T...)) & Class::write);
 }
 
-template <typename... T>
-void declare_writer_multifile(py::module &m, const std::string &typestr) {
-  using Class = stryke::OrcWriterMulti<T...>;
+template <typename TypesFolder, typename... Types>
+void declare_writer_dispatch(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcWriterDispatch<TypesFolder, Types...>;
   std::string pyclass_name = std::string("Writer") + typestr;
 
   py::class_<Class>(m, pyclass_name.c_str())
-      .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-      .def("write", (void (Class::*)(T...)) & Class::write)
-      .def("close", (void (Class::*)(T...)) & Class::close);
+      .def(py::init<std::array<std::string, TypesFolder::size + sizeof...(Types)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(TypesFolder, Types...)) & Class::write)
+      .def("close", (void (Class::*)(TypesFolder, Types...)) & Class::close);
 }
 
-template <typename... T>
-void declare_writer_thread(py::module &m, const std::string &typestr) {
-  using Class = stryke::OrcWriterThread<stryke::OrcWriterMulti, T...>;
+template <typename S, typename TypesFolder, typename... Types>
+void declare_writer_sequential(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcWriterSequential<S, TypesFolder, Types...>;
   std::string pyclass_name = std::string("Writer") + typestr;
 
   py::class_<Class>(m, pyclass_name.c_str())
-      .def(py::init<std::array<std::string, sizeof...(T)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
-      .def("write", (void (Class::*)(T...)) & Class::write)
-      .def("close_async", (void (Class::*)(T...)) & Class::close_async)
-      .def("close_sync", (void (Class::*)(T...)) & Class::close_sync);
+      .def(py::init<std::array<std::string, 1 + TypesFolder::size + sizeof...(Types)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(S, TypesFolder, Types...)) & Class::write)
+      .def("close", (void (Class::*)(S, TypesFolder, Types...)) & Class::close);
+}
+
+template <typename S, typename TypesFolder, typename... Types>
+void declare_writer_dispatch_duplicate(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcWriterDispatchDuplicate<S, TypesFolder, Types...>;
+  std::string pyclass_name = std::string("Writer") + typestr;
+
+  py::class_<Class>(m, pyclass_name.c_str())
+      .def(py::init<std::array<std::string, 1 + TypesFolder::size + sizeof...(Types)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(S, TypesFolder, Types...)) & Class::write)
+      .def("close", (void (Class::*)(S, TypesFolder, Types...)) & Class::close);
+}
+
+template <typename S, typename TypesFolder, typename... Types>
+void declare_writer_sequential_duplicate(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcWriterSequentialDuplicate<S, TypesFolder, Types...>;
+  std::string pyclass_name = std::string("Writer") + typestr;
+
+  py::class_<Class>(m, pyclass_name.c_str())
+      .def(py::init<std::array<std::string, 1 + TypesFolder::size + sizeof...(Types)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(S, TypesFolder, Types...)) & Class::write)
+      .def("close", (void (Class::*)(S, TypesFolder, Types...)) & Class::close);
+}
+
+template <template <typename TypesFolder, typename... Types> typename Writer, typename S, typename TypesFolder, typename... Types>
+void declare_writer_thread(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcWriterThread<Writer, S, TypesFolder, Types...>;
+  std::string pyclass_name = std::string("Writer") + typestr;
+
+  py::class_<Class>(m, pyclass_name.c_str())
+      .def(py::init<std::array<std::string, 1 + TypesFolder::size + sizeof...(Types)>, std::string, std::string, const stryke::WriterOptions &>(), py::arg("column_names"), py::arg("root_folder"), py::arg("prefix"), py::arg("writer_options"))
+      .def("write", (void (Class::*)(S, TypesFolder, Types...)) & Class::write)
+      .def("close_async", (void (Class::*)(S, TypesFolder, Types...)) & Class::close_async)
+      .def("close_sync", (void (Class::*)(S, TypesFolder, Types...)) & Class::close_sync);
 }
 
 
 PYBIND11_MODULE(stryke, m) {
 
-  py::class_<stryke::WriterOptions>(m, "WriterOptions")
+  using namespace stryke; // for convenience
+
+  py::class_<WriterOptions>(m, "WriterOptions")
       .def(py::init<>())
-      .def("disable_lock_file", &stryke::WriterOptions::disable_lock_file, py::arg("disable_lock_file") = true)
-      .def("enable_suffix_timestamp", &stryke::WriterOptions::enable_suffix_timestamp, py::arg("enable_suffix_timestamp") = true)
-      .def("set_batch_size", &stryke::WriterOptions::set_batch_size)
-      .def("set_batch_max", &stryke::WriterOptions::set_batch_max)
-      .def("set_stripe_size", &stryke::WriterOptions::set_stripe_size)
-      .def("set_cron", &stryke::WriterOptions::set_cron);
+      .def("disable_lock_file", &WriterOptions::disable_lock_file, py::arg("disable_lock_file") = true)
+      .def("enable_suffix_timestamp", &WriterOptions::enable_suffix_timestamp, py::arg("enable_suffix_timestamp") = true)
+      .def("set_batch_size", &WriterOptions::set_batch_size)
+      .def("set_batch_max", &WriterOptions::set_batch_max)
+      .def("set_stripe_size", &WriterOptions::set_stripe_size)
+      .def("set_cron", &WriterOptions::set_cron);
 
   // ==============================================================
   // Binding for WriterTemplate
@@ -281,127 +319,42 @@ PYBIND11_MODULE(stryke, m) {
   auto m_simple = m.def_submodule("simple");
 
   // Basic type
-  declare_writer_impl<stryke::Long>(m_simple, "Long1");
-  declare_writer_impl<stryke::Double>(m_simple, "Double1");
-  declare_writer_impl<stryke::Boolean>(m_simple, "Boolean1");
-  declare_writer_impl<stryke::Date>(m_simple, "Date1");
-  declare_writer_impl<stryke::DateNumber>(m_simple, "DateN1");
-  declare_writer_impl<stryke::Timestamp>(m_simple, "Timestamp1");
-  declare_writer_impl<stryke::TimestampNumber>(m_simple, "TimestampN1");
+  declare_writer_impl<Long>(m_simple, "Long1");
+  declare_writer_impl<Double>(m_simple, "Double1");
+  declare_writer_impl<Boolean>(m_simple, "Boolean1");
+  declare_writer_impl<Date>(m_simple, "Date1");
+  declare_writer_impl<DateNumber>(m_simple, "DateN1");
+  declare_writer_impl<Timestamp>(m_simple, "Timestamp1");
+  declare_writer_impl<TimestampNumber>(m_simple, "TimestampN1");
+
   // Reader
-  m_simple.def("readerLong1", &stryke::orcReader<stryke::Long>, "Reader for single column Long");
-  m_simple.def("readerDouble1", &stryke::orcReader<stryke::Double>, "Reader for single column Double");
-  m_simple.def("readerBoolean1", &stryke::orcReader<stryke::Boolean>, "Reader for single column Boolean");
-  m_simple.def("readerDate1", &stryke::orcReader<stryke::Date>, "Reader for single column Date");
-  m_simple.def("readerDateN1", &stryke::orcReader<stryke::DateNumber>, "Reader for single column DateN");
-  m_simple.def("readerTimestamp1", &stryke::orcReader<stryke::Timestamp>, "Reader for single column Timestamp");
-  m_simple.def("readerTimestampN1", &stryke::orcReader<stryke::TimestampNumber>, "Reader for single column TimestampN");
-
-  // 1D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long>(m_simple, "TimestampPoint1l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long>(m_simple, "TimestampNPoint1l");
-  declare_writer_impl<stryke::Date, stryke::Long>(m_simple, "DatePoint1l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long>(m_simple, "DateNPoint1l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double>(m_simple, "TimestampPoint1d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double>(m_simple, "TimestampNPoint1d");
-  declare_writer_impl<stryke::Date, stryke::Double>(m_simple, "DatePoint1d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double>(m_simple, "DateNPoint1d");
-
-  // 2D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long>(m_simple, "TimestampPoint2l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_simple, "TimestampNPoint2l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long>(m_simple, "DatePoint2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long>(m_simple, "DateNPoint2l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double>(m_simple, "TimestampPoint2d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_simple, "TimestampNPoint2d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double>(m_simple, "DatePoint2d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double>(m_simple, "DateNPoint2d");
-
-  // 3D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampPoint3l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNPoint3l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DatePoint3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNPoint3l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampPoint3d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNPoint3d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DatePoint3d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNPoint3d");
-
-  // Pair of coordinate 2D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampVec2l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNVec2l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateVec2l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNVec2l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampVec2d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNVec2d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateVec2d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNVec2d");
-
-  // Pair of coordinate 3D Point
-  declare_writer_impl<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampVec3l");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "TimestampNVec3l");
-  declare_writer_impl<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateVec3l");
-  declare_writer_impl<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_simple, "DateNVec3l");
-  declare_writer_impl<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampVec3d");
-  declare_writer_impl<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "TimestampNVec3d");
-  declare_writer_impl<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateVec3d");
-  declare_writer_impl<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_simple, "DateNVec3d");
+  m_simple.def("readerLong1", &orcReader<Long>, "Reader for single column Long");
+  m_simple.def("readerDouble1", &orcReader<Double>, "Reader for single column Double");
+  m_simple.def("readerBoolean1", &orcReader<Boolean>, "Reader for single column Boolean");
+  m_simple.def("readerDate1", &orcReader<Date>, "Reader for single column Date");
+  m_simple.def("readerDateN1", &orcReader<DateNumber>, "Reader for single column DateN");
+  m_simple.def("readerTimestamp1", &orcReader<Timestamp>, "Reader for single column Timestamp");
+  m_simple.def("readerTimestampN1", &orcReader<TimestampNumber>, "Reader for single column TimestampN");
 
   // ==============================================================
-  // Binding for WriterMultifile
+  // Binding for WriterDispatch
   // ==============================================================
 
-  auto m_multifile = m.def_submodule("multifile");
+  auto m_dispatch = m.def_submodule("dispatch");
 
-  // 1D Point
-  declare_writer_multifile<stryke::Timestamp, stryke::Long>(m_multifile, "TimestampPoint1l");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Long>(m_multifile, "TimestampNPoint1l");
-  declare_writer_multifile<stryke::Date, stryke::Long>(m_multifile, "DatePoint1l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Long>(m_multifile, "DateNPoint1l");
-  declare_writer_multifile<stryke::Timestamp, stryke::Double>(m_multifile, "TimestampPoint1d");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Double>(m_multifile, "TimestampNPoint1d");
-  declare_writer_multifile<stryke::Date, stryke::Double>(m_multifile, "DatePoint1d");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double>(m_multifile, "DateNPoint1d");
+  // Example
+  declare_writer_dispatch<FolderEncode<TimestampNumber, Int>, Long, Long>( m_dispatch, "ForTestWithFolder");
+  declare_writer_dispatch<FolderEncode<>, TimestampNumber, Int, Long, Long>( m_dispatch, "ForTestWithoutFolder");
 
-  // 2D Point
-  declare_writer_multifile<stryke::Timestamp, stryke::Long, stryke::Long>(m_multifile, "TimestampPoint2l");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_multifile, "TimestampNPoint2l");
-  declare_writer_multifile<stryke::Date, stryke::Long, stryke::Long>(m_multifile, "DatePoint2l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long>(m_multifile, "DateNPoint2l");
-  declare_writer_multifile<stryke::Timestamp, stryke::Double, stryke::Double>(m_multifile, "TimestampPoint2d");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_multifile, "TimestampNPoint2d");
-  declare_writer_multifile<stryke::Date, stryke::Double, stryke::Double>(m_multifile, "DatePoint2d");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double>(m_multifile, "DateNPoint2d");
+  // ==============================================================
+  // Binding for WriterSequential
+  // ==============================================================
 
-  // 3D Point
-  declare_writer_multifile<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampPoint3l");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampNPoint3l");
-  declare_writer_multifile<stryke::Date, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DatePoint3l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateNPoint3l");
-  declare_writer_multifile<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampPoint3d");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampNPoint3d");
-  declare_writer_multifile<stryke::Date, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DatePoint3d");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateNPoint3d");
+  auto m_sequential = m.def_submodule("sequential");
 
-  // Pair of coordinate 2D Point
-  declare_writer_multifile<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampVec2l");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampNVec2l");
-  declare_writer_multifile<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateVec2l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateNVec2l");
-  declare_writer_multifile<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampVec2d");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampNVec2d");
-  declare_writer_multifile<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateVec2d");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateNVec2d");
-
-  // Pair of coordinate 3D Point
-  declare_writer_multifile<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampVec3l");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "TimestampNVec3l");
-  declare_writer_multifile<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateVec3l");
-  declare_writer_multifile<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_multifile, "DateNVec3l");
-  declare_writer_multifile<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampVec3d");
-  declare_writer_multifile<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "TimestampNVec3d");
-  declare_writer_multifile<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateVec3d");
-  declare_writer_multifile<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_multifile, "DateNVec3d");
+  // Example
+  declare_writer_sequential<TimestampNumber, FolderEncode<Int>, Long, Long>(m_sequential, "ForTestWithFolder");
+  declare_writer_sequential<TimestampNumber, FolderEncode<>, Long, Long>(m_sequential, "ForTestWithoutFolder");
 
   // ==============================================================
   // Binding for WriterThread
@@ -409,55 +362,31 @@ PYBIND11_MODULE(stryke, m) {
 
   auto m_thread = m.def_submodule("thread");
 
-  // 1D Point
-  declare_writer_thread<stryke::Timestamp, stryke::Long>(m_thread, "TimestampPoint1l");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long>(m_thread, "TimestampNPoint1l");
-  declare_writer_thread<stryke::Date, stryke::Long>(m_thread, "DatePoint1l");
-  declare_writer_thread<stryke::DateNumber, stryke::Long>(m_thread, "DateNPoint1l");
-  declare_writer_thread<stryke::Timestamp, stryke::Double>(m_thread, "TimestampPoint1d");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Double>(m_thread, "TimestampNPoint1d");
-  declare_writer_thread<stryke::Date, stryke::Double>(m_thread, "DatePoint1d");
-  declare_writer_thread<stryke::DateNumber, stryke::Double>(m_thread, "DateNPoint1d");
+  // Example
+  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<Int>, Long, Long>(m_thread, "ForTestWithFolder");
+  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<>, Int, Long, Long>(m_thread, "ForTestWithoutFolder");
 
-  // 2D Point
-  declare_writer_thread<stryke::Timestamp, stryke::Long, stryke::Long>(m_thread, "TimestampPoint2l");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long>(m_thread, "TimestampNPoint2l");
-  declare_writer_thread<stryke::Date, stryke::Long, stryke::Long>(m_thread, "DatePoint2l");
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long>(m_thread, "DateNPoint2l");
-  declare_writer_thread<stryke::Timestamp, stryke::Double, stryke::Double>(m_thread, "TimestampPoint2d");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double>(m_thread, "TimestampNPoint2d");
-  declare_writer_thread<stryke::Date, stryke::Double, stryke::Double>(m_thread, "DatePoint2d");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double>(m_thread, "DateNPoint2d");
+  // ==============================================================
+  // Binding for Miscellaneous
+  // ==============================================================
 
-  // 3D Point
-  declare_writer_thread<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampPoint3l");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampNPoint3l");
-  declare_writer_thread<stryke::Date, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DatePoint3l");
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateNPoint3l");
-  declare_writer_thread<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampPoint3d");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampNPoint3d");
-  declare_writer_thread<stryke::Date, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DatePoint3d");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateNPoint3d");
+    // ==============================================================
+    // Binding for Miscellaneous WriterThreadDispatchDuplicate
+    // ==============================================================
+    auto m_dispatch_miscellaneous = m_dispatch.def_submodule("miscellaneous");
 
-  // Pair of coordinate 2D Point
-  declare_writer_thread<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampVec2l");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampNVec2l");
-  declare_writer_thread<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateVec2l");
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateNVec2l");
-  declare_writer_thread<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampVec2d");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampNVec2d");
-  declare_writer_thread<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec2d");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateNVec2d");
+    // Example
+    declare_writer_dispatch_duplicate<TimestampNumber, FolderEncode<Int>, Long, Long>(m_dispatch_miscellaneous, "ForTestWithFolder");
+    declare_writer_dispatch_duplicate<TimestampNumber, FolderEncode<>, Long, Long>(m_dispatch_miscellaneous, "ForTestWithoutFolder");
 
-  // Pair of coordinate 3D Point
-  declare_writer_thread<stryke::Timestamp, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampVec3l");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "TimestampNVec3l");
-  declare_writer_thread<stryke::Date, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateVec3l");
-  declare_writer_thread<stryke::DateNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(m_thread, "DateNVec3l");
-  declare_writer_thread<stryke::Timestamp, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampVec3d");
-  declare_writer_thread<stryke::TimestampNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "TimestampNVec3d");
-  declare_writer_thread<stryke::Date, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateVec3d");
-  declare_writer_thread<stryke::DateNumber, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double, stryke::Double>(m_thread, "DateNVec3d");
+    // ==============================================================
+    // Binding for Miscellaneous WriterThreadSequentialDuplicate
+    // ==============================================================
+    auto m_sequential_miscellaneous = m_sequential.def_submodule("miscellaneous");
+
+    // Example
+    declare_writer_sequential_duplicate<TimestampNumber, FolderEncode<Int>, Long, Long>(m_sequential_miscellaneous, "ForTest");
+    declare_writer_sequential_duplicate<TimestampNumber, FolderEncode<>, Long, Long>(m_sequential_miscellaneous, "ForTest");
 
   // ==============================================================
   // Custom Binding
@@ -465,5 +394,4 @@ PYBIND11_MODULE(stryke, m) {
 
   auto m_custom = m.def_submodule("custom");
 
-  declare_writer_thread<stryke::Timestamp, stryke::Int, stryke::Double>(m_custom, "TimestampIntDouble");
 }

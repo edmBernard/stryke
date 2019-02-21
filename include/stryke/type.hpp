@@ -263,8 +263,10 @@ public:
   static constexpr bool is_date = true;
 };
 
-template <typename...>
-struct FolderEncode {};
+template <typename... T>
+struct FolderEncode {
+  static constexpr size_t size = sizeof...(T);
+};
 
 } // namespace stryke
 

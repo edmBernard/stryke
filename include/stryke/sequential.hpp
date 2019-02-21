@@ -34,17 +34,17 @@ namespace utils {
 
 template <typename T>
 bool compare(T value1, T value2) {
-  return value1 == value2;
+  return value1.data == value2.data;
 }
 
 template <>
 inline bool compare(TimestampNumber value1, TimestampNumber value2) {
-  return long(value1/86400) == long(value2/86400);
+  return long(value1.data/86400) == long(value2.data/86400);
 }
 
 template <>
 inline bool compare(Double value1, Double value2) {
-  return long(value1) == long(value2);
+  return long(value1.data) == long(value2.data);
 }
 
 } // namespace utils

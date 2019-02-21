@@ -62,7 +62,7 @@ namespace fs = std::filesystem;
 
 // We replace TypeKind method in stryke::Type by an external get_orc_type to get stryke::Type without orc dependencies
 template <typename Type>
-inline orc::TypeKind const get_orc_type();
+orc::TypeKind const get_orc_type();
 
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Long>() {
