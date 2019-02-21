@@ -43,46 +43,46 @@ template <typename T>
 T get_value(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row);
 
 template <>
-stryke::Long get_value<stryke::Long>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Long get_value<stryke::Long>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 template <>
-stryke::Short get_value<stryke::Short>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Short get_value<stryke::Short>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 template <>
-stryke::Int get_value<stryke::Int>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Int get_value<stryke::Int>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 
 template <>
-stryke::String get_value<stryke::String>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::String get_value<stryke::String>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::StringVectorBatch *col1 = dynamic_cast<orc::StringVectorBatch *>(structBatch->fields[index_col]);
   return std::string(col1->data[index_row], col1->length[index_row]);
 }
 
 template <>
-stryke::Double get_value<stryke::Double>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Double get_value<stryke::Double>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::DoubleVectorBatch *col1 = dynamic_cast<orc::DoubleVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 template <>
-stryke::Float get_value<stryke::Float>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Float get_value<stryke::Float>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::DoubleVectorBatch *col1 = dynamic_cast<orc::DoubleVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 
 template <>
-stryke::Boolean get_value<stryke::Boolean>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Boolean get_value<stryke::Boolean>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *col1 = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
   return col1->data[index_row];
 }
 
 template <>
-stryke::Date get_value<stryke::Date>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Date get_value<stryke::Date>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *date = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
 
   date::sys_days tp = date::floor<date::days>(std::chrono::system_clock::time_point()) + date::days(date->data[index_row]);
@@ -98,13 +98,13 @@ stryke::Date get_value<stryke::Date>(orc::StructVectorBatch *structBatch, uint64
 }
 
 template <>
-stryke::DateNumber get_value<stryke::DateNumber>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::DateNumber get_value<stryke::DateNumber>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::LongVectorBatch *date = dynamic_cast<orc::LongVectorBatch *>(structBatch->fields[index_col]);
   return date->data[index_row];
 }
 
 template <>
-stryke::Timestamp get_value<stryke::Timestamp>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::Timestamp get_value<stryke::Timestamp>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::TimestampVectorBatch *date = dynamic_cast<orc::TimestampVectorBatch *>(structBatch->fields[index_col]);
 
   std::chrono::system_clock::time_point tp = std::chrono::system_clock::from_time_t(date->data[index_row]);
@@ -128,7 +128,7 @@ stryke::Timestamp get_value<stryke::Timestamp>(orc::StructVectorBatch *structBat
 }
 
 template <>
-stryke::TimestampNumber get_value<stryke::TimestampNumber>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
+inline stryke::TimestampNumber get_value<stryke::TimestampNumber>(orc::StructVectorBatch *structBatch, uint64_t index_col, uint64_t index_row) {
   orc::TimestampVectorBatch *date = dynamic_cast<orc::TimestampVectorBatch *>(structBatch->fields[index_col]);
   return date->data[index_row] + date->nanoseconds[index_row] / 1000000000.;
 }
