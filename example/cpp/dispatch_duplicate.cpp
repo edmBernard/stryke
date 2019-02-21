@@ -12,7 +12,7 @@
 
 #include "stryke/type.hpp"
 #include "stryke/options.hpp"
-#include "stryke/variation/dispatch_duplicate.hpp"
+#include "stryke/miscellaneous/dispatch_duplicate.hpp"
 
 
 using namespace stryke;

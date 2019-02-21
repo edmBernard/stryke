@@ -12,7 +12,7 @@
 
 #include "stryke/type.hpp"
 #include "stryke/options.hpp"
-#include "stryke/variation/sequential_duplicate.hpp"
+#include "stryke/miscellaneous/sequential_duplicate.hpp"
 
 
 using namespace stryke;
