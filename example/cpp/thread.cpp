@@ -11,7 +11,7 @@
 //
 
 #include "stryke/thread.hpp"
-#include "stryke/multifile.hpp"
+#include "stryke/miscellaneous/sequential_duplicate.hpp"
 #include "stryke/core.hpp"
 
 using namespace stryke;
@@ -21,7 +21,7 @@ void bench_thread(int number_line, const WriterOptions &options) {
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterThread<OrcWriterMulti, DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "thread_", options);
+    OrcWriterThread<OrcWriterSequentialDuplicate, DateNumber, Double, TimestampNumber> writer_multi({"A2", "B2", "C2"}, "data", "thread_", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
       // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);

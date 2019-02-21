@@ -113,7 +113,7 @@ public:
         std::tuple<Types...> data = this->fifo.front();
         this->fifo.pop();
         lck.unlock();
-        this->writer->write_tuple(data);
+        this->writer->write_tuple(std::make_tuple(std::get<0>(data)), data);
       }
     }
   }
