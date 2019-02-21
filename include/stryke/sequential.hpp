@@ -38,12 +38,12 @@ bool compare(T value1, T value2) {
 }
 
 template <>
-bool compare(TimestampNumber value1, TimestampNumber value2) {
+inline bool compare(TimestampNumber value1, TimestampNumber value2) {
   return long(value1/86400) == long(value2/86400);
 }
 
 template <>
-bool compare(Double value1, Double value2) {
+inline bool compare(Double value1, Double value2) {
   return long(value1) == long(value2);
 }
 

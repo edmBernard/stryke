@@ -189,7 +189,12 @@ protected:
 
       fs::path filename;
       do {
-        filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".orc");
+        if (this->writeroptions.suffix_timestamp) {
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".orc");
+        } else {
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".orc");
+        }
+
       } while (fs::exists(filename));
 
       fs::create_directories(filename.parent_path());
