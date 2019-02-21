@@ -33,6 +33,8 @@ find_package(Catch2 CONFIG REQUIRED)
 # endforeach()
 
 option(BUILD_PYTHON_BINDING "Build the unit tests" OFF)
+set(CUSTOM_BINDING ${CMAKE_CURRENT_SOURCE_DIR}/python/custom_binding_example.cpp CACHE STRING "Build binding in the specified cpp")
+
 if(BUILD_PYTHON_BINDING)
 
   # Pybind11
@@ -129,7 +131,7 @@ endif()
 # Build Python Binding
 #**************************************************************************************************
 if(BUILD_PYTHON_BINDING)
-  add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
+  add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp ${CUSTOM_BINDING})
   target_link_libraries(stryke PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
   set_target_properties(stryke PROPERTIES PREFIX "")
 

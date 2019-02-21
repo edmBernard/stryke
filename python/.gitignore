@@ -3,4 +3,5 @@
 !setup.py
 !stryke_binding.cpp
 !stryke_binding.hpp
+!custom_binding_example.cpp
 !README.md

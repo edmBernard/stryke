@@ -19,18 +19,20 @@
 
 namespace py = pybind11;
 
+void init_custom(py::module &);
+
 PYBIND11_MODULE(stryke, m) {
 
   using namespace stryke; // for convenience
 
   py::class_<WriterOptions>(m, "WriterOptions")
-      .def(py::init<>())
-      .def("disable_lock_file", &WriterOptions::disable_lock_file, py::arg("disable_lock_file") = true)
-      .def("enable_suffix_timestamp", &WriterOptions::enable_suffix_timestamp, py::arg("enable_suffix_timestamp") = true)
-      .def("set_batch_size", &WriterOptions::set_batch_size)
-      .def("set_batch_max", &WriterOptions::set_batch_max)
-      .def("set_stripe_size", &WriterOptions::set_stripe_size)
-      .def("set_cron", &WriterOptions::set_cron);
+    .def(py::init<>())
+    .def("disable_lock_file", &WriterOptions::disable_lock_file, py::arg("disable_lock_file") = true)
+    .def("enable_suffix_timestamp", &WriterOptions::enable_suffix_timestamp, py::arg("enable_suffix_timestamp") = true)
+    .def("set_batch_size", &WriterOptions::set_batch_size)
+    .def("set_batch_max", &WriterOptions::set_batch_max)
+    .def("set_stripe_size", &WriterOptions::set_stripe_size)
+    .def("set_cron", &WriterOptions::set_cron);
 
   // ==============================================================
   // Binding for WriterTemplate
@@ -114,5 +116,7 @@ PYBIND11_MODULE(stryke, m) {
     declare_writer_sequential_duplicate<TimestampNumber, FolderEncode<>, Long, Long>(m_sequential_miscellaneous, "ForTestWithoutFolder");
 
   auto m_custom = m.def_submodule("custom");
+
+  init_custom(m_custom);
 
 }
