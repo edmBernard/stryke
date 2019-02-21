@@ -5,9 +5,10 @@
 __version__ = "0.1"
 
 from .stryke import simple
-from .stryke import multifile
+from .stryke import dispatch
+from .stryke import sequential
 from .stryke import thread
 from .stryke import custom
 from .stryke import WriterOptions
 
-__all__ = ['thread', 'multifile', 'simple', 'custom', 'WriterOptions']
+__all__ = ['simple', 'dispatch', 'sequential', 'thread', 'custom', 'WriterOptions']

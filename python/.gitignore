@@ -2,4 +2,5 @@
 !.gitignore
 !setup.py
 !stryke_binding.cpp
+!stryke_binding.hpp
 !README.md

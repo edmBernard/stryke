@@ -17,8 +17,10 @@
 using namespace stryke;
 
 int main(int argc, char const *argv[]) {
+  WriterOptions options;
+  options.enable_suffix_timestamp();
 
-  OrcWriterDispatch<FolderEncode<DateNumber>, DateNumber, Int> writer({"date", "date", "value"}, "data", "date", WriterOptions());
+  OrcWriterDispatch<FolderEncode<DateNumber>, DateNumber, Int> writer({"date", "date", "value"}, "data", "date", options);
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(17875 + i/100000., 17875 + i/100000., i);
