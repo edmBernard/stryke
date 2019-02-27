@@ -55,5 +55,14 @@ int main(int argc, char const *argv[]) {
       }
   }
 
+  OrcWriterDispatch<FolderEncode<DateNumber, Int>, Int, Int> writer5({"date", "direction", "value", "direction"}, "data5", "date", WriterOptions());
+  for (int i = 0; i < 20; ++i) {
+      std::cout << "42 + i :" << i << std::endl;
+      writer5.write(17875 + i/100000., i%2, i, i%2);
+      if (i == 10) {
+        writer5.close();
+      }
+  }
+
   return 0;
 }

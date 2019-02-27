@@ -49,11 +49,21 @@ We add Two custom type for date that can be initialized by double/long instead o
 
 ## Examples
 
+There several writer implemented :
+- `OrcWriterImpl` : The basic writer the core implementation
+- `OrcWriterDispatch` : It add capability to encode data in folder (ex: `col1=1/col2=2/test-1-2.orc`) for predicate push down in spark. (*Note*: All file are keep open until the writer destruction)
+- `OrcWriterSequential` : Define a main key that force to close all open file when it changes.
+- `OrcWriterDispatchDuplicate` : Define a main key that appear in folder and in file.
+- `OrcWriterSequentialDuplicate` : Define a main key that force to close all open file when it changes. This key is in folder and in file.
+- `OrcWriterThread` : Multi threaded writer that can work as `OrcWriterDispatchDuplicate` or `OrcWriterSequentialDuplicate`.
+
+*Note*: All following example assume `using namespace stryke;` is defined.
+
 ### Simple writer
 
 ```cpp
 OrcWriterImpl<Date, Int> writer({"date", "value"}, "example.orc", WriterOptions());
-writer.write(std::string("2018-12-10"), 42);
+writer.write("2018-12-10", 42);
 ```
 
 resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents):
@@ -61,23 +71,40 @@ resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#
 {"date": "2018-12-09", "value": 42}
 ```
 
-### Multi file writer
+### Dispatch writer
 
-`OrcWriterMulti` create a file by day in a tree with the pattern `year={YYYY}/month={MM}/day={DD}/{prefix}{YYYY}-{MM}-{DD}-{suffix}.orc`
+`OrcWriterDispatch` allow to write data encoded in folder or in file.
 
-**Note**: The first Type must be a date. Currently, we only support `DateNumber` and `TimestampNumber`.
+### Basic Type
 
+The following code will encode data like `folder1=1/test-1-0.orc`
 ```cpp
-OrcWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", WriterOptions());
+OrcWriterMulti<FolderEncode<Int>, Int> writer({"folder1", "value"}, "data", "test", WriterOptions());
 for (int i = 0; i < 100; ++i) {
     writer.write(17875 + i/2., 42 + i);
 }
 ```
 
-Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) (`2018/12/10/date_2018-12-10-0.orc`):
+Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) (`2018/12/10/date-2018-12-10-0.orc`):
 ```python
-{"date": "2018-12-10", "value": 42}
-{"date": "2018-12-10", "value": 43}
+{"value": 42}
+{"value": 43}
+```
+
+### Date Type
+
+Date type have special behaviour encoded in folder. The following code create a file by day in a tree with the pattern `year={YYYY}/month={MM}/day={DD}/{prefix}-{YYYY}-{MM}-{DD}-{suffix}.orc`. (*Note*: in this case the column name for the date is not used)
+```cpp
+OrcWriterMulti<FolderEncode<DateNumber>, Int> writer({"date", "value"}, "data", "test", WriterOptions());
+for (int i = 0; i < 100; ++i) {
+    writer.write(17875 + i/2., 42 + i);
+}
+```
+
+Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) (`2018/12/10/date-2018-12-10-0.orc`):
+```python
+{"value": 42}
+{"value": 43}
 ```
 
 Resulting tree created:
@@ -86,32 +113,87 @@ data
 ├── year=2018
 │   └── month=12
 │       ├── day=10
-│       │   └── date_2018-12-10-0.orc
+│       │   └── test-2018-12-10-0.orc
 │       ├── day=11
-│       │   └── date_2018-12-11-0.orc
+│       │   └── test-2018-12-11-0.orc
 ...
 │       └── day=31
-│           └── date_2018-12-31-0.orc
+│           └── test-2018-12-31-0.orc
 └── year=2019
     └── month=1
         ├── day=1
-        │   └── date_2019-1-1-0.orc
+        │   └── test-2019-1-1-0.orc
         ├── day=2
-        │   └── date_2019-1-2-0.orc
+        │   └── test-2019-1-2-0.orc
 ...
         ├── day=26
-        │   └── date_2019-1-26-0.orc
+        │   └── test-2019-1-26-0.orc
         ├── day=27
-        │   └── date_2019-1-27-0.orc
+        │   └── test-2019-1-27-0.orc
         └── day=28
-            └── date_2019-1-28-0.orc
+            └── test-2019-1-28-0.orc
 ```
+
+More example for dispatch writer can be found [here](example/cpp) or in [test](tests/cpp/unit-dispatch-folder-encoding.cpp)
+
+### Sequential writer
+
+`OrcWriterSequential` have globally the same behaviour the dispatch writer. But where `OrcDisptachWriter` keep all file open, `OrcWriterSequential` close file when its main key change. In the following example, at each new day all file are closed and finalized.
+
+```cpp
+OrcWriterMulti<DateNumber, FolderEncode<Int>, Int> writer({"date", folder2, "value"}, "data", "test", WriterOptions());
+for (int i = 0; i < 100; ++i) {
+    writer.write(17875 + i/2., i%2, 42 + i);
+}
+```
+
+More example for sequential writer can be found [here](example/cpp) or in [test](tests/cpp/unit-sequential-closing.cpp)
+
+### Dispatch Duplicate writer
+
+`OrcWriterDispatchDuplicate` we have to define a main key that appear in folder and in file.
+The following code will encode data like `mainkey=1/folder1=17875/test-1-17875-0.orc`
+```cpp
+OrcWriterMulti<Int, FolderEncode<Int>, Int> writer({"mainkey", "folder1", "value"}, "data", "test", WriterOptions());
+for (int i = 0; i < 100; ++i) {
+    writer.write(i%2, 17875 + i/2., 42 + i);
+}
+```
+
+Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) :
+```python
+{"mainkey": 0, "value": 42}
+{"mainkey": 0, "value": 44}
+```
+More example for sequential writer can be found [here](example/cpp) or in [test](tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp)
+
+### Sequential Duplicate writer
+
+`OrcWriterSequentialDuplicate` the main key that appear in folder and in file.
+The following code will encode data like `mainkey=1/folder1=17875/test-1-17875-0.orc`
+```cpp
+OrcWriterMulti<Int, FolderEncode<Int>, Int> writer({"mainkey", "folder1", "value"}, "data", "test", WriterOptions());
+for (int i = 0; i < 100; ++i) {
+    writer.write(i%2, 17875 + i/2., 42 + i);
+}
+```
+
+Resulting file read by [orc-content](https://orc.apache.org/docs/cpp-tools.html#orc-contents) :
+```python
+{"mainkey": 0, "value": 42}
+{"mainkey": 0, "value": 44}
+```
+
+More example for sequential writer can be found [here](example/cpp) or in [test](tests/cpp/unit-sequential-duplicate-timestampnumber.cpp)
+
 
 ### Threaded file writer
 
-Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate for `OrcWriterThread`.
+
+Orc write in file by Batch. To avoid the writing time during a batch to periodicaly increase `write` method, I move the write process in a separate thread for `OrcWriterThread`.
+This writer can use either `OrcWriterDispatchDuplicate` or `OrcWriterSequentialDuplicate`.
 ```cpp
-    OrcWriterThread<OrcWriterMulti, DateNumber, Int> writer_multi({"A2", "B2"}, "data", "date_", WriterOptions());
+    OrcWriterThread<OrcWriterDispatchDuplicate, FolderEncode<DateNumber>, Int> writer_multi({"A2", "B2"}, "data", "test", WriterOptions());
     for (int i = 0; i < 100; ++i) {
         writer.write(17875 + i/2., 42 + i);
     }
@@ -135,10 +217,11 @@ Stryke depend on:
 
 ### Compile Example, Test and/or Python binding
 
-There is 3 options :
-* BUILD_PYTHON_BINDING (default: OFF)
+There is 4 options :
 * BUILD_EXAMPLES (default: OFF)
 * BUILD_UNIT_TESTS (default: OFF)
+* BUILD_PYTHON_BINDING (default: OFF)
+* CUSTOM_BINDING (default: `python/custom_binding_example.cpp`). More explaination on python binding [here](python).
 
 ```bash
 mkdir build
@@ -161,3 +244,13 @@ You need to have doxygen and graphviz installed on your computer.
 ```bash
 make docs
 ```
+
+
+TODO:   - Mettre à jour le readme
+
+TODO: - Fixer le writer csv et csv multifile
+
+TODO: - Mettre à jour le readme général
+TODO: - Ajouter plus de tests pour sequential
+TODO: - Ajouter test pour le nom des colonnes
+TODO: - Add comments in code
