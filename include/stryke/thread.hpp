@@ -15,6 +15,7 @@
 
 #include "date/date.h"
 #include "stryke/options.hpp"
+#include "stryke/type.hpp"
 #include <atomic>
 #include <condition_variable>
 #include <exception>
@@ -37,14 +38,25 @@ namespace utils {
 
 } // namespace utils
 
-//! Writer in mutli file one thread.
-//!
-//!
-template <template <typename... Types> typename Writer, typename... Types>
-class OrcWriterThread {
+// template <template <typename...> typename Writer, typename T, typename... Types>
+// class OrcWriterThread;
+
+template <template <typename...> typename Writer, typename T, typename... Types>
+class OrcWriterThread : public OrcWriterThread<Writer, T, FolderEncode<>, Types...> {
 public:
-  OrcWriterThread(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
-    this->writer = std::make_unique<Writer<Types...>>(column_names, root_folder, file_prefix, options);
+  OrcWriterThread(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : OrcWriterThread<Writer, T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  }
+};
+
+//! Writer in mutli file separated thread.
+//!
+//!
+template <template <typename...> typename Writer, typename T, typename... TypesFolder, typename... Types>
+class OrcWriterThread<Writer, T, FolderEncode<TypesFolder...>, Types...> {
+public:
+  OrcWriterThread(std::array<std::string, 1 + sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+    this->writer = std::make_unique<Writer<T, TypesFolder..., Types...>>(column_names, root_folder, file_prefix, options);
     this->cron_minute = options.cron;
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
     if (this->cron_minute > 0) {
@@ -60,16 +72,20 @@ public:
     }
   }
 
-  void write(Types... data) {
-    this->write_tuple(std::make_tuple(data...));
-  }
-
-  void write_tuple(std::tuple<Types...> data) {
+  void write(T date, TypesFolder... datafolder, Types... dataT) {
     std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
     std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
-    this->fifo.push(data);
+    this->fifo.push(std::make_tuple(date, datafolder..., dataT...));
     this->queue_is_not_empty.notify_all();
   }
+
+  // TODO: I don't know how to unpack tuple
+  // void write_tuple(T date, std::tuple<TypesFolder...> datafolder, std::tuple<Types...> dataT) {
+  //   std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
+  //   std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
+  //   this->fifo.push(datafolder, dataT)); // This will not work
+  //   this->queue_is_not_empty.notify_all();
+  // }
 
   bool has_closed() {
     return this->writer_closed;
@@ -110,7 +126,7 @@ public:
 
       while (!this->fifo.empty()) {
         lck.lock();
-        std::tuple<Types...> data = this->fifo.front();
+        std::tuple<T, TypesFolder..., Types...> data = this->fifo.front();
         this->fifo.pop();
         lck.unlock();
         this->writer->write_tuple(std::make_tuple(std::get<0>(data)), data);
@@ -138,11 +154,11 @@ public:
   }
 
 private:
-  std::queue<std::tuple<Types...>> fifo;
+  std::queue<std::tuple<T, TypesFolder..., Types...>> fifo;
   std::thread writer_thread;
   std::thread cron_thread;
   int cron_minute;
-  std::unique_ptr<Writer<Types...>> writer;
+  std::unique_ptr<Writer<T, TypesFolder..., Types...>> writer;
   std::atomic<bool> stop_thread = false;  // simple thread stopping.
   std::atomic<bool> close_writer = false; // ask writer thread to close writer
   std::atomic<bool> writer_closed = true; // variable for check after async close

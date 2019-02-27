@@ -117,6 +117,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-datenumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-timestampnumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread-folder-encoding.cpp
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
