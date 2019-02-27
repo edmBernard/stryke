@@ -38,9 +38,6 @@ namespace utils {
 
 } // namespace utils
 
-// template <template <typename...> typename Writer, typename T, typename... Types>
-// class OrcWriterThread;
-
 template <template <typename...> typename Writer, typename T, typename... Types>
 class OrcWriterThread : public OrcWriterThread<Writer, T, FolderEncode<>, Types...> {
 public:
