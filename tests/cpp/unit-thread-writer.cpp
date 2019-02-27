@@ -14,6 +14,7 @@ TEST_CASE("OrcWriterThread Writers", "[Thread][Multifile]") {
   stryke::WriterOptions options;
   uint64_t nbr_rows = 100;
   std::string root_folder = "data_test";
+  fs::remove_all(root_folder);
 
   SECTION("Dispatch Duplicate") {
     {
@@ -41,5 +42,6 @@ TEST_CASE("OrcWriterThread Writers", "[Thread][Multifile]") {
     REQUIRE(tmp_b.nbr_rows == nbr_rows);
 
   }
+
   fs::remove_all(root_folder);
 }

@@ -12,6 +12,8 @@ TEST_CASE("OrcWriterDispatch Data in folder name", "[Dispatch]") {
 
   stryke::WriterOptions options;
   std::string root_folder = "data_test";
+  fs::remove_all(root_folder);
+
   uint64_t nbr_rows = 10000;
 
   SECTION("0 columns encoded with empty FolderEncode") {

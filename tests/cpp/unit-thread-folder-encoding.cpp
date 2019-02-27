@@ -12,6 +12,8 @@ TEST_CASE("OrcWriterThread Folder encoding", "[Thread][Multifile]") {
 
   stryke::WriterOptions options;
   std::string root_folder = "data_test";
+  fs::remove_all(root_folder);
+
   uint64_t nbr_rows = 100;
 
   SECTION("0 columns encoded with empty FolderEncode") {

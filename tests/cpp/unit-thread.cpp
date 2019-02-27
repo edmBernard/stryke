@@ -15,10 +15,12 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
   options.set_batch_max(0);
   options.set_stripe_size(10000);
 
+  std::string root_folder = "data_test";
+  fs::remove_all(root_folder);
+
   SECTION("Split by date") {
     uint64_t nbr_rows = 10000;
 
-    std::string root_folder = "data_test";
     SECTION("0 split") {
       {
         stryke::OrcWriterThread<stryke::OrcWriterSequentialDuplicate, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
@@ -49,13 +51,11 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
     }
 
-    fs::remove_all(root_folder);
   }
 
   SECTION("Split by number of batch") {
     uint64_t nbr_rows = 10000;
 
-    std::string root_folder = "data_test";
     SECTION("0 split") {
       {
         stryke::OrcWriterThread<stryke::OrcWriterSequentialDuplicate, stryke::DateNumber, stryke::Int> writer({"date", "col1"}, root_folder, "test", options);
@@ -87,13 +87,11 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       REQUIRE(tmp_b.nbr_rows == nbr_rows / 2.);
     }
 
-    fs::remove_all(root_folder);
   }
 
   SECTION("Split by force") {
     uint64_t nbr_rows = 10000;
 
-    std::string root_folder = "data_test";
     SECTION("1 split sync") {
       uint64_t check_point = 10;
       stryke::BasicStats tmp_b;
@@ -208,6 +206,7 @@ TEST_CASE("OrcWriterThread Split", "[Thread][Multifile]") {
       REQUIRE(tmp_b.nbr_rows == nbr_rows - check_point2);
     }
 
-    fs::remove_all(root_folder);
   }
+  fs::remove_all(root_folder);
+
 }

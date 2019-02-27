@@ -18,6 +18,7 @@ TEST_CASE("OrcWriterSequential test file closing", "[Sequential]") {
   uint64_t nbr_rows = 10000;
 
   std::string root_folder = "data_test";
+  fs::remove_all(root_folder);
 
   SECTION("Split by TimestampNumber") {
 
