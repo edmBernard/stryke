@@ -88,8 +88,8 @@ PYBIND11_MODULE(stryke, m) {
   auto m_thread = m.def_submodule("thread");
 
   // Example
-  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<Long>, Long, Long>(m_thread, "ForTestWithFolder");
-  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<>, Long, Long, Long>(m_thread, "ForTestWithoutFolder");
+  declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<Long>, Long, Long>(m_thread, "ForTestWithFolder");
+  declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<>, Long, Long, Long>(m_thread, "ForTestWithoutFolder");
 
 
 

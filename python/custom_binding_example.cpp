@@ -38,8 +38,10 @@ void init_custom(py::module &m) {
   declare_writer_sequential<TimestampNumber, FolderEncode<Long>, Long>(m, "Custom4");
   declare_writer_sequential<TimestampNumber, FolderEncode<>, Long>(m, "Custom5");
 
-  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<Long>, Long>(m_thread, "Custom6");
-  // declare_writer_thread<OrcWriterSequential, TimestampNumber, FolderEncode<>, Long, Long>(m_thread, "Custom7");
+  declare_writer_thread<OrcWriterSequentialDuplicate, TimestampNumber, FolderEncode<Long>, Long>(m, "Custom6.1");
+  declare_writer_thread<OrcWriterSequentialDuplicate, TimestampNumber, FolderEncode<>, Long, Long>(m, "Custom7.1");
+  declare_writer_thread<OrcWriterSequentialDuplicate, TimestampNumber, FolderEncode<Long>, Long>(m, "Custom6.2");
+  declare_writer_thread<OrcWriterSequentialDuplicate, TimestampNumber, FolderEncode<>, Long, Long>(m, "Custom7.2");
 
   declare_writer_dispatch_duplicate<TimestampNumber, FolderEncode<Long>, Long>(m, "Custom8");
   declare_writer_dispatch_duplicate<TimestampNumber, FolderEncode<>, Long>(m, "Custom9");
