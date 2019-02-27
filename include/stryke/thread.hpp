@@ -56,7 +56,7 @@ template <template <typename...> typename Writer, typename T, typename... TypesF
 class OrcWriterThread<Writer, T, FolderEncode<TypesFolder...>, Types...> {
 public:
   OrcWriterThread(std::array<std::string, 1 + sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
-    this->writer = std::make_unique<Writer<T, TypesFolder..., Types...>>(column_names, root_folder, file_prefix, options);
+    this->writer = std::make_unique<Writer<T, FolderEncode<TypesFolder...>, Types...>>(column_names, root_folder, file_prefix, options);
     this->cron_minute = options.cron;
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);
     if (this->cron_minute > 0) {
@@ -73,19 +73,16 @@ public:
   }
 
   void write(T date, TypesFolder... datafolder, Types... dataT) {
-    std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
-    std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
-    this->fifo.push(std::make_tuple(date, datafolder..., dataT...));
-    this->queue_is_not_empty.notify_all();
+    this->write_tuple(std::make_tuple(date, datafolder...), std::make_tuple(date, dataT...));
   }
 
-  // TODO: I don't know how to unpack tuple
-  // void write_tuple(T date, std::tuple<TypesFolder...> datafolder, std::tuple<Types...> dataT) {
-  //   std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
-  //   std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
-  //   this->fifo.push(datafolder, dataT)); // This will not work
-  //   this->queue_is_not_empty.notify_all();
-  // }
+  void write_tuple(std::tuple<T, TypesFolder...> datafolder, std::tuple<T, Types...> dataT) {
+    std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
+    std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
+    this->fifo.push(dataT);
+    this->fifo_folder.push(datafolder);
+    this->queue_is_not_empty.notify_all();
+  }
 
   bool has_closed() {
     return this->writer_closed;
@@ -126,10 +123,12 @@ public:
 
       while (!this->fifo.empty()) {
         lck.lock();
-        std::tuple<T, TypesFolder..., Types...> data = this->fifo.front();
+        std::tuple<T, Types...> data = this->fifo.front();
+        std::tuple<T, TypesFolder...> data_folder = this->fifo_folder.front();
         this->fifo.pop();
+        this->fifo_folder.pop();
         lck.unlock();
-        this->writer->write_tuple(std::make_tuple(std::get<0>(data)), data);
+        this->writer->write_tuple(data_folder, data);
       }
     }
   }
@@ -154,11 +153,12 @@ public:
   }
 
 private:
-  std::queue<std::tuple<T, TypesFolder..., Types...>> fifo;
+  std::queue<std::tuple<T, Types...>> fifo;
+  std::queue<std::tuple<T, TypesFolder...>> fifo_folder;
   std::thread writer_thread;
   std::thread cron_thread;
   int cron_minute;
-  std::unique_ptr<Writer<T, TypesFolder..., Types...>> writer;
+  std::unique_ptr<Writer<T, FolderEncode<TypesFolder...>, Types...>> writer;
   std::atomic<bool> stop_thread = false;  // simple thread stopping.
   std::atomic<bool> close_writer = false; // ask writer thread to close writer
   std::atomic<bool> writer_closed = true; // variable for check after async close
