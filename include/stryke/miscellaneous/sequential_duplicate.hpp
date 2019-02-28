@@ -49,7 +49,7 @@ public:
   OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
-    std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(Types));
+    std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
 
     this->writer = std::make_unique<OrcWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
   }
