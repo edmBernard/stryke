@@ -68,6 +68,7 @@ public:
   long data;
   bool empty = true;
   typedef Long type;
+  static constexpr bool is_date = false;
 };
 
 class Short {
@@ -83,6 +84,7 @@ public:
   short data;
   bool empty = true;
   typedef Long type;
+  static constexpr bool is_date = false;
 };
 
 class Int {
@@ -98,6 +100,7 @@ public:
   int data;
   bool empty = true;
   typedef Long type;
+  static constexpr bool is_date = false;
 };
 
 // String Type Category
@@ -119,6 +122,7 @@ public:
   }
   std::string data;
   typedef String type;
+  static constexpr bool is_date = false;
 };
 
 // Not working
@@ -147,6 +151,7 @@ public:
   double data;
   bool empty = true;
   typedef Double type;
+  static constexpr bool is_date = false;
 };
 
 class Float {
@@ -162,6 +167,7 @@ public:
   float data;
   bool empty = true;
   typedef Double type;
+  static constexpr bool is_date = false;
 };
 
 // Boolean Type Category
@@ -178,6 +184,7 @@ public:
   bool data;
   bool empty = true;
   typedef Boolean type;
+  static constexpr bool is_date = false;
 };
 
 // Date Type Category
@@ -199,6 +206,7 @@ public:
   }
   std::string data;
   typedef Date type;
+  static constexpr bool is_date = true;
 };
 
 class DateNumber {
@@ -214,6 +222,7 @@ public:
   long data;
   bool empty = true;
   typedef Long type;
+  static constexpr bool is_date = true;
 };
 
 // Timestamp Type Category
@@ -235,6 +244,7 @@ public:
   }
   std::string data;
   typedef Timestamp type;
+  static constexpr bool is_date = true;
 };
 
 class TimestampNumber {
@@ -250,10 +260,13 @@ public:
   double data;
   bool empty = true;
   typedef TimestampNumber type;
+  static constexpr bool is_date = true;
 };
 
-template <typename...>
-struct FolderEncode {};
+template <typename... T>
+struct FolderEncode {
+  static constexpr size_t size = sizeof...(T);
+};
 
 } // namespace stryke
 

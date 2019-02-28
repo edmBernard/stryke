@@ -62,7 +62,7 @@ namespace fs = std::filesystem;
 
 // We replace TypeKind method in stryke::Type by an external get_orc_type to get stryke::Type without orc dependencies
 template <typename Type>
-inline orc::TypeKind const get_orc_type();
+orc::TypeKind const get_orc_type();
 
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Long>() {
@@ -485,6 +485,7 @@ public:
 
     this->data.push_back(dataT);
     ++this->numValues;
+    ++this->total_line;
   }
 
   void addToFile() {
@@ -498,6 +499,10 @@ public:
     this->data.clear();
     this->numValues = 0;
     this->string_buffer_offset = 0;
+  }
+
+  uint64_t const &get_count() const {
+    return this->total_line;
   }
 
 private:
@@ -520,7 +525,8 @@ private:
   fs::path root_folder;
   std::string filename;
 
-  uint64_t numValues = 0; // num of lines read in a batch
+  uint64_t numValues = 0; // num of lines in batch writer
+  uint64_t total_line = 0; // num of lines in batch writer + number of line already write in file
 };
 
 } // namespace stryke

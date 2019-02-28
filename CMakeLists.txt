@@ -33,6 +33,8 @@ find_package(Catch2 CONFIG REQUIRED)
 # endforeach()
 
 option(BUILD_PYTHON_BINDING "Build the unit tests" OFF)
+set(CUSTOM_BINDING ${CMAKE_CURRENT_SOURCE_DIR}/python/custom_binding_example.cpp CACHE STRING "Build binding in the specified cpp")
+
 if(BUILD_PYTHON_BINDING)
 
   # Pybind11
@@ -49,6 +51,7 @@ endif()
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/python)
 
 
 #**************************************************************************************************
@@ -62,12 +65,14 @@ set(examples
   csv_writer
   csv_multifile
   dispatch
+  dispatch_duplicate
   dispatch_folder
   merge_file
-  multifile
   performance
   reader_basic_type
   reader_rainbow
+  sequential
+  sequential_duplicate
   thread
   writer_rainbow
 )
@@ -104,12 +109,16 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-type.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-batch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-lock.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-impl.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-multifile-datenumber.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-multifile-timestampnumber.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-timestampnumber.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-folder-creation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder-encoding.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-split.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-closing.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-datenumber.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-timestampnumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread-writer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread-folder-encoding.cpp
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
@@ -125,7 +134,7 @@ endif()
 # Build Python Binding
 #**************************************************************************************************
 if(BUILD_PYTHON_BINDING)
-  add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp)
+  add_library(stryke SHARED ${CMAKE_CURRENT_SOURCE_DIR}/python/stryke_binding.cpp ${CUSTOM_BINDING})
   target_link_libraries(stryke PRIVATE -lstdc++fs ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY} ${PYTHON_LIBRARIES})
   set_target_properties(stryke PROPERTIES PREFIX "")
 

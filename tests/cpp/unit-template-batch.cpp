@@ -6,7 +6,7 @@
 
 namespace fs = std::filesystem;
 
-TEST_CASE("OrcWriterImpl Batch", "[Simple]") {
+TEST_CASE("OrcWriterImpl Batch", "[Core]") {
 
   for (auto &&batchsize : {10, 100, 1000, 10000}) {
     for (auto &&nbr_rows : {10, 100, 1000, 100000}) {

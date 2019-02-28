@@ -19,7 +19,7 @@ using namespace stryke;
 
 int main(int argc, char const *argv[]) {
 
-  OrcWriterDispatch<FolderEncode<Int>, DateNumber, Int, Int> writer({"direction", "date", "value", "direction"}, "data", "date_", WriterOptions());
+  OrcWriterDispatch<FolderEncode<Int>, DateNumber, Int, Int> writer({"direction", "date", "value", "direction"}, "data", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(i%2, 17875 + i/100000., i, i%2);
@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
       }
   }
 
-  OrcWriterDispatch<FolderEncode<>, DateNumber, Int, Int, Int> writer2({"date", "direction", "value", "direction"}, "data2", "date_", WriterOptions());
+  OrcWriterDispatch<FolderEncode<>, DateNumber, Int, Int, Int> writer2({"date", "direction", "value", "direction"}, "data2", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer2.write(17875 + i/100000., i%2, i, i%2);
@@ -37,12 +37,30 @@ int main(int argc, char const *argv[]) {
       }
   }
 
-  OrcWriterDispatch<DateNumber, Int, Int, Int> writer3({"date", "direction", "value", "direction"}, "data3", "date_", WriterOptions());
+  OrcWriterDispatch<DateNumber, Int, Int, Int> writer3({"date", "direction", "value", "direction"}, "data3", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer3.write(17875 + i/100000., i%2, i, i%2);
       if (i == 10) {
         writer3.close();
+      }
+  }
+
+  OrcWriterDispatch<FolderEncode<DateNumber>, Int, Int, Int> writer4({"date", "direction", "value", "direction"}, "data4", "date", WriterOptions());
+  for (int i = 0; i < 20; ++i) {
+      std::cout << "42 + i :" << i << std::endl;
+      writer4.write(17875 + i/100000., i%2, i, i%2);
+      if (i == 10) {
+        writer4.close();
+      }
+  }
+
+  OrcWriterDispatch<FolderEncode<DateNumber, Int>, Int, Int> writer5({"date", "direction", "value", "direction"}, "data5", "date", WriterOptions());
+  for (int i = 0; i < 20; ++i) {
+      std::cout << "42 + i :" << i << std::endl;
+      writer5.write(17875 + i/100000., i%2, i, i%2);
+      if (i == 10) {
+        writer5.close();
       }
   }
 

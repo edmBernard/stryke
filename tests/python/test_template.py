@@ -16,9 +16,9 @@ def test_batch(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = sy.simple.WriterTimestampNPoint1l(["Date", "value"], filename, options)
+    writer = sy.simple.WriterForTest(["Date", "value1", "value2", "value3"], filename, options)
     for i in range(nbre_rows):
-        writer.write(i, -i)
+        writer.write(i, i, i, i)
 
     del writer
 
@@ -41,9 +41,10 @@ def test_lock_file(batchsize, nbre_rows):
     options = sy.WriterOptions()
     options.set_batch_size(batchsize)
 
-    writer = sy.simple.WriterDateNPoint1l(["Date", "value"], filename, options)
+    writer = sy.simple.WriterForTest(["Date", "value1", "value2", "value3"], filename, options)
+
     for i in range(nbre_rows):
-        writer.write(i, i)
+        writer.write(i, i, i, i)
 
     assert Path(filename).exists()
     assert Path(filename + ".lock").exists()
