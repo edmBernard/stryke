@@ -53,13 +53,13 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_impl<TimestampNumber>(m_simple, "TimestampN1");
 
   // Reader
-  m_simple.def("readerLong1", &orcReader<Long>, "Reader for single column Long");
-  m_simple.def("readerDouble1", &orcReader<Double>, "Reader for single column Double");
-  m_simple.def("readerBoolean1", &orcReader<Boolean>, "Reader for single column Boolean");
-  m_simple.def("readerDate1", &orcReader<Date>, "Reader for single column Date");
-  m_simple.def("readerDateN1", &orcReader<DateNumber>, "Reader for single column DateN");
-  m_simple.def("readerTimestamp1", &orcReader<Timestamp>, "Reader for single column Timestamp");
-  m_simple.def("readerTimestampN1", &orcReader<TimestampNumber>, "Reader for single column TimestampN");
+  declare_reader<Long>(m_simple, "Long1");
+  declare_reader<Double>(m_simple, "Double1");
+  declare_reader<Boolean>(m_simple, "Boolean1");
+  declare_reader<Date>(m_simple, "Date1");
+  declare_reader<DateNumber>(m_simple, "DateN1");
+  declare_reader<Timestamp>(m_simple, "Timestamp1");
+  declare_reader<TimestampNumber>(m_simple, "TimestampN1");
 
   // ==============================================================
   // Binding for WriterDispatch

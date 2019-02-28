@@ -54,18 +54,18 @@ int main(int argc, char const *argv[]) {
       stryke::Timestamp,
       stryke::TimestampNumber> writer(
         {"Long",
-          "Short",
-          "Int",
-          "String",
-          "Double",
-          "Float",
-          "Boolean",
-          "Date",
-          "DateNumber",
-          "Timestamp",
-          "TimestampNumber"}, argv[1], options);
+         "Short",
+         "Int",
+         "String",
+         "Double",
+         "Float",
+         "Boolean",
+         "Date",
+         "DateNumber",
+         "Timestamp",
+         "TimestampNumber"}, argv[1], options);
 
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 10; ++i) {
       writer.write(i*10, i*100, i*1000, std::to_string(i*10000), i/10., i/100., i%3==0, "2018-12-18", i, "2018-12-18 12:26:20.123456789", i);
     }
 

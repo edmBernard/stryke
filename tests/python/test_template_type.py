@@ -35,7 +35,8 @@ def test_WriterLong1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerLong1(orc_file)
+    reader = sy.simple.ReaderLong1(orc_file)
+    data = reader.get_data()
 
     assert len(data) == len(data_input)
 
@@ -74,7 +75,8 @@ def test_Double1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerDouble1(orc_file)
+    reader = sy.simple.ReaderDouble1(orc_file)
+    data = reader.get_data()
     assert len(data) == len(data_input)
 
     for d, i in zip(data, data_input):
@@ -105,7 +107,8 @@ def test_Boolean1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerBoolean1(orc_file)
+    reader = sy.simple.ReaderBoolean1(orc_file)
+    data = reader.get_data()
     assert len(data) == len(data_input)
 
     for d, i in zip(data, data_input):
@@ -136,7 +139,8 @@ def test_Date1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerDate1(orc_file)
+    reader = sy.simple.ReaderDate1(orc_file)
+    data = reader.get_data()
     assert len(data) == len(data_input)
 
     for d, i in zip(data, data_input):
@@ -156,7 +160,8 @@ def test_DateN1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerDateN1(orc_file)
+    reader = sy.simple.ReaderDateN1(orc_file)
+    data = reader.get_data()
     assert len(data) == len(data_input)
 
     for d, i in zip(data, data_input):
@@ -187,7 +192,8 @@ def test_Timestamp1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerTimestamp1(orc_file)
+    reader = sy.simple.ReaderTimestamp1(orc_file)
+    data = reader.get_data()
 
     assert len(data) == len(data_input)
 
@@ -209,7 +215,8 @@ def test_TimestampN1(orc_file, orc_options):
     del writer
     assert Path(orc_file).exists()
 
-    data = sy.simple.readerTimestampN1(orc_file)
+    reader = sy.simple.ReaderTimestampN1(orc_file)
+    data = reader.get_data()
     assert len(data) == len(data_input)
 
     for d, i in zip(data, data_input):

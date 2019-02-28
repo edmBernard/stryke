@@ -16,7 +16,7 @@
 #include "date/date.h"
 #include "orc/OrcFile.hh"
 #include "orc/Type.hh"
-#include "stryke/core.hpp"
+#include "stryke/type.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -148,23 +148,51 @@ auto for_each(orc::StructVectorBatch *structBatch, uint64_t row) -> std::tuple<T
 } // namespace utils
 
 template <typename... Types>
-std::vector<std::tuple<Types...>> orcReader(std::string filename) {
-  std::vector<std::tuple<Types...>> output;
-
+class OrcReader {
+  std::string filename;
   orc::ReaderOptions options;
-  std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
-  std::unique_ptr<orc::RowReader> rowReader = reader->createRowReader();
-  std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
+  std::unique_ptr<orc::Reader> reader;
 
-  while (rowReader->next(*batch)) {
-    orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
-
-    for (uint64_t r = 0; r < batch->numElements; ++r) {
-      output.push_back(utils::for_each<Types...>(structBatch, r));
-    }
+public:
+  OrcReader(std::string filename) : filename(filename) {
+    reader = orc::createReader(orc::readLocalFile(filename), this->options);
   }
-  return output;
-}
+
+  std::array<std::string, sizeof...(Types)> get_cols_name() {
+
+    std::array<std::string, sizeof...(Types)> ret;
+
+    for (std::size_t i = 0; i < sizeof...(Types); ++i) {
+      ret[i] = this->reader->getType().getFieldName(i);
+    }
+
+    return ret;
+  }
+
+  std::vector<std::tuple<Types...>> get_data() {
+    std::vector<std::tuple<Types...>> output;
+
+    std::unique_ptr<orc::RowReader> rowReader = this->reader->createRowReader();
+    std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
+
+    while (rowReader->next(*batch)) {
+      orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
+
+      for (uint64_t r = 0; r < batch->numElements; ++r) {
+        output.push_back(utils::for_each<Types...>(structBatch, r));
+      }
+    }
+    return output;
+  }
+
+  // void get_stripe_stats() {
+  //   for (int i = 0; i < this->reader->getNumberOfStripes; ++i) {
+  //     auto tmp = this->reader->getStripe(i);
+
+  //   }
+  // }
+
+};
 
 } // namespace stryke
 

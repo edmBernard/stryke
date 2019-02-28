@@ -110,12 +110,17 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-batch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-lock.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-folder-creation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-template-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-folder-encoding.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-split.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-closing.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-datenumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-timestampnumber.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread-writer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-thread-folder-encoding.cpp
