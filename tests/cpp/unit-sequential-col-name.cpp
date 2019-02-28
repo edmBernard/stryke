@@ -50,7 +50,7 @@ TEST_CASE("OrcWriterSequential Column name", "[Sequential]") {
 
   }
 
-  SECTION("OrcWriterSequential<Int, Int>") {
+  SECTION("OrcWriterSequential<Int, Int, Int>") {
     {
       stryke::OrcWriterSequential<stryke::Int, stryke::Int, stryke::Int> writer({cnl[0], cnl[1], cnl[2]}, root_folder, "test", options);
       writer.write(1, 1, 1);
