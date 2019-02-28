@@ -53,24 +53,25 @@ int main(int argc, char const *argv[]) {
       stryke::Timestamp,
       stryke::TimestampNumber>(argv[1]);
 
-    for (auto &&i : reader.get_cols_name()) {
-      std::cout << "i : " << i << std::endl;
+
+    for (size_t i = 0; i < reader.get_cols_name().size(); ++i) {
+      std::cout << "column " << i << " : " << reader.get_cols_name()[i] << std::endl;
     }
 
     int count = 0;
     for (auto&& i : reader.get_data()) {
-      // std::cout << "**** Row: " << count++ << std::endl
-      //           << "  - Long: " << std::get<0>(i).data << std::endl
-      //           << "  - Short: " << std::get<1>(i).data << std::endl
-      //           << "  - Int: " << std::get<2>(i).data << std::endl
-      //           << "  - String: " << std::get<3>(i).data << std::endl
-      //           << "  - Double: " << std::get<4>(i).data << std::endl
-      //           << "  - Float: " << std::get<5>(i).data << std::endl
-      //           << "  - Boolean: " << std::get<6>(i).data << std::endl
-      //           << "  - Date: " << std::get<7>(i).data << std::endl
-      //           << "  - DateNumber: " << std::get<8>(i).data << std::endl
-      //           << "  - Timestamp: " << std::get<9>(i).data << std::endl
-      //           << "  - TimestampNumber: " << std::get<10>(i).data << std::endl;
+      std::cout << "**** Row: " << count++ << std::endl
+                << "  - Long: " << std::get<0>(i).data << std::endl
+                << "  - Short: " << std::get<1>(i).data << std::endl
+                << "  - Int: " << std::get<2>(i).data << std::endl
+                << "  - String: " << std::get<3>(i).data << std::endl
+                << "  - Double: " << std::get<4>(i).data << std::endl
+                << "  - Float: " << std::get<5>(i).data << std::endl
+                << "  - Boolean: " << std::get<6>(i).data << std::endl
+                << "  - Date: " << std::get<7>(i).data << std::endl
+                << "  - DateNumber: " << std::get<8>(i).data << std::endl
+                << "  - Timestamp: " << std::get<9>(i).data << std::endl
+                << "  - TimestampNumber: " << std::get<10>(i).data << std::endl;
     }
 
   } catch (std::exception &ex) {

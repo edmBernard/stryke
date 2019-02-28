@@ -259,6 +259,17 @@ void declare_writer_impl(py::module &m, const std::string &typestr) {
       .def("write", (void (Class::*)(T...)) & Class::write);
 }
 
+template <typename... T>
+void declare_reader(py::module &m, const std::string &typestr) {
+  using Class = stryke::OrcReader<T...>;
+  std::string pyclass_name = std::string("Reader") + typestr;
+
+  py::class_<Class>(m, pyclass_name.c_str())
+      .def(py::init<std::string>(), py::arg("filename"))
+      .def("get_data", &Class::get_data)
+      .def("get_cols_name", &Class::get_cols_name);
+}
+
 template <typename TypesFolder, typename... Types>
 void declare_writer_dispatch(py::module &m, const std::string &typestr) {
   using Class = stryke::OrcWriterDispatch<TypesFolder, Types...>;

@@ -37,7 +37,8 @@ int main(int argc, char const *argv[]) {
     for (auto &p : fs::directory_iterator(argv[1])) {
       if (p.is_regular_file()) {
         if (std::regex_match(p.path().string(), std::regex(".*\\.orc"))) {
-          auto result = stryke::orcReader<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(p.path());
+          auto reader = stryke::OrcReader<stryke::TimestampNumber, stryke::Long, stryke::Long, stryke::Long, stryke::Long>(p.path());
+          auto result = reader.get_data();
           for (auto &&i : result) {
             ++count;
             writer.write_tuple(i);

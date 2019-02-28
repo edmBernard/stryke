@@ -21,7 +21,8 @@ void test_simple_writer_impl(std::vector<U> input, std::string filename, stryke:
   REQUIRE(tmp_b.nbr_columns == 2);
   REQUIRE(tmp_b.nbr_rows == input.size());
 
-  auto result = stryke::orcReader<T>(filename);
+  auto reader = stryke::OrcReader<T>(filename);
+  auto result = reader.get_data();
   int count = 0;
   for (auto && i: input) {
     REQUIRE(std::get<0>(result[count]).data == i);
@@ -155,7 +156,8 @@ TEST_CASE("OrcWriterImpl Types", "[Core]") {
     REQUIRE(tmp_b.nbr_columns == 2);
     REQUIRE(tmp_b.nbr_rows == input.size());
 
-    auto result = stryke::orcReader<stryke::Boolean>(filename);
+    auto reader = stryke::OrcReader<stryke::Boolean>(filename);
+    auto result = reader.get_data();
     int count = 0;
     for (auto && i: input) {
       REQUIRE(std::get<0>(result[count]).data == i);
@@ -196,7 +198,8 @@ TEST_CASE("OrcWriterImpl Types", "[Core]") {
       REQUIRE(tmp_b.nbr_columns == 2);
       REQUIRE(tmp_b.nbr_rows == input.size());
 
-      auto result = stryke::orcReader<stryke::Timestamp>(filename);
+      auto reader = stryke::OrcReader<stryke::Timestamp>(filename);
+      auto result = reader.get_data();
       int count = 0;
       for (auto && i: expected_output) {
         REQUIRE(std::get<0>(result[count]).data == i);
@@ -238,7 +241,8 @@ TEST_CASE("OrcWriterImpl Types", "[Core]") {
     REQUIRE(tmp_b.nbr_columns == 2);
     REQUIRE(tmp_b.nbr_rows == input.size());
 
-    auto result = stryke::orcReader<stryke::TimestampNumber>(filename);
+    auto reader = stryke::OrcReader<stryke::TimestampNumber>(filename);
+    auto result = reader.get_data();
     int count = 0;
     for (auto && i: input) {
       if (i > -1 && i < 0) {

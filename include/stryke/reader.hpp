@@ -148,25 +148,6 @@ auto for_each(orc::StructVectorBatch *structBatch, uint64_t row) -> std::tuple<T
 } // namespace utils
 
 template <typename... Types>
-std::vector<std::tuple<Types...>> orcReader(std::string filename) {
-  std::vector<std::tuple<Types...>> output;
-
-  orc::ReaderOptions options;
-  std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
-  std::unique_ptr<orc::RowReader> rowReader = reader->createRowReader();
-  std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
-
-  while (rowReader->next(*batch)) {
-    orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
-
-    for (uint64_t r = 0; r < batch->numElements; ++r) {
-      output.push_back(utils::for_each<Types...>(structBatch, r));
-    }
-  }
-  return output;
-}
-
-template <typename... Types>
 class OrcReader {
   std::string filename;
   orc::ReaderOptions options;

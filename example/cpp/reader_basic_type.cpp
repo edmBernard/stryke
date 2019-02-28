@@ -56,67 +56,78 @@ int main(int argc, char const *argv[]) {
     switch (std::stoi(argv[1])) {
 
     case StrykeType::Long: {
-      auto result = stryke::orcReader<stryke::Long>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Long>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Short: {
-      auto result = stryke::orcReader<stryke::Short>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Short>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Int: {
-      auto result = stryke::orcReader<stryke::Int>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Int>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::String: {
-      auto result = stryke::orcReader<stryke::String>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::String>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Double: {
-      auto result = stryke::orcReader<stryke::Double>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Double>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Float: {
-      auto result = stryke::orcReader<stryke::Float>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Float>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Boolean: {
-      auto result = stryke::orcReader<stryke::Boolean>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Boolean>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Date: {
-      auto result = stryke::orcReader<stryke::Date>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Date>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::DateNumber: {
-      auto result = stryke::orcReader<stryke::DateNumber>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::DateNumber>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::Timestamp: {
-      auto result = stryke::orcReader<stryke::Timestamp>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::Timestamp>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }
     } break;
     case StrykeType::TimestampNumber: {
-      auto result = stryke::orcReader<stryke::TimestampNumber>(argv[2]);
+      auto reader = stryke::OrcReader<stryke::TimestampNumber>(argv[2]);
+      auto result = reader.get_data();
       for (auto &&i : result) {
         std::cout << "value :" << std::get<0>(i).data << std::endl;
       }

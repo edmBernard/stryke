@@ -40,7 +40,7 @@ int main(int argc, char const *argv[]) {
 
   try {
 
-    auto result = stryke::orcReader<
+    auto reader = stryke::OrcReader<
       stryke::Long,
       stryke::Short,
       stryke::Int,
@@ -53,8 +53,13 @@ int main(int argc, char const *argv[]) {
       stryke::Timestamp,
       stryke::TimestampNumber>(argv[1]);
 
+
+    for (size_t i = 0; i < reader.get_cols_name().size(); ++i) {
+      std::cout << "column " << i << " : " << reader.get_cols_name()[i] << std::endl;
+    }
+
     int count = 0;
-    for (auto&& i : result) {
+    for (auto&& i : reader.get_data()) {
       std::cout << "**** Row: " << count++ << std::endl
                 << "  - Long: " << std::get<0>(i).data << std::endl
                 << "  - Short: " << std::get<1>(i).data << std::endl
