@@ -169,19 +169,20 @@ std::vector<std::tuple<Types...>> orcReader(std::string filename) {
 template <typename... Types>
 class OrcReader {
   std::string filename;
+  orc::ReaderOptions options;
+  std::unique_ptr<orc::Reader> reader;
 
 public:
   OrcReader(std::string filename) : filename(filename) {
+    reader = orc::createReader(orc::readLocalFile(filename), this->options);
   }
 
   std::array<std::string, sizeof...(Types)> get_cols_name() {
-    orc::ReaderOptions options;
-    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
 
     std::array<std::string, sizeof...(Types)> ret;
 
     for (std::size_t i = 0; i < sizeof...(Types); ++i) {
-      ret[i] = reader->getType().getFieldName(i);
+      ret[i] = this->reader->getType().getFieldName(i);
     }
 
     return ret;
@@ -190,9 +191,7 @@ public:
   std::vector<std::tuple<Types...>> get_data() {
     std::vector<std::tuple<Types...>> output;
 
-    orc::ReaderOptions options;
-    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
-    std::unique_ptr<orc::RowReader> rowReader = reader->createRowReader();
+    std::unique_ptr<orc::RowReader> rowReader = this->reader->createRowReader();
     std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
 
     while (rowReader->next(*batch)) {
@@ -205,13 +204,12 @@ public:
     return output;
   }
 
-  void get_stripe_stats() {
-    std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readLocalFile(filename), options);
-    for (int i = 0; i < reader->getNumberOfStripes; ++i) {
-      auto tmp = reader->getStripe(i);
+  // void get_stripe_stats() {
+  //   for (int i = 0; i < this->reader->getNumberOfStripes; ++i) {
+  //     auto tmp = this->reader->getStripe(i);
 
-    }
-  }
+  //   }
+  // }
 
 };
 
