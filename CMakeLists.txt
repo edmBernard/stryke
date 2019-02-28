@@ -115,6 +115,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-split.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-closing.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-col-name.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-dispatch-duplicate-timestampnumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-datenumber.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-sequential-duplicate-timestampnumber.cpp

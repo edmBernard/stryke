@@ -21,7 +21,7 @@ TEST_CASE("OrcWriterImpl Column name", "[Core]") {
     column_name_list.push_back("col" + std::to_string(i));
   }
 
-  SECTION("1") {
+  SECTION("OrcWriterImpl<Int") {
     {
       stryke::OrcWriterImpl<stryke::Int> writer({column_name_list[0]}, filename, options);
       writer.write(1);
@@ -33,7 +33,7 @@ TEST_CASE("OrcWriterImpl Column name", "[Core]") {
     REQUIRE(columns_read[0] == column_name_list[0]);
 
   }
-  SECTION("2") {
+  SECTION("OrcWriterImpl<Int, Int>") {
     {
       stryke::OrcWriterImpl<stryke::Int, stryke::Int> writer({column_name_list[0], column_name_list[1]}, filename, options);
       writer.write(1, 1);
