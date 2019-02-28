@@ -27,6 +27,7 @@ int main(int argc, char const *argv[]) {
         writer.close();
       }
   }
+
   OrcWriterSequentialDuplicate<DateNumber, FolderEncode<>, Int, Int> writer2({"date", "value", "direction"}, "data2", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
@@ -35,6 +36,7 @@ int main(int argc, char const *argv[]) {
         writer2.close();
       }
   }
+
   OrcWriterSequentialDuplicate<DateNumber, Int, Int> writer3({"date", "value", "direction"}, "data3", "date", WriterOptions());
   for (int i = 0; i < 20; ++i) {
       std::cout << "42 + i :" << i << std::endl;
