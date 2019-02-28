@@ -70,7 +70,7 @@ TEST_CASE("OrcWriterSequential Column name", "[Sequential]") {
       writer.write(1, 1, 1, 1, 1, 1, 1, 1);
     }
 
-    stryke::OrcReader<stryke::Int, stryke::Int, stryke::Int, stryke::Int, stryke::Int, stryke::Int, stryke::Int> reader(root_folder + "/" + cnl[0] + "=1/"+ cnl[1] + "=1/" + "test-1-1-0.orc");
+    stryke::OrcReader<stryke::Int, stryke::Int, stryke::Int, stryke::Int, stryke::Int, stryke::Int> reader(root_folder + "/" + cnl[0] + "=1/"+ cnl[1] + "=1/" + "test-1-1-0.orc");
     auto columns_read = reader.get_cols_name();
 
     REQUIRE(columns_read[0] == cnl[2]);

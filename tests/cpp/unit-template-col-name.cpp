@@ -16,34 +16,34 @@ TEST_CASE("OrcWriterImpl Column name", "[Core]") {
   options.set_batch_max(0);
   options.set_stripe_size(10000);
 
-  std::vector<std::string> column_name_list;
+  std::vector<std::string> cnl;
   for (int i = 0; i < 10; ++i) {
-    column_name_list.push_back("col" + std::to_string(i));
+    cnl.push_back("col" + std::to_string(i));
   }
 
   SECTION("OrcWriterImpl<Int") {
     {
-      stryke::OrcWriterImpl<stryke::Int> writer({column_name_list[0]}, filename, options);
+      stryke::OrcWriterImpl<stryke::Int> writer({cnl[0]}, filename, options);
       writer.write(1);
     }
 
     stryke::OrcReader<stryke::Int> reader(filename);
     auto columns_read = reader.get_cols_name();
 
-    REQUIRE(columns_read[0] == column_name_list[0]);
+    REQUIRE(columns_read[0] == cnl[0]);
 
   }
   SECTION("OrcWriterImpl<Int, Int>") {
     {
-      stryke::OrcWriterImpl<stryke::Int, stryke::Int> writer({column_name_list[0], column_name_list[1]}, filename, options);
+      stryke::OrcWriterImpl<stryke::Int, stryke::Int> writer({cnl[0], cnl[1]}, filename, options);
       writer.write(1, 1);
     }
 
-    stryke::OrcReader<stryke::Int> reader(filename);
+    stryke::OrcReader<stryke::Int, stryke::Int> reader(filename);
     auto columns_read = reader.get_cols_name();
 
-    REQUIRE(columns_read[0] == column_name_list[0]);
-    REQUIRE(columns_read[1] == column_name_list[1]);
+    REQUIRE(columns_read[0] == cnl[0]);
+    REQUIRE(columns_read[1] == cnl[1]);
 
   }
 
