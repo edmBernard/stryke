@@ -244,13 +244,3 @@ You need to have doxygen and graphviz installed on your computer.
 ```bash
 make docs
 ```
-
-
-TODO:   - Mettre à jour le readme
-
-TODO: - Fixer le writer csv et csv multifile
-
-TODO: - Mettre à jour le readme général
-TODO: - Ajouter plus de tests pour sequential
-TODO: - Ajouter test pour le nom des colonnes
-TODO: - Add comments in code
