@@ -59,6 +59,8 @@ int main(int argc, char const *argv[]) {
     }
 
     int count = 0;
+
+    // get all data in one time
     for (auto&& i : reader.get_data()) {
       std::cout << "**** Row: " << count++ << std::endl
                 << "  - Long: " << std::get<0>(i).data << std::endl
@@ -72,6 +74,14 @@ int main(int argc, char const *argv[]) {
                 << "  - DateNumber: " << std::get<8>(i).data << std::endl
                 << "  - Timestamp: " << std::get<9>(i).data << std::endl
                 << "  - TimestampNumber: " << std::get<10>(i).data << std::endl;
+    }
+
+    // reset reader to be able to read data another time
+    reader.reset();
+
+    // read data by batch
+    for (auto res = reader.get_batch(); !res.empty(); res = reader.get_batch()) {
+      std::cout << "res.size() : " << res.size() << std::endl;
     }
 
   } catch (std::exception &ex) {

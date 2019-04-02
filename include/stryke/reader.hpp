@@ -147,15 +147,25 @@ auto for_each(orc::StructVectorBatch *structBatch, uint64_t row) -> std::tuple<T
 
 } // namespace utils
 
+
+//! OrcReader work like an iterator, it must be reset to get data another time.
+//!
+//! \tparam Types
+//!
 template <typename... Types>
 class OrcReader {
   std::string filename;
   orc::ReaderOptions options;
   std::unique_ptr<orc::Reader> reader;
+  std::unique_ptr<orc::RowReader> rowReader;
+  uint64_t batch_size;
+  std::unique_ptr<orc::ColumnVectorBatch> batch;
 
 public:
-  OrcReader(std::string filename) : filename(filename) {
-    reader = orc::createReader(orc::readLocalFile(filename), this->options);
+  OrcReader(std::string filename, uint64_t batch_size = 10000) : filename(filename), batch_size(batch_size) {
+    this->reader = orc::createReader(orc::readLocalFile(this->filename), this->options);
+    this->rowReader = this->reader->createRowReader();
+    this->batch = this->rowReader->createRowBatch(this->batch_size);
   }
 
   std::array<std::string, sizeof...(Types)> get_cols_name() {
@@ -169,11 +179,14 @@ public:
     return ret;
   }
 
+  void reset() {
+    this->reader = orc::createReader(orc::readLocalFile(this->filename), this->options);
+    this->rowReader = this->reader->createRowReader();
+    this->batch = this->rowReader->createRowBatch(this->batch_size);
+  }
+
   std::vector<std::tuple<Types...>> get_data() {
     std::vector<std::tuple<Types...>> output;
-
-    std::unique_ptr<orc::RowReader> rowReader = this->reader->createRowReader();
-    std::unique_ptr<orc::ColumnVectorBatch> batch = rowReader->createRowBatch(10);
 
     while (rowReader->next(*batch)) {
       orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
@@ -182,6 +195,20 @@ public:
         output.push_back(utils::for_each<Types...>(structBatch, r));
       }
     }
+    return output;
+  }
+
+  std::vector<std::tuple<Types...>> get_batch() {
+    std::vector<std::tuple<Types...>> output;
+
+    if (rowReader->next(*batch)) {
+      orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(batch.get());
+
+      for (uint64_t r = 0; r < batch->numElements; ++r) {
+        output.push_back(utils::for_each<Types...>(structBatch, r));
+      }
+    }
+
     return output;
   }
 
