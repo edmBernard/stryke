@@ -3,9 +3,9 @@
 //
 //  https://github.com/edmBernard/Stryke
 //
-//  Created by Erwan BERNARD on 08/12/2018.
+//  Created by Erwan BERNARD on 03/04/2019.
 //
-//  Copyright (c) 2018 Erwan BERNARD. All rights reserved.
+//  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
