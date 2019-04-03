@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "stryke/miscellaneous/dispatch_duplicate.hpp"
+#include "stryke/dispatch.hpp"
 #include "utils_for_test.hpp"
 #include "stryke/core.hpp"
 #include "stryke/options.hpp"

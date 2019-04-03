@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include "stryke/reader.hpp"
-#include "stryke/miscellaneous/sequential_duplicate.hpp"
+#include "stryke/sequential.hpp"
 #include "stryke/type.hpp"
 #include <filesystem>
 

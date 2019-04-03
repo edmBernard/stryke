@@ -5,8 +5,6 @@
 #include "stryke/options.hpp"
 #include "stryke/reader.hpp"
 #include "stryke/thread.hpp"
-#include "stryke/miscellaneous/dispatch_duplicate.hpp"
-#include "stryke/miscellaneous/sequential_duplicate.hpp"
 #include "stryke_binding.hpp"
 
 #include <Python.h>

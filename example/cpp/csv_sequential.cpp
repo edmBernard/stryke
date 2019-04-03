@@ -28,5 +28,11 @@ int main(int argc, char const *argv[]) {
       writer.write(17875 + i/100000., i);
   }
 
+  CsvWriterSequentialDuplicate<DateNumber, Int> writer2({"date", "value"}, "data2", "date", options);
+  for (int i = 0; i < 10100; ++i) {
+      std::cout << "42 + i :" << i << std::endl;
+      writer2.write(17875 + i/100000., i);
+  }
+
   return 0;
 }

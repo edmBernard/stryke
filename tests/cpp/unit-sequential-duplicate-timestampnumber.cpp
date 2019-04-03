@@ -1,6 +1,5 @@
 #include "catch.hpp"
-#include "stryke/miscellaneous/sequential_duplicate.hpp"
-// #include "stryke/multifile.hpp"
+#include "stryke/sequential.hpp"
 #include "utils_for_test.hpp"
 #include "stryke/core.hpp"
 #include "stryke/options.hpp"

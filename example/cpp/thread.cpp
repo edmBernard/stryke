@@ -11,7 +11,7 @@
 //
 
 #include "stryke/thread.hpp"
-#include "stryke/miscellaneous/sequential_duplicate.hpp"
+#include "stryke/sequential.hpp"
 #include "stryke/core.hpp"
 
 using namespace stryke;
