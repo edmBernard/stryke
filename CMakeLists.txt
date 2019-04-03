@@ -64,6 +64,7 @@ set(examples
   core_writer
   csv_writer
   csv_sequential
+  csv_performance
   dispatch
   dispatch_duplicate
   dispatch_folder
