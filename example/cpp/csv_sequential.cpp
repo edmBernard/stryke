@@ -11,17 +11,18 @@
 //
 
 #include "stryke/type.hpp"
-#include "stryke/csv/multifile.hpp"
+#include "stryke/csv/sequential.hpp"
 
 
 using namespace stryke;
+using namespace stryke::csv;
 
 int main(int argc, char const *argv[]) {
 
   WriterOptions options;
   options.enable_suffix_timestamp();
 
-  CsvWriterMulti<DateNumber, Int> writer({"date", "value"}, "data", "date_", options);
+  CsvWriterSequential<DateNumber, Int> writer({"date", "value"}, "data", "date_", options);
   for (int i = 0; i < 10100; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer.write(17875 + i/100000., i);

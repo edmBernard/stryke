@@ -63,7 +63,7 @@ SET(SOURCES
 set(examples
   core_writer
   csv_writer
-  csv_multifile
+  csv_sequential
   dispatch
   dispatch_duplicate
   dispatch_folder

@@ -19,7 +19,6 @@
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
 
-
 #include <cmath>
 #include <filesystem>
 #include <fstream>

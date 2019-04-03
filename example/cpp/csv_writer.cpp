@@ -20,7 +20,7 @@
 
 
 using namespace stryke;
-
+using namespace stryke::csv;
 
 int main(int argc, char const *argv[]) {
   std::string filename = "my_file.csv";
