@@ -191,9 +191,9 @@ protected:
       fs::path filename;
       do {
         if (this->writeroptions.suffix_timestamp) {
-          filename = file_folder / (prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".orc");
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".csv");
         } else {
-          filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".orc");
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".csv");
         }
 
       } while (fs::exists(filename));
