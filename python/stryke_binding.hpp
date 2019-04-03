@@ -22,8 +22,6 @@
 #include "stryke/options.hpp"
 #include "stryke/reader.hpp"
 #include "stryke/thread.hpp"
-#include "stryke/miscellaneous/dispatch_duplicate.hpp"
-#include "stryke/miscellaneous/sequential_duplicate.hpp"
 #include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>

@@ -3,19 +3,19 @@
 //
 //  https://github.com/edmBernard/Stryke
 //
-//  Created by Erwan BERNARD on 08/12/2018.
+//  Created by Erwan BERNARD on 03/04/2019.
 //
 //  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_SEQUENTIAL_HPP_
-#define STRYKE_SEQUENTIAL_HPP_
+#ifndef STRYKE_CSV_SEQUENTIAL_HPP_
+#define STRYKE_CSV_SEQUENTIAL_HPP_
 
 #include "date/date.h"
 #include "stryke/core.hpp"
-#include "stryke/dispatch.hpp"
+#include "stryke/csv/dispatch.hpp"
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
 #include <ctime>
@@ -29,6 +29,7 @@
 #include <vector>
 
 namespace stryke {
+namespace csv {
 
 namespace utils {
 
@@ -50,18 +51,18 @@ inline bool compare(Double value1, Double value2) {
 } // namespace utils
 
 template <typename T, typename... Types>
-class OrcWriterSequential : public OrcWriterSequential<T, FolderEncode<>, Types...> {
+class CsvWriterSequential : public CsvWriterSequential<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-      : OrcWriterSequential<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  CsvWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : CsvWriterSequential<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
 
-// I don't find a better way. I was not able to implement it with heritage from OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
+// I don't find a better way. I was not able to implement it with heritage from CsvWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
 template <typename T, typename... TypesFolder, typename... Types>
-class OrcWriterSequential<T, FolderEncode<TypesFolder...>, Types...> {
+class CsvWriterSequential<T, FolderEncode<TypesFolder...>, Types...> {
 public:
-  OrcWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
@@ -83,7 +84,7 @@ public:
 private:
   void get_writer(T data) {
     if (!utils::compare(data, this->current_data) || !this->writer) {
-      this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>>(this->column_names_full, this->root_folder, this->file_prefix, this->writeroptions);
+      this->writer = std::make_unique<CsvWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>>(this->column_names_full, this->root_folder, this->file_prefix, this->writeroptions);
       this->current_data = data;
     }
   }
@@ -92,33 +93,33 @@ private:
   fs::path root_folder;
   std::string file_prefix;
 
-  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>> writer;
+  std::unique_ptr<CsvWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>> writer;
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names_full;
   T current_data;
 };
 
 template <typename T, typename... Types>
-class OrcWriterSequentialDuplicate : public OrcWriterSequentialDuplicate<T, FolderEncode<>, Types...> {
+class CsvWriterSequentialDuplicate : public CsvWriterSequentialDuplicate<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-      : OrcWriterSequentialDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : CsvWriterSequentialDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
 
-// I don't find a better way. I was not able to implement it with heritage from OrcWriterSequential<FolderEncode<T, TypesFolder...>, T, Types...>.
+// I don't find a better way. I was not able to implement it with heritage from CsvWriterSequential<FolderEncode<T, TypesFolder...>, T, Types...>.
 template <typename T, typename... TypesFolder, typename... Types>
-class OrcWriterSequentialDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
+class CsvWriterSequentialDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
 
-  std::unique_ptr<OrcWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>> writer;
+  std::unique_ptr<CsvWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>> writer;
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;
 
 public:
-  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
 
-    this->writer = std::make_unique<OrcWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
+    this->writer = std::make_unique<CsvWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
   }
 
   void write(T date, TypesFolder... datafolder, Types... dataT) {
@@ -134,6 +135,7 @@ public:
   }
 };
 
+} // namespace csv
 } // namespace stryke
 
-#endif // !STRYKE_SEQUENTIAL_HPP_
+#endif // !STRYKE_CSV_SEQUENTIAL_HPP_

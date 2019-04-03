@@ -3,18 +3,18 @@
 //
 //  https://github.com/edmBernard/Stryke
 //
-//  Created by Erwan BERNARD on 08/12/2018.
+//  Created by Erwan BERNARD on 03/04/2019.
 //
 //  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_DISPATCH_HPP_
-#define STRYKE_DISPATCH_HPP_
+#ifndef STRYKE_CSV_DISPATCH_HPP_
+#define STRYKE_CSV_DISPATCH_HPP_
 
 #include "date/date.h"
-#include "stryke/core.hpp"
+#include "stryke/csv/core.hpp"
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
 #include <ctime>
@@ -28,6 +28,7 @@
 #include <vector>
 
 namespace stryke {
+namespace csv {
 
 namespace utils {
 
@@ -129,10 +130,10 @@ auto createFileSuffix(std::tuple<Types...> const &data, std::string &suffix) {
 namespace fs = std::filesystem;
 
 template <typename... Types>
-class OrcWriterDispatch : public OrcWriterDispatch<FolderEncode<>, Types...> {
+class CsvWriterDispatch : public CsvWriterDispatch<FolderEncode<>, Types...> {
 public:
-  OrcWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-      : OrcWriterDispatch<FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  CsvWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : CsvWriterDispatch<FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
 
@@ -140,15 +141,15 @@ public:
 //!
 //!
 template <typename... TypesFolder, typename... Types>
-class OrcWriterDispatch<FolderEncode<TypesFolder...>, Types...> {
+class CsvWriterDispatch<FolderEncode<TypesFolder...>, Types...> {
 public:
-  OrcWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder), this->column_names_folder.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder), sizeof...(Types), this->column_names_file.begin());
   }
 
-  ~OrcWriterDispatch() {
+  ~CsvWriterDispatch() {
   }
 
   void write(TypesFolder... datafolder, Types... dataT) {
@@ -190,16 +191,16 @@ protected:
       fs::path filename;
       do {
         if (this->writeroptions.suffix_timestamp) {
-          filename = file_folder / (prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".orc");
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".csv");
         } else {
-          filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".orc");
+          filename = file_folder / (prefix_with_date + "-" + std::to_string(++this->counts[prefix_with_date]) + ".csv");
         }
 
       } while (fs::exists(filename));
 
       fs::create_directories(filename.parent_path());
 
-      this->writers[prefix_with_date] = std::make_unique<OrcWriterImpl<Types...>>(this->column_names_file, filename, this->writeroptions);
+      this->writers[prefix_with_date] = std::make_unique<CsvWriterImpl<Types...>>(this->column_names_file, filename, this->writeroptions);
     }
     return prefix_with_date;
   }
@@ -208,7 +209,7 @@ protected:
   std::array<std::string, sizeof...(Types)> column_names_file;
   std::array<std::string, sizeof...(TypesFolder)> column_names_folder;
 
-  std::map<fs::path, std::unique_ptr<OrcWriterImpl<Types...>>> writers;
+  std::map<fs::path, std::unique_ptr<CsvWriterImpl<Types...>>> writers;
   std::map<fs::path, int> counts; // counts for suffix in filename
 
   fs::path root_folder;
@@ -216,27 +217,27 @@ protected:
 };
 
 template <typename T, typename... Types>
-class OrcWriterDispatchDuplicate : public OrcWriterDispatchDuplicate<T, FolderEncode<>, Types...> {
+class CsvWriterDispatchDuplicate : public CsvWriterDispatchDuplicate<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
-      : OrcWriterDispatchDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
+  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+      : CsvWriterDispatchDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
 
-// I don't find a better way. I was not able to implement it with heritage from OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
+// I don't find a better way. I was not able to implement it with heritage from CsvWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
 template <typename T, typename... TypesFolder, typename... Types>
-class OrcWriterDispatchDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
+class CsvWriterDispatchDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
 
-  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>> writer;
+  std::unique_ptr<CsvWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>> writer;
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;
 
 public:
-  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
 
-    this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
+    this->writer = std::make_unique<CsvWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
   }
 
   void write(T date, TypesFolder... datafolder, Types... dataT) {
@@ -252,6 +253,7 @@ public:
   }
 };
 
+} // namespace csv
 } // namespace stryke
 
-#endif // !STRYKE_DISPATCH_HPP_
+#endif // !STRYKE_CSV_DISPATCH_HPP_

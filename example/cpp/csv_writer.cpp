@@ -5,7 +5,7 @@
 //
 //  Created by Erwan BERNARD on 02/12/2018.
 //
-//  Copyright (c) 2018 Erwan BERNARD. All rights reserved.
+//  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
@@ -20,7 +20,7 @@
 
 
 using namespace stryke;
-
+using namespace stryke::csv;
 
 int main(int argc, char const *argv[]) {
   std::string filename = "my_file.csv";

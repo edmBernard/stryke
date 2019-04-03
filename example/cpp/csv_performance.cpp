@@ -11,13 +11,14 @@
 //
 
 #include "stryke/thread.hpp"
-#include "stryke/dispatch.hpp"
-#include "stryke/sequential.hpp"
+#include "stryke/csv/dispatch.hpp"
+#include "stryke/csv/sequential.hpp"
 #include "stryke/core.hpp"
 #include <filesystem>
 #include <chrono>
 
 using namespace stryke;
+using namespace stryke::csv;
 namespace fs = std::filesystem;
 
 
@@ -26,7 +27,7 @@ void bench_sequential(int number_line, const WriterOptions &options) {
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterSequential<DateNumber, DateNumber, Double, TimestampNumber> writer({"A2", "A2b", "B2", "C2"}, "data", "sequential", options);
+    CsvWriterSequential<DateNumber, DateNumber, Double, TimestampNumber> writer({"A2", "A2b", "B2", "C2"}, "data", "sequential", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
       // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
@@ -55,7 +56,7 @@ void bench_sequential_duplicate(int number_line, const WriterOptions &options) {
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterSequentialDuplicate<DateNumber, Double, TimestampNumber> writer({"A2", "B2", "C2"}, "data", "sequential_duplicate", options);
+    CsvWriterSequentialDuplicate<DateNumber, Double, TimestampNumber> writer({"A2", "B2", "C2"}, "data", "sequential_duplicate", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
       // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);
@@ -84,7 +85,7 @@ void bench_thread(int number_line, const WriterOptions &options) {
   double max_timer = 0;
   auto start1 = std::chrono::high_resolution_clock::now();
   {
-    OrcWriterThread<OrcWriterSequentialDuplicate, DateNumber, Double, TimestampNumber> writer({"A2", "B2", "C2"}, "data", "thread", options);
+    OrcWriterThread<CsvWriterSequentialDuplicate, DateNumber, Double, TimestampNumber> writer({"A2", "B2", "C2"}, "data", "thread", options);
     double previous_timer = 0;
     for (int i = 0; i < number_line; ++i) {
       // auto start3 = std::chrono::high_resolution_clock::now() + std::chrono::duration<double, std::micro>(10);

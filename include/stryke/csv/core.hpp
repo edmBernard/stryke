@@ -5,7 +5,7 @@
 //
 //  Created by Erwan BERNARD on 02/12/2018.
 //
-//  Copyright (c) 2018 Erwan BERNARD. All rights reserved.
+//  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
@@ -31,8 +31,12 @@
 #include <tuple>
 
 namespace stryke {
+namespace csv {
+
+namespace fs = std::filesystem;
 
 namespace utils {
+
 // ==============================================================
 //  Fill file with data
 // ==============================================================
@@ -66,8 +70,8 @@ auto fillcsv(std::ofstream &writer, std::tuple<Types...> &data) {
 template <typename... Types>
 class CsvWriterImpl {
 public:
-  CsvWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
-      : writeroptions(options), column_names(column_names), filename(filename) {
+  CsvWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
+      : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
 
     this->writer = std::ofstream(filename);
 
@@ -79,15 +83,19 @@ public:
 
     // create lock file
     if (this->writeroptions.create_lock_file) {
-      std::ofstream outfile(this->filename + ".lock");
+      std::ofstream outfile(this->root_folder / (this->filename + ".lock"));
       outfile.close();
     }
+  }
+
+  CsvWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
+      : CsvWriterImpl(column_names, "", filename, options) {
   }
 
   ~CsvWriterImpl() {
     this->writer.close();
     if (this->writeroptions.create_lock_file) {
-      std::filesystem::remove(this->filename + ".lock");
+      std::filesystem::remove(this->root_folder / (this->filename + ".lock"));
     }
   }
 
@@ -100,6 +108,9 @@ public:
     this->writer << "\n";
   }
 
+  uint64_t const &get_count() const {
+    return this->total_line;
+  }
 
 private:
 
@@ -109,9 +120,14 @@ private:
 
   std::array<std::string, sizeof...(Types)> column_names;
 
+  fs::path root_folder;
   std::string filename;
+
+  uint64_t numValues = 0; // num of lines in batch writer
+  uint64_t total_line = 0; // num of lines in batch writer + number of line already write in file
 };
 
+} // namespace csv
 } // namespace stryke
 
 #endif // !STRYKE_CSV_HPP_
