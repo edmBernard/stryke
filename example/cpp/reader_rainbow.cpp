@@ -76,12 +76,15 @@ int main(int argc, char const *argv[]) {
                 << "  - TimestampNumber: " << std::get<10>(i).data << std::endl;
     }
 
+    std::cout << "number of row in file : " << reader.get_nbr_rows() << std::endl;
+    std::cout << "number of column in file : " << reader.get_nbr_cols() << std::endl;
+
     // reset reader to be able to read data another time
     reader.reset();
 
     // read data by batch
     for (auto res = reader.get_batch(); !res.empty(); res = reader.get_batch()) {
-      std::cout << "res.size() : " << res.size() << std::endl;
+      std::cout << "extracted batch size : " << res.size() << std::endl;
     }
 
   } catch (std::exception &ex) {

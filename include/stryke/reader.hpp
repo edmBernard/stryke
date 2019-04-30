@@ -159,6 +159,8 @@ class OrcReader {
   std::unique_ptr<orc::Reader> reader;
   std::unique_ptr<orc::RowReader> rowReader;
   uint64_t batch_size;
+  uint64_t nbr_rows;
+  uint64_t nbr_cols;
   std::unique_ptr<orc::ColumnVectorBatch> batch;
 
 public:
@@ -166,6 +168,12 @@ public:
     this->reader = orc::createReader(orc::readLocalFile(this->filename), this->options);
     this->rowReader = this->reader->createRowReader();
     this->batch = this->rowReader->createRowBatch(this->batch_size);
+    this->nbr_rows = this->reader->getNumberOfRows();
+    this->nbr_cols = this->reader->getStatistics()->getNumberOfColumns();
+
+    if (sizeof...(Types) != this->nbr_cols-1) {
+      throw std::runtime_error("Incompatible file, nbr of columns expected by reader : " + std::to_string(sizeof...(Types)) + " got in file : " + std::to_string(this->nbr_cols-1));
+    }
   }
 
   std::array<std::string, sizeof...(Types)> get_cols_name() {
@@ -218,6 +226,14 @@ public:
 
   //   }
   // }
+
+  uint64_t get_nbr_rows() {
+    return this->nbr_rows;
+  }
+
+  uint64_t get_nbr_cols() {
+    return this->nbr_cols;
+  }
 
 };
 
