@@ -24,7 +24,6 @@ using namespace stryke::csv;
 
 int main(int argc, char const *argv[]) {
   std::string filename = "my_file.csv";
-
   CsvWriterImpl<DateNumber, Int> writer({"date", "value"}, filename, WriterOptions());
   for (int i = 0; i < 10100; ++i) {
       std::cout << "42 + i :" << i << std::endl;
@@ -36,6 +35,13 @@ int main(int argc, char const *argv[]) {
   for (int i = 0; i < 10100; ++i) {
       std::cout << "42 + i :" << i << std::endl;
       writer2.write(17875 + i/100000., i);
+  }
+
+  std::string filename3 = "my_file3.csv";
+  CsvWriterImpl<TimestampNumber, Int> writer3({"date", "value"}, filename3, WriterOptions());
+  for (int i = 0; i < 10; ++i) {
+      std::cout << "43 + i :" << i << std::endl;
+      writer3.write(1556780436 + i, i);
   }
 
   return 0;

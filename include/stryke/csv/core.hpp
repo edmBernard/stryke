@@ -43,7 +43,7 @@ namespace utils {
 
 template <typename Types, uint64_t N>
 bool addData(std::ofstream &writer, const Types &data) {
-  writer << std::get<N>(data) << ";";
+  writer << std::setprecision(20) << std::get<N>(data) << ";";
   return true;
 }
 
