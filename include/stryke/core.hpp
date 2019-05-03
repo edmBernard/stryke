@@ -657,6 +657,16 @@ public:
     ++this->total_line;
   }
 
+  //! Get the number of lines send to file.
+  //!
+  //! \return uint64_t const&
+  //!
+  uint64_t const &get_count() const {
+    return this->total_line;
+  }
+
+private:
+
   void addToFile() {
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
@@ -669,16 +679,6 @@ public:
     this->numValues = 0;
     this->string_buffer_offset = 0;
   }
-
-  //! Get the number of lines send to file.
-  //!
-  //! \return uint64_t const&
-  //!
-  uint64_t const &get_count() const {
-    return this->total_line;
-  }
-
-private:
 
   std::unique_ptr<orc::Type> fileType;
 
