@@ -196,6 +196,12 @@ namespace utils {
 // ==============================================================
 
 // I use a class because function template partial specialisation is not allowed in c++, but class yes
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//! \tparam T type of the field to fill (stryke::Type)
+//!
 template <typename Types, uint64_t N, typename T>
 class Filler {
 public:
@@ -207,6 +213,11 @@ public:
   // }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, Long> {
 public:
@@ -233,6 +244,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, String> {
 public:
@@ -267,6 +283,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, Double> {
 public:
@@ -293,6 +314,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, Boolean> {
 public:
@@ -319,6 +345,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, Date> {
 public:
@@ -350,6 +381,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, DateNumber> {
 public:
@@ -376,6 +412,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, Timestamp> {
 public:
@@ -423,6 +464,11 @@ public:
   }
 };
 
+//! Class to fill data in orc::StructVectorBatch.
+//!
+//! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
+//! \tparam N column index of the field to fill
+//!
 template <typename Types, uint64_t N>
 class Filler<Types, N, TimestampNumber> {
 public:
@@ -460,14 +506,35 @@ public:
   }
 };
 
+//! Implementation to create a foreach on all element of a tuple.
+//!
+//! \tparam T fields type (std::tuple<stryke::Type...>)
+//! \tparam Indices List of indice to acces tuple element (std::index_sequence_for)
+//! \param data
+//! \param structBatch Structure where we put data
+//! \param numValues number of value to add in batch
+//! \param string_buffer string buffer. string are store in a buffer and not in structBatch
+//! \param string_buffer_offset offset to keep track of string position
+//! \return std::vector<bool> status of each data transfert
+//!
 template <typename T, std::size_t... Indices>
 auto fillValuesImpl(std::index_sequence<Indices...>, std::vector<T> &data, orc::StructVectorBatch *structBatch, uint64_t numValues, std::unique_ptr<orc::DataBuffer<char>> &string_buffer, uint64_t &string_buffer_offset) -> std::vector<bool> {
   // return {Filler<T, Indices, decltype(std::get<Indices>(data[0]))>::fillValue(data, structBatch, numValues)...};
   return {Filler<T, Indices, typename std::tuple_element<Indices, T>::type::type>::fillValue(data, structBatch, numValues, string_buffer, string_buffer_offset)...};
 }
 
+//! Apply Filler function on all element of the data. Fill orc file with data.
+//!
+//! \tparam Types template variadic list of field stryke::Type
+//! \param data
+//! \param structBatch Structure where we put data
+//! \param numValues number of value to add in batch
+//! \param string_buffer string buffer. string are store in a buffer and not in structBatch
+//! \param string_buffer_offset offset to keep track of string position
+//! \return std::vector<bool> status of each data transfert
+//!
 template <typename... Types>
-auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch *structBatch, uint64_t numValues, std::unique_ptr<orc::DataBuffer<char>> &string_buffer, uint64_t &string_buffer_offset) {
+std::vector<bool> fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch *structBatch, uint64_t numValues, std::unique_ptr<orc::DataBuffer<char>> &string_buffer, uint64_t &string_buffer_offset) {
   return fillValuesImpl(std::index_sequence_for<Types...>(), data, structBatch, numValues, string_buffer, string_buffer_offset);
 }
 
@@ -475,6 +542,14 @@ auto fillValues(std::vector<std::tuple<Types...>> &data, orc::StructVectorBatch 
 //  Create Schema Implementation: function to create data schema
 // ==============================================================
 
+//! Add given Type and column name to schema store in orc file.
+//!
+//! \tparam T field type (stryke::Type)
+//! \param struct_type struct containing file schema.
+//! \param column_name
+//! \return true always retrun true, use to force compiler to implement this template
+//! \return false
+//!
 template <typename T>
 bool addStructField(std::unique_ptr<orc::Type> &struct_type, std::string column_name) {
   struct_type->addStructField(column_name, orc::createPrimitiveType(get_orc_type<T>()));
@@ -487,8 +562,15 @@ auto createSchemaImpl(std::index_sequence<Indices...>, std::unique_ptr<orc::Type
   return {addStructField<Types>(struct_type, column_names[Indices])...};
 }
 
+//! Create a Schema object from given stryke::Type.
+//!
+//! \tparam Types list of field stryke::Type
+//! \param struct_type
+//! \param column_names
+//! \return std::vector<bool> always retrun true, use to force compiler to implement this template
+//!
 template <typename... Types>
-auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::string, sizeof...(Types)> column_names) {
+std::vector<bool> createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::string, sizeof...(Types)> column_names) {
   return createSchemaImpl<Types...>(std::index_sequence_for<Types...>(), struct_type, column_names);
 }
 
@@ -500,10 +582,18 @@ auto createSchema(std::unique_ptr<orc::Type> &struct_type, std::array<std::strin
 
 //! Writer in one file one thread.
 //!
+//! \tparam Types list of field stryke::Type
 //!
 template <typename... Types>
 class OrcWriterImpl {
 public:
+  //! Construct a new Orc Writer Impl object.
+  //!
+  //! \param column_names
+  //! \param root_folder
+  //! \param filename
+  //! \param options
+  //!
   OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
       : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
     this->fileType = orc::createStructType();
@@ -526,6 +616,12 @@ public:
     }
   }
 
+  //! Construct a new Orc Writer Impl object.
+  //!
+  //! \param column_names
+  //! \param filename
+  //! \param options
+  //!
   OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
       : OrcWriterImpl(column_names, "", filename, options) {
   }
@@ -538,10 +634,18 @@ public:
     }
   }
 
+  //! Write given data to file.
+  //!
+  //! \param dataT
+  //!
   void write(Types... dataT) {
     this->write_tuple(std::make_tuple(dataT...));
   }
 
+  //! Write given tuple to file.
+  //!
+  //! \param dataT
+  //!
   void write_tuple(std::tuple<Types...> dataT) {
 
     if (this->numValues >= this->writeroptions.batchSize) {
@@ -566,6 +670,10 @@ public:
     this->string_buffer_offset = 0;
   }
 
+  //! Get the number of lines send to file.
+  //!
+  //! \return uint64_t const&
+  //!
   uint64_t const &get_count() const {
     return this->total_line;
   }
