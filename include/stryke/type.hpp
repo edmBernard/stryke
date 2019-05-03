@@ -56,7 +56,7 @@ namespace stryke {
 
 //! stryke::Type defined an interface for type that match orc type.
 //!
-//!
+//! stryke::get_orc_type and stryke::utils::Filler are define outside to get stryke::Type free of orc library dependencies.
 class Type {
 protected:
   Type() {}
