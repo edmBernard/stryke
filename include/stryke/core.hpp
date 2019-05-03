@@ -59,65 +59,131 @@ namespace fs = std::filesystem;
 // orc::MAP         --> Not Implemented
 // orc::UNION       --> Not Implemented
 
-// We replace TypeKind method in stryke::Type by an external get_orc_type to get stryke::Type without orc dependencies
+//! Get the orc type for stryke Type given in template.
+//!
+//! The default template is not implemened to raise an error at compile time if the type doesn't exist.
+//! *Note*: We replace TypeKind method in stryke::Type by an external get_orc_type to get stryke::Type without orc dependencies
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <typename Type>
 orc::TypeKind const get_orc_type();
 
+//! Get the orc type for stryke::Long given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Long>() {
   return orc::TypeKind::LONG;
 }
 
+//! Get the orc type for stryke::Short given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Short>() {
   return orc::TypeKind::SHORT;
 }
 
+//! Get the orc type for stryke::Int given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Int>() {
   return orc::TypeKind::INT;
 }
 
+//! Get the orc type for stryke::String given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::String>() {
   return orc::TypeKind::STRING;
 }
 
+//! Get the orc type for stryke::Char given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 // template <>
 // inline orc::TypeKind const get_orc_type<stryke::Char>() {
 //   return orc::TypeKind::CHAR;
 // }
 
+//! Get the orc type for stryke::Double given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Double>() {
   return orc::TypeKind::DOUBLE;
 }
 
+//! Get the orc type for stryke::Float given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Float>() {
   return orc::TypeKind::FLOAT;
 }
 
+//! Get the orc type for stryke::Boolean given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Boolean>() {
   return orc::TypeKind::BOOLEAN;
 }
 
+//! Get the orc type for stryke::Date given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Date>() {
   return orc::TypeKind::DATE;
 }
 
+//! Get the orc type for stryke::DateNumber given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::DateNumber>() {
   return orc::TypeKind::DATE;
 }
 
+//! Get the orc type for stryke::Timestamp given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::Timestamp>() {
   return orc::TypeKind::TIMESTAMP;
 }
 
+//! Get the orc type for stryke::TimestampNumber given in template.
+//!
+//! \tparam stryke field type
+//! \return orc::TypeKind const
+//!
 template <>
 inline orc::TypeKind const get_orc_type<stryke::TimestampNumber>() {
   return orc::TypeKind::TIMESTAMP;
