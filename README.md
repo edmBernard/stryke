@@ -51,11 +51,11 @@ We add Two custom type for date that can be initialized by double/long instead o
 
 There several writer implemented :
 - `stryke::OrcWriterImpl` : The basic writer the core implementation
-- `stryke::OrcWriterDispatch` : It add capability to encode data in folder (ex: `col1=1/col2=2/test-1-2.orc`) for predicate push down in spark. (*Note*: All file are keep open until the writer destruction)
-- `stryke::OrcWriterSequential` : Define a main key that force to close all open file when it changes.
-- `stryke::OrcWriterDispatchDuplicate` : Define a main key that appear in folder and in file.
-- `stryke::OrcWriterSequentialDuplicate` : Define a main key that force to close all open file when it changes. This key is in folder and in file.
-- `stryke::OrcWriterThread` : Multi threaded writer that can work as `OrcWriterDispatchDuplicate` or `OrcWriterSequentialDuplicate`.
+- `stryke::OrcWriterDispatch` : Writer with the ability to encode data in folder (ex: `col1=1/col2=2/test-1-2.orc`) for predicate push down in spark. (*Note*: All file are keep open until the writer destruction)
+- `stryke::OrcWriterSequential` : Writer with the ability to encode data in folder. And define a main key that force to close all open file when it changes.
+- `stryke::OrcWriterDispatchDuplicate` : Similar to OrcWriterDispatch with a main key that appear in folder and in file.
+- `stryke::OrcWriterSequentialDuplicate` : Similar to OrcWriterSequential with a main key that force to close all open file when it changes. This key is in folder and in file.
+- `stryke::OrcWriterThread` : Wrapper around Writer to delegate Writer un another thread. delegate worker can be : `OrcWriterDispatchDuplicate` or `OrcWriterSequentialDuplicate`.
 
 *Note*: All following example assume `using namespace stryke;` is defined.
 
