@@ -14,7 +14,6 @@
 #define STRYKE_CSV_SEQUENTIAL_HPP_
 
 #include "date/date.h"
-#include "stryke/core.hpp"
 #include "stryke/csv/dispatch.hpp"
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
