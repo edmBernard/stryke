@@ -54,8 +54,24 @@ namespace stryke {
 // orc::MAP         --> Not Implemented
 // orc::UNION       --> Not Implemented
 
-// Long Type Category
-class Long {
+//! stryke::Type defined an interface for type that match orc type.
+//!
+//! stryke::get_orc_type and stryke::utils::Filler are define outside to get stryke::Type free of orc library dependencies.
+class Type {
+protected:
+  Type() {
+  }
+
+public:
+  // bool empty = true;
+  typedef Type type;
+  static constexpr bool is_date = false;
+};
+
+//! stryke::Long defined type to match orc field type orc::TypeKind::LONG.
+//!
+//!
+class Long : public Type {
 public:
   Long(long data)
       : data(data), empty(false) {
@@ -71,7 +87,10 @@ public:
   static constexpr bool is_date = false;
 };
 
-class Short {
+//! stryke::Short defined type to match orc field type orc::TypeKind::SHORT.
+//!
+//!
+class Short : public Type {
 public:
   Short(short data)
       : data(data), empty(false) {
@@ -87,7 +106,10 @@ public:
   static constexpr bool is_date = false;
 };
 
-class Int {
+//! stryke::Int defined type to match orc field type orc::TypeKind::INT.
+//!
+//!
+class Int : public Type {
 public:
   Int(int data)
       : data(data), empty(false) {
@@ -103,17 +125,19 @@ public:
   static constexpr bool is_date = false;
 };
 
-// String Type Category
-class String {
+//! stryke::String defined type to match orc field type orc::TypeKind::STRINGs.
+//!
+//!
+class String : public Type {
 public:
   String(std::string &&data)
-      : data(std::forward<std::string>(data)) {
+      : data(std::forward<std::string>(data)), empty(false) {
   }
   String(const std::string &data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   String(const char *data)
-      : data(std::string(data)) {
+      : data(std::string(data)), empty(false) {
   }
   String() {
   }
@@ -121,24 +145,15 @@ public:
     return data;
   }
   std::string data;
+  bool empty = true;
   typedef String type;
   static constexpr bool is_date = false;
 };
 
-// Not working
-// class Char {
-// public:
-//   Char(char data)
-//       : data(1, data) {
-//   }
-//   Char() {
-//   }
-//   std::string data;
-//   typedef String type;
-// };
-
-// Double Type Category
-class Double {
+//! stryke::Double defined type to match orc field type orc::TypeKind::DOUBLE.
+//!
+//!
+class Double : public Type {
 public:
   Double(double data)
       : data(data), empty(false) {
@@ -154,7 +169,10 @@ public:
   static constexpr bool is_date = false;
 };
 
-class Float {
+//! stryke::Float defined type to match orc field type orc::TypeKind::FLOAT.
+//!
+//!
+class Float : public Type {
 public:
   Float(float data)
       : data(data), empty(false) {
@@ -170,8 +188,10 @@ public:
   static constexpr bool is_date = false;
 };
 
-// Boolean Type Category
-class Boolean {
+//! stryke::Boolean defined type to match orc field type orc::TypeKind::BOOLEAN.
+//!
+//!
+class Boolean : public Type {
 public:
   Boolean(bool data)
       : data(data), empty(false) {
@@ -187,17 +207,19 @@ public:
   static constexpr bool is_date = false;
 };
 
-// Date Type Category
-class Date {
+//! stryke::Date defined type to match orc field type orc::TypeKind::DATE.
+//!
+//! Build to be initialized by a std::string
+class Date : public Type {
 public:
   Date(std::string &&data)
-      : data(std::forward<std::string>(data)) {
+      : data(std::forward<std::string>(data)), empty(false) {
   }
   Date(const std::string &data)
-      : data(data) {
+      : data(data), empty(false) {
   }
   Date(const char *data)
-      : data(std::string(data)) {
+      : data(std::string(data)), empty(false) {
   }
   Date() {
   }
@@ -205,11 +227,15 @@ public:
     return data;
   }
   std::string data;
+  bool empty = true;
   typedef Date type;
   static constexpr bool is_date = true;
 };
 
-class DateNumber {
+//! stryke::DateNumber defined type to match orc field type orc::TypeKind::DATE.
+//!
+//! Build to be initialized by a long that represent number of day since 1970
+class DateNumber : public Type {
 public:
   DateNumber(long data)
       : data(data), empty(false) {
@@ -225,29 +251,35 @@ public:
   static constexpr bool is_date = true;
 };
 
-// Timestamp Type Category
-class Timestamp {
+//! stryke::Timestamp defined type to match orc field type orc::TypeKind::TIMESTAMP.
+//!
+//! Build to be initialized by a std::string
+class Timestamp : public Type {
 public:
   Timestamp(std::string &&data)
-      : data(std::forward<std::string>(data)) {
+      : data(std::forward<std::string>(data)), empty(false) {
   }
   Timestamp(const std::string &data)
-      : data(data) {
-  }
-  Timestamp() {
+      : data(data), empty(false) {
   }
   Timestamp(const char *data)
-      : data(std::string(data)) {
+      : data(std::string(data)), empty(false) {
+  }
+  Timestamp() {
   }
   operator std::string() const {
     return data;
   }
   std::string data;
+  bool empty = true;
   typedef Timestamp type;
   static constexpr bool is_date = true;
 };
 
-class TimestampNumber {
+//! stryke::Timestamp defined type to match orc field type orc::TypeKind::TIMESTAMP.
+//!
+//! Build to be initialized by a double that represent number of nanosecond since 1970
+class TimestampNumber : public Type {
 public:
   TimestampNumber(double data)
       : data(data), empty(false) {
@@ -263,6 +295,10 @@ public:
   static constexpr bool is_date = true;
 };
 
+//! Simple stryke::Type wrapper to specify if a field in encode in folder or in file.
+//!
+//! \tparam T variadic template of all field.
+//!
 template <typename... T>
 struct FolderEncode {
   static constexpr size_t size = sizeof...(T);

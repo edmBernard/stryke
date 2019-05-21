@@ -38,6 +38,12 @@ namespace utils {
 
 } // namespace utils
 
+//! Wrapper arroud a writer to delegate file writing in a separated thread.
+//!
+//! \tparam Writer Writer to use. OrcWriterSequentialDuplicate, OrcWriterDispatchDuplicate
+//! \tparam T Data that will be duplicate between folder and file. It behaviour change in function of used writer
+//! \tparam Types Types list of field stryke::Type or stryke::FolderEncode.
+//!
 template <template <typename...> typename Writer, typename T, typename... Types>
 class OrcWriterThread : public OrcWriterThread<Writer, T, FolderEncode<>, Types...> {
 public:
@@ -46,8 +52,12 @@ public:
   }
 };
 
-//! Writer in mutli file separated thread.
+//! Wrapper arroud a writer to delegate file writing in a separated thread.
 //!
+//! \tparam Writer Writer to use. OrcWriterSequentialDuplicate, OrcWriterDispatchDuplicate
+//! \tparam T Data that will be duplicate between folder and file. It behaviour change in function of used writer
+//! \tparam TypesFolder Types list of field stryke::Type contained in a stryke::FolderEncode. These datas will be store in folder path.
+//! \tparam Types Types list of field stryke::Type.
 //!
 template <template <typename...> typename Writer, typename T, typename... TypesFolder, typename... Types>
 class OrcWriterThread<Writer, T, FolderEncode<TypesFolder...>, Types...> {
@@ -61,6 +71,9 @@ public:
     }
   }
 
+  //! Destroy the Orc Writer Thread object. Close file, stop thread etc ...
+  //!
+  //!
   ~OrcWriterThread() {
     // close_sync
     this->writer_closed = false;                      // unecessary but iso with async close
@@ -78,13 +91,23 @@ public:
     if (this->cron_minute > 0) {
       this->cron_thread.join();
     }
-
   }
 
+  //! Write given data to file.
+  //!
+  //! \param data Data stored in folder and in file.
+  //! \param datafolder Data encoded in folder
+  //! \param dataT Data stored in file
+  //!
   void write(T date, TypesFolder... datafolder, Types... dataT) {
     this->write_tuple(std::make_tuple(date, datafolder...), std::make_tuple(date, dataT...));
   }
 
+  //! Write given tuple to file.
+  //!
+  //! \param datafolder Data encoded in folder. The first element is the trigger for file closing.
+  //! \param dataT Data stored in file
+  //!
   void write_tuple(std::tuple<T, TypesFolder...> datafolder, std::tuple<T, Types...> dataT) {
     std::unique_lock<std::mutex> lck(this->mx_queue);  // lock to protect read and write on queue
     std::unique_lock<std::mutex> lck2(this->mx_close); // lock only to block close method until file is closed
@@ -93,18 +116,27 @@ public:
     this->queue_is_not_empty.notify_all();
   }
 
+  //! Close file and finalize it.
+  //!
+  //!
   bool has_closed() {
     return this->writer_closed;
   }
 
+  //! Close Writer Asynchronously.
   //! I made the choice that close_async wait the queue to be empty before closing file.
   //! if we continue to write data fast enough the file can never close.
+  //!
+  //!
   void close_async() {
     this->writer_closed = false;
     this->close_writer = true;             // ask writer thread to close writer
     this->queue_is_not_empty.notify_all(); // command to unlock writer thread if queue is already empty
   }
 
+  //! Close Writer Synchronously.
+  //!
+  //!
   void close_sync() {
     this->writer_closed = false;                      // unecessary but iso with async close
     this->close_writer = true;                        // ask writer thread to close writer
@@ -115,6 +147,10 @@ public:
     }
   }
 
+private:
+  //! Function that consume data from fifo and write them in file.
+  //!
+  //!
   void consumer() {
     while (!this->stop_thread) {
       std::unique_lock<std::mutex> lck(this->mx_queue, std::defer_lock); // lock to protect read and write on queue
@@ -142,6 +178,9 @@ public:
     }
   }
 
+  //! Function that trigger file closing periodically.
+  //!
+  //!
   void cron() {
     long previous_minute_count = 0;
 
@@ -161,20 +200,19 @@ public:
     }
   }
 
-private:
-  std::queue<std::tuple<T, Types...>> fifo;
-  std::queue<std::tuple<T, TypesFolder...>> fifo_folder;
-  std::thread writer_thread;
-  std::thread cron_thread;
-  int cron_minute;
-  std::unique_ptr<Writer<T, FolderEncode<TypesFolder...>, Types...>> writer;
-  std::atomic<bool> stop_thread = false;  // simple thread stopping.
-  std::atomic<bool> close_writer = false; // ask writer thread to close writer
-  std::atomic<bool> writer_closed = true; // variable for check after async close
-  std::mutex mx_queue;                    // lock to protect read and write on queue
-  std::mutex mx_close;                    // lock only to block close method until file is closed
-  std::condition_variable queue_is_not_empty;
-  std::condition_variable writer_is_closed;
+  std::queue<std::tuple<T, Types...>> fifo;                                  //!< First in First out file use to store data store in file between main thread and writer thread
+  std::queue<std::tuple<T, TypesFolder...>> fifo_folder;                     //!< First in First out file use to store data store in folder between main thread and writer thread
+  std::thread writer_thread;                                                 //!< Thread with writer function
+  std::thread cron_thread;                                                   //!< Thread with cron function
+  int cron_minute;                                                           //!< Trigger for cron
+  std::unique_ptr<Writer<T, FolderEncode<TypesFolder...>, Types...>> writer; //!< Writer use to write Orc file
+  std::atomic<bool> stop_thread = false;                                     //!< simple thread stopping.
+  std::atomic<bool> close_writer = false;                                    //!< ask writer thread to close writer
+  std::atomic<bool> writer_closed = true;                                    //!< variable for check after async close
+  std::mutex mx_queue;                                                       //!< lock to protect read and write on queue
+  std::mutex mx_close;                                                       //!< lock only to block close method until file is closed
+  std::condition_variable queue_is_not_empty;                                //!< Variable to trigger signal between thread
+  std::condition_variable writer_is_closed;                                  //!< Variable to trigger signal between thread
 };
 
 } // namespace stryke
