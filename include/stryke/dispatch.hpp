@@ -128,7 +128,7 @@ auto createFileSuffix(std::tuple<Types...> const &data, std::string &suffix) {
 
 namespace fs = std::filesystem;
 
-//! Writer in mutli file one thread.
+//! Writer in mutli file one thread. It keep all file open at a time.
 //!
 //! \tparam Types Types list of field stryke::Type or stryke::FolderEncode.
 //!
@@ -141,7 +141,7 @@ public:
 };
 
 
-//! Writer in mutli file one thread.
+//! Writer in mutli file one thread. It keep all file open at a time.
 //!
 //! \tparam TypesFolder Types list of field stryke::Type contained in a stryke::FolderEncode. These datas will be store in folder path.
 //! \tparam Types Types list of field stryke::Type.
@@ -198,7 +198,7 @@ public:
 
 protected:
 
-  //! Get the writer object. In function of data stored in folder path.
+  //! Get the writer object identity in function of data stored in folder path.
   //!
   //! \param datafolder Data encoded in folder
   //! \return std::string Identity of the writer
@@ -253,10 +253,10 @@ protected:
 };
 
 
-//! Writer in mutli file one thread. It duplicate the first data to store it in folder and in file.
+//! Writer in mutli file one thread. It keep all file open at a time. It duplicate the first data to store it in folder and in file.
 //!
-//! \tparam T
-//! \tparam Types
+//! \tparam T First Types that will be duplicate between folder and file.
+//! \tparam Types Types list of field stryke::Type or stryke::FolderEncode.
 //!
 template <typename T, typename... Types>
 class OrcWriterDispatchDuplicate : public OrcWriterDispatchDuplicate<T, FolderEncode<>, Types...> {
@@ -278,9 +278,9 @@ public:
 //! Writer in mutli file one thread. It duplicate the first data to store it in folder and in file.
 //! I don't find a better way. I was not able to implement it with heritage from OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
 //!
-//! \tparam T
-//! \tparam TypesFolder
-//! \tparam Types
+//! \tparam T First Types that will be duplicate between folder and file.
+//! \tparam TypesFolder Types list of field stryke::Type contained in a stryke::FolderEncode. These datas will be store in folder path.
+//! \tparam Types Types list of field stryke::Type.
 //!
 template <typename T, typename... TypesFolder, typename... Types>
 class OrcWriterDispatchDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
