@@ -59,7 +59,9 @@ namespace stryke {
 //! stryke::get_orc_type and stryke::utils::Filler are define outside to get stryke::Type free of orc library dependencies.
 class Type {
 protected:
-  Type() {}
+  Type() {
+  }
+
 public:
   // bool empty = true;
   typedef Type type;
@@ -88,7 +90,7 @@ public:
 //! stryke::Short defined type to match orc field type orc::TypeKind::SHORT.
 //!
 //!
-class Short : public Type  {
+class Short : public Type {
 public:
   Short(short data)
       : data(data), empty(false) {
@@ -107,12 +109,12 @@ public:
 //! stryke::Int defined type to match orc field type orc::TypeKind::INT.
 //!
 //!
-class Int : public Type  {
+class Int : public Type {
 public:
   Int(int data)
       : data(data), empty(false) {
   }
-  Int () {
+  Int() {
   }
   operator int() const {
     return data;
@@ -126,7 +128,7 @@ public:
 //! stryke::String defined type to match orc field type orc::TypeKind::STRINGs.
 //!
 //!
-class String : public Type  {
+class String : public Type {
 public:
   String(std::string &&data)
       : data(std::forward<std::string>(data)), empty(false) {
@@ -151,7 +153,7 @@ public:
 //! stryke::Double defined type to match orc field type orc::TypeKind::DOUBLE.
 //!
 //!
-class Double : public Type  {
+class Double : public Type {
 public:
   Double(double data)
       : data(data), empty(false) {
@@ -170,7 +172,7 @@ public:
 //! stryke::Float defined type to match orc field type orc::TypeKind::FLOAT.
 //!
 //!
-class Float : public Type  {
+class Float : public Type {
 public:
   Float(float data)
       : data(data), empty(false) {
@@ -189,7 +191,7 @@ public:
 //! stryke::Boolean defined type to match orc field type orc::TypeKind::BOOLEAN.
 //!
 //!
-class Boolean : public Type  {
+class Boolean : public Type {
 public:
   Boolean(bool data)
       : data(data), empty(false) {
@@ -208,7 +210,7 @@ public:
 //! stryke::Date defined type to match orc field type orc::TypeKind::DATE.
 //!
 //! Build to be initialized by a std::string
-class Date : public Type  {
+class Date : public Type {
 public:
   Date(std::string &&data)
       : data(std::forward<std::string>(data)), empty(false) {
@@ -233,7 +235,7 @@ public:
 //! stryke::DateNumber defined type to match orc field type orc::TypeKind::DATE.
 //!
 //! Build to be initialized by a long that represent number of day since 1970
-class DateNumber : public Type  {
+class DateNumber : public Type {
 public:
   DateNumber(long data)
       : data(data), empty(false) {
@@ -252,7 +254,7 @@ public:
 //! stryke::Timestamp defined type to match orc field type orc::TypeKind::TIMESTAMP.
 //!
 //! Build to be initialized by a std::string
-class Timestamp : public Type  {
+class Timestamp : public Type {
 public:
   Timestamp(std::string &&data)
       : data(std::forward<std::string>(data)), empty(false) {
@@ -277,7 +279,7 @@ public:
 //! stryke::Timestamp defined type to match orc field type orc::TypeKind::TIMESTAMP.
 //!
 //! Build to be initialized by a double that represent number of nanosecond since 1970
-class TimestampNumber : public Type  {
+class TimestampNumber : public Type {
 public:
   TimestampNumber(double data)
       : data(data), empty(false) {

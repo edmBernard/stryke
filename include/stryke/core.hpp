@@ -195,8 +195,8 @@ namespace utils {
 // Filler Implementation: function to fill batch
 // ==============================================================
 
-// I use a class because function template partial specialisation is not allowed in c++, but class yes
 //! Class to fill data in orc::StructVectorBatch.
+//! I use a class because function template partial specialisation is not allowed in c++, but class yes
 //!
 //! \tparam Types tuple of all field Type (std::tuple<stryke::Type...>)
 //! \tparam N column index of the field to fill
