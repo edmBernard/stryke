@@ -147,7 +147,6 @@ auto for_each(orc::StructVectorBatch *structBatch, uint64_t row) -> std::tuple<T
 
 } // namespace utils
 
-
 //! OrcReader work like an iterator, it must be reset to get data another time.
 //!
 //! \tparam Types
@@ -164,15 +163,16 @@ class OrcReader {
   std::unique_ptr<orc::ColumnVectorBatch> batch;
 
 public:
-  OrcReader(std::string filename, uint64_t batch_size = 10000) : filename(filename), batch_size(batch_size) {
+  OrcReader(std::string filename, uint64_t batch_size = 10000)
+      : filename(filename), batch_size(batch_size) {
     this->reader = orc::createReader(orc::readLocalFile(this->filename), this->options);
     this->rowReader = this->reader->createRowReader();
     this->batch = this->rowReader->createRowBatch(this->batch_size);
     this->nbr_rows = this->reader->getNumberOfRows();
     this->nbr_cols = this->reader->getStatistics()->getNumberOfColumns();
 
-    if (sizeof...(Types) != this->nbr_cols-1) {
-      throw std::runtime_error("Incompatible file, nbr of columns expected by reader : " + std::to_string(sizeof...(Types)) + " got in file : " + std::to_string(this->nbr_cols-1));
+    if (sizeof...(Types) != this->nbr_cols - 1) {
+      throw std::runtime_error("Incompatible file, nbr of columns expected by reader : " + std::to_string(sizeof...(Types)) + " got in file : " + std::to_string(this->nbr_cols - 1));
     }
   }
 
@@ -234,7 +234,6 @@ public:
   uint64_t get_nbr_cols() {
     return this->nbr_cols;
   }
-
 };
 
 } // namespace stryke
