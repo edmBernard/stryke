@@ -39,7 +39,7 @@ bool compare(T value1, T value2) {
 
 template <>
 inline bool compare(TimestampNumber value1, TimestampNumber value2) {
-  return long(value1.data/86400) == long(value2.data/86400);
+  return long(value1.data / 86400) == long(value2.data / 86400);
 }
 
 template <>
@@ -48,7 +48,6 @@ inline bool compare(Double value1, Double value2) {
 }
 
 } // namespace utils
-
 
 //! Writer in mutli file one thread. It close file when the trigger data change.
 //!
@@ -73,7 +72,6 @@ public:
 template <typename T, typename... TypesFolder, typename... Types>
 class OrcWriterSequential<T, FolderEncode<TypesFolder...>, Types...> {
 public:
-
   //! Construct a new Orc Writer Sequential object.
   //!
   //! \param column_names Array/Initializer with columns name
@@ -115,11 +113,10 @@ public:
   }
 
 private:
-
- //! Get the writer object identity in function of the trigger.
- //!
- //! \param data Data stored in folder. Trigger for file closing.
- //!
+  //! Get the writer object identity in function of the trigger.
+  //!
+  //! \param data Data stored in folder. Trigger for file closing.
+  //!
   void get_writer(T data) {
     if (!utils::compare(data, this->current_data) || !this->writer) {
       this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>>(this->column_names_full, this->root_folder, this->file_prefix, this->writeroptions);
@@ -128,12 +125,12 @@ private:
   }
 
   WriterOptions writeroptions; //!< Writer options
-  fs::path root_folder; //!< Output directory
-  std::string file_prefix; //!< File prefix for output file
+  fs::path root_folder;        //!< Output directory
+  std::string file_prefix;     //!< File prefix for output file
 
-  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>> writer; //!< Map contain writer. The hash is compute with data stored in folder name
+  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, Types...>> writer;     //!< Map contain writer. The hash is compute with data stored in folder name
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names_full; //!< Array with all field name (in path and in file)
-  T current_data; //!< Value of the current data trigger
+  T current_data;                                                                           //!< Value of the current data trigger
 };
 
 //! Writer in mutli file one thread. It close file when the trigger data change. Data trigger will be duplicate between folder and file.
@@ -160,10 +157,9 @@ template <typename T, typename... TypesFolder, typename... Types>
 class OrcWriterSequentialDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
 
   std::unique_ptr<OrcWriterSequential<T, FolderEncode<TypesFolder...>, T, Types...>> writer; //!< Map contain writer. The hash is compute with data stored in folder name
-  std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full; //!< Array with all field name (in path and in file)
+  std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;  //!< Array with all field name (in path and in file)
 
 public:
-
   //! Construct a new Orc Writer Sequential Duplicate object.
   //!
   //! \param column_names Array/Initializer with columns name

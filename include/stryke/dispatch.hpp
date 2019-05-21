@@ -62,7 +62,6 @@ inline std::chrono::time_point<std::chrono::system_clock> get_time<TimestampNumb
   return p1 + std::chrono::seconds(long(date.data));
 }
 
-
 inline std::array<std::string, 3> tp2ymd(std::chrono::time_point<std::chrono::system_clock> tp) {
   // Process Date
   auto ymd = date::year_month_day(date::floor<date::days>(tp)); // calendar date
@@ -89,7 +88,6 @@ bool addFolder(T value, std::string column_name, fs::path &folder) {
   return true;
 };
 
-
 template <typename... Types, std::size_t... Indices>
 auto createFolderImpl(std::index_sequence<Indices...>, std::tuple<Types...> const &data, std::array<std::string, sizeof...(Types)> column_names, fs::path &folder) -> std::vector<bool> {
   return {addFolder(std::get<Indices>(data), std::get<Indices>(column_names), folder)...};
@@ -104,7 +102,7 @@ template <typename T>
 bool addFileSuffix(T value, std::string &suffix) {
   if constexpr (T::is_date) {
     auto ymd = tp2ymd(get_time(value));
-    suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-"  + std::get<2>(ymd);
+    suffix += "-" + std::get<0>(ymd) + "-" + std::get<1>(ymd) + "-" + std::get<2>(ymd);
   } else {
     std::ostringstream oss;
     oss << "-" << value.data;
@@ -112,7 +110,6 @@ bool addFileSuffix(T value, std::string &suffix) {
   }
   return true;
 }
-
 
 template <typename... Types, std::size_t... Indices>
 auto createFileSuffixImpl(std::index_sequence<Indices...>, std::tuple<Types...> const &data, std::string &suffix) -> std::vector<bool> {
@@ -140,7 +137,6 @@ public:
   }
 };
 
-
 //! Writer in mutli file one thread. It keep all file open at a time.
 //!
 //! \tparam TypesFolder Types list of field stryke::Type contained in a stryke::FolderEncode. These datas will be store in folder path.
@@ -149,7 +145,6 @@ public:
 template <typename... TypesFolder, typename... Types>
 class OrcWriterDispatch<FolderEncode<TypesFolder...>, Types...> {
 public:
-
   //! Construct a new Orc Writer Dispatch object.
   //!
   //! \param column_names Array/Initializer with columns name
@@ -197,7 +192,6 @@ public:
   }
 
 protected:
-
   //! Get the writer object identity in function of data stored in folder path.
   //!
   //! \param datafolder Data encoded in folder
@@ -241,17 +235,16 @@ protected:
     return prefix_with_date;
   }
 
-  WriterOptions writeroptions; //!< Writer options
-  std::array<std::string, sizeof...(Types)> column_names_file;  //!< Columns name for data in files
+  WriterOptions writeroptions;                                         //!< Writer options
+  std::array<std::string, sizeof...(Types)> column_names_file;         //!< Columns name for data in files
   std::array<std::string, sizeof...(TypesFolder)> column_names_folder; //!< Columns name for data in folder name
 
   std::map<fs::path, std::unique_ptr<OrcWriterImpl<Types...>>> writers; //!< Map contain writer. The hash is compute with data stored in folder name
-  std::map<fs::path, int> counts; //!< Counts for suffix in filename
+  std::map<fs::path, int> counts;                                       //!< Counts for suffix in filename
 
-  fs::path root_folder; //!< Output directory
+  fs::path root_folder;    //!< Output directory
   std::string file_prefix; //!< File prefix for output file
 };
-
 
 //! Writer in mutli file one thread. It keep all file open at a time. It duplicate the first data to store it in folder and in file.
 //!
@@ -261,7 +254,6 @@ protected:
 template <typename T, typename... Types>
 class OrcWriterDispatchDuplicate : public OrcWriterDispatchDuplicate<T, FolderEncode<>, Types...> {
 public:
-
   //! Construct a new Orc Writer Dispatch Duplicate object.
   //!
   //! \param column_names Array/Initializer with columns name
@@ -274,7 +266,6 @@ public:
   }
 };
 
-
 //! Writer in mutli file one thread. It duplicate the first data to store it in folder and in file.
 //! I don't find a better way. I was not able to implement it with heritage from OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>.
 //!
@@ -285,11 +276,10 @@ public:
 template <typename T, typename... TypesFolder, typename... Types>
 class OrcWriterDispatchDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
 
-  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>> writer; //!< Map contain writer. The hash is compute with data stored in folder name
+  std::unique_ptr<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>> writer;  //!< Map contain writer. The hash is compute with data stored in folder name
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full; //!< Array with all field name (in path and in file)
 
 public:
-
   //! Construct a new Orc Writer Dispatch Duplicate object.
   //!
   //! \param column_names Array/Initializer with columns name
@@ -305,7 +295,6 @@ public:
     this->writer = std::make_unique<OrcWriterDispatch<FolderEncode<T, TypesFolder...>, T, Types...>>(this->column_names_full, root_folder, file_prefix, options);
   }
 
-
   //! Write given data to file.
   //!
   //! \param date Data stored in file and in folder
@@ -315,7 +304,6 @@ public:
   void write(T date, TypesFolder... datafolder, Types... dataT) {
     this->writer->write(date, datafolder..., date, dataT...);
   }
-
 
   //! Write given tuple to file.
   //!

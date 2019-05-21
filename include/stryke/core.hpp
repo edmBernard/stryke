@@ -587,7 +587,6 @@ std::vector<bool> createSchema(std::unique_ptr<orc::Type> &struct_type, std::arr
 template <typename... Types>
 class OrcWriterImpl {
 public:
-
   //! Construct a new Orc Writer Impl object.
   //!
   //! \param column_names Array/Initializer with columns name
@@ -667,7 +666,6 @@ public:
   }
 
 private:
-
   void addToFile() {
     orc::StructVectorBatch *structBatch = dynamic_cast<orc::StructVectorBatch *>(this->rowBatch.get());
     structBatch->numElements = this->numValues;
@@ -683,23 +681,23 @@ private:
 
   std::unique_ptr<orc::Type> fileType; //!< Orc file type it contain schema etc ...
 
-  WriterOptions writeroptions; //!< Writer options for stryke wrapper
+  WriterOptions writeroptions;          //!< Writer options for stryke wrapper
   orc::WriterOptions orc_writeroptions; //!< Writer options for Orc library
 
-  std::unique_ptr<orc::OutputStream> outStream; //!< Output stream
-  std::unique_ptr<orc::Writer> writer; //!< Orc file writer
+  std::unique_ptr<orc::OutputStream> outStream;     //!< Output stream
+  std::unique_ptr<orc::Writer> writer;              //!< Orc file writer
   std::unique_ptr<orc::ColumnVectorBatch> rowBatch; //!< Structure that store data before it's write to file
 
-  std::vector<std::tuple<Types...>> data; //!< Buffer that holds a batch of rows in tuple
+  std::vector<std::tuple<Types...>> data;                 //!< Buffer that holds a batch of rows in tuple
   std::array<std::string, sizeof...(Types)> column_names; //!< Array that contain column name. We use an array to be able to use it in template
 
   std::unique_ptr<orc::DataBuffer<char>> string_buffer; //!< Buffer that holds string data. String are stored in there own buffer in the file.
-  uint64_t string_buffer_offset = 0; //!< Buffer offset to keep track of data position.
+  uint64_t string_buffer_offset = 0;                    //!< Buffer offset to keep track of data position.
 
   fs::path root_folder; //!< Output directory
   std::string filename; //!< Output filename
 
-  uint64_t numValues = 0; //!< num of lines in batch writer
+  uint64_t numValues = 0;  //!< num of lines in batch writer
   uint64_t total_line = 0; //!< num of lines in batch writer + number of line already write in file
 };
 
