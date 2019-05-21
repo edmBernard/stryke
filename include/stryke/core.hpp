@@ -587,12 +587,13 @@ std::vector<bool> createSchema(std::unique_ptr<orc::Type> &struct_type, std::arr
 template <typename... Types>
 class OrcWriterImpl {
 public:
+
   //! Construct a new Orc Writer Impl object.
   //!
-  //! \param column_names
-  //! \param root_folder
-  //! \param filename
-  //! \param options
+  //! \param column_names Array/Initializer with columns name
+  //! \param root_folder Output directory
+  //! \param filename Output filename
+  //! \param options Writer options
   //!
   OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
       : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
@@ -618,9 +619,9 @@ public:
 
   //! Construct a new Orc Writer Impl object.
   //!
-  //! \param column_names
-  //! \param filename
-  //! \param options
+  //! \param column_names Array/Initializer with columns name
+  //! \param filename Output filename
+  //! \param options Writer options
   //!
   OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string filename, const WriterOptions &options)
       : OrcWriterImpl(column_names, "", filename, options) {
@@ -680,26 +681,26 @@ private:
     this->string_buffer_offset = 0;
   }
 
-  std::unique_ptr<orc::Type> fileType;
+  std::unique_ptr<orc::Type> fileType; //!< Orc file type it contain schema etc ...
 
-  WriterOptions writeroptions;
-  orc::WriterOptions orc_writeroptions;
+  WriterOptions writeroptions; //!< Writer options for stryke wrapper
+  orc::WriterOptions orc_writeroptions; //!< Writer options for Orc library
 
-  std::unique_ptr<orc::OutputStream> outStream;
-  std::unique_ptr<orc::Writer> writer;
-  std::unique_ptr<orc::ColumnVectorBatch> rowBatch;
+  std::unique_ptr<orc::OutputStream> outStream; //!< Output stream
+  std::unique_ptr<orc::Writer> writer; //!< Orc file writer
+  std::unique_ptr<orc::ColumnVectorBatch> rowBatch; //!< Structure that store data before it's write to file
 
-  std::vector<std::tuple<Types...>> data; // buffer that holds a batch of rows in tuple
-  std::array<std::string, sizeof...(Types)> column_names;
+  std::vector<std::tuple<Types...>> data; //!< Buffer that holds a batch of rows in tuple
+  std::array<std::string, sizeof...(Types)> column_names; //!< Array that contain column name. We use an array to be able to use it in template
 
-  std::unique_ptr<orc::DataBuffer<char>> string_buffer;
-  uint64_t string_buffer_offset = 0;
+  std::unique_ptr<orc::DataBuffer<char>> string_buffer; //!< Buffer that holds string data. String are stored in there own buffer in the file.
+  uint64_t string_buffer_offset = 0; //!< Buffer offset to keep track of data position.
 
-  fs::path root_folder;
-  std::string filename;
+  fs::path root_folder; //!< Output directory
+  std::string filename; //!< Output filename
 
-  uint64_t numValues = 0; // num of lines in batch writer
-  uint64_t total_line = 0; // num of lines in batch writer + number of line already write in file
+  uint64_t numValues = 0; //!< num of lines in batch writer
+  uint64_t total_line = 0; //!< num of lines in batch writer + number of line already write in file
 };
 
 } // namespace stryke
