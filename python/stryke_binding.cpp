@@ -42,6 +42,8 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_impl<TimestampNumber, Long, Long, Long>(m_simple, "ForTest");
 
   // Basic type
+  declare_writer_impl<Short>(m_simple, "Short1");
+  declare_writer_impl<Int>(m_simple, "Int1");
   declare_writer_impl<Long>(m_simple, "Long1");
   declare_writer_impl<Double>(m_simple, "Double1");
   declare_writer_impl<Boolean>(m_simple, "Boolean1");
@@ -51,6 +53,8 @@ PYBIND11_MODULE(stryke, m) {
   declare_writer_impl<TimestampNumber>(m_simple, "TimestampN1");
 
   // Reader
+  declare_reader<Short>(m_simple, "Short1");
+  declare_reader<Int>(m_simple, "Int1");
   declare_reader<Long>(m_simple, "Long1");
   declare_reader<Double>(m_simple, "Double1");
   declare_reader<Boolean>(m_simple, "Boolean1");

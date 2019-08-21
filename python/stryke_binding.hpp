@@ -38,46 +38,47 @@ namespace py = pybind11;
 namespace pybind11 {
 namespace detail {
 
-// For safety reason as I'm not so sure of my binding,
-// I will comment type with unsafe conversion like Short<->Long
-// concern type are :
-// Short
-// Int
-// Float
+// Warning: Short Int and Float don't exist on python side. Short and Int are converted to Long and Float to Double and vice versa.
+template <>
+struct type_caster<stryke::Short> {
+public:
+  PYBIND11_TYPE_CASTER(stryke::Short, _("stryke.Short"));
+  bool load(handle src, bool) {
+    PyObject *source = src.ptr();
+    PyObject *tmp = PyNumber_Long(source);
+    if (!tmp)
+      return false;
+    value.data = PyLong_AsLong(tmp);
+    value.empty = false;
+    Py_DECREF(tmp);
+    return !((value.data == -1) && (PyErr_Occurred() != NULL));
+  }
 
-// For safety reason as I'm not so sure of my binding,
-// I will comment type with unsafe conversion like Short<->Long
-// template <>
-// struct type_caster<stryke::Int> {
-// public:
-//   PYBIND11_TYPE_CASTER(stryke::Int, _("stryke.Int"));
-//   bool load(handle src, bool) {
-//     PyObject *source = src.ptr();
-//     PyObject *tmp = PyNumber_Long(source);
-//     if (!tmp)
-//       return false;
-//     value.data = PyLong_AsLong(tmp);  // it's maybe not safe to convert long to int
-//     Py_DECREF(tmp);
-//     return !(value.data == -1 && PyErr_Occurred());
-//   }
-// };
+  static handle cast(stryke::Short src, return_value_policy, handle) {
+    return PyLong_FromLong(src.data);
+  }
+};
 
-// For safety reason as I'm not so sure of my binding,
-// I will comment type with unsafe conversion like Short<->Long
-// template <>
-// struct type_caster<stryke::Short> {
-// public:
-//   PYBIND11_TYPE_CASTER(stryke::Short, _("stryke.Short"));
-//   bool load(handle src, bool) {
-//     PyObject *source = src.ptr();
-//     PyObject *tmp = PyNumber_Long(source);
-//     if (!tmp)
-//       return false;
-//     value.data = PyLong_AsLong(tmp);  // it's maybe not safe to convert long to short
-//     Py_DECREF(tmp);
-//     return !(value.data == -1 && PyErr_Occurred());
-//   }
-// };
+// Warning: Short Int and Float don't exist on python side. Short and Int are converted to Long and Float to Double and vice versa.
+template <>
+struct type_caster<stryke::Int> {
+public:
+  PYBIND11_TYPE_CASTER(stryke::Int, _("stryke.Int"));
+  bool load(handle src, bool) {
+    PyObject *source = src.ptr();
+    PyObject *tmp = PyNumber_Long(source);
+    if (!tmp)
+      return false;
+    value.data = PyLong_AsLong(tmp);
+    value.empty = false;
+    Py_DECREF(tmp);
+    return !((value.data == -1) && (PyErr_Occurred() != NULL));
+  }
+
+  static handle cast(stryke::Int src, return_value_policy, handle) {
+    return PyLong_FromLong(src.data);
+  }
+};
 
 template <>
 struct type_caster<stryke::Long> {
@@ -99,22 +100,26 @@ public:
   }
 };
 
-// For safety reason as I'm not so sure of my binding,
-// I will comment type with unsafe conversion like Short<->Long
-// template <>
-// struct type_caster<stryke::Float> {
-// public:
-//   PYBIND11_TYPE_CASTER(stryke::Float, _("stryke.Float"));
-//   bool load(handle src, bool) {
-//     PyObject *source = src.ptr();
-//     PyObject *tmp = PyNumber_Float(source);
-//     if (!tmp)
-//       return false;
-//     value.data = PyFloat_AsDouble(tmp);  // it's maybe not safe to convert double to float
-//     Py_DECREF(tmp);
-//     return !(value.data == -1 && PyErr_Occurred());
-//   }
-// };
+// Warning: Short Int and Float don't exist on python side. Short and Int are converted to Long and Float to Double and vice versa.
+template <>
+struct type_caster<stryke::Float> {
+public:
+  PYBIND11_TYPE_CASTER(stryke::Float, _("stryke.Float"));
+  bool load(handle src, bool) {
+    PyObject *source = src.ptr();
+    PyObject *tmp = PyNumber_Float(source);
+    if (!tmp)
+      return false;
+    value.data = PyFloat_AsDouble(tmp);
+    value.empty = false;
+    Py_DECREF(tmp);
+    return !((value.data == -1.0) && (PyErr_Occurred() != NULL));
+  }
+
+  static handle cast(stryke::Float src, return_value_policy, handle) {
+    return PyFloat_FromDouble(src.data);
+  }
+};
 
 template <>
 struct type_caster<stryke::Double> {

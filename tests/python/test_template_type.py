@@ -17,6 +17,60 @@ def orc_options():
     yield sy.WriterOptions()
 
 
+def test_WriterShort1(orc_file, orc_options):
+    writer = sy.simple.WriterShort1(["col1"], orc_file, orc_options)
+    data_input = [
+        1,
+        "1",
+        "+1",
+        "+1 ",
+        -1,
+        "-1",
+        "-1 "
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
+    del writer
+    assert Path(orc_file).exists()
+
+    reader = sy.simple.ReaderShort1(orc_file)
+    data = reader.get_data()
+
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == int(i)
+
+
+def test_WriterInt1(orc_file, orc_options):
+    writer = sy.simple.WriterInt1(["col1"], orc_file, orc_options)
+    data_input = [
+        1,
+        "1",
+        "+1",
+        "+1 ",
+        -1,
+        "-1",
+        "-1 "
+    ]
+
+    for i in data_input:
+        writer.write(i)
+
+    del writer
+    assert Path(orc_file).exists()
+
+    reader = sy.simple.ReaderInt1(orc_file)
+    data = reader.get_data()
+
+    assert len(data) == len(data_input)
+
+    for d, i in zip(data, data_input):
+        assert d[0] == int(i)
+
+
 def test_WriterLong1(orc_file, orc_options):
     writer = sy.simple.WriterLong1(["col1"], orc_file, orc_options)
     data_input = [
