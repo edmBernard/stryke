@@ -1,45 +1,32 @@
-sudo: false
-
-
 git:
   depth: 1
 
-matrix:
-  include:
+language: cpp
 
+jobs:
+  include:
     - os: linux
       dist: bionic
-      language: cpp
+      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" CXXFLAGS=-std=c++17
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - CXXFLAGS=-std=c++17
-
     - os: linux
       dist: xenial
-      language: cpp
+      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" CXXFLAGS=-std=c++17
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-8
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-        - CXXFLAGS=-std=c++17
-
-
 
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      eval "${MATRIX_EVAL}";
-    fi
+  - eval "${MATRIX_EVAL}";
   - uname -a
   - $CXX --version
   - $CC --version
@@ -59,7 +46,6 @@ install:
   - ./bootstrap-vcpkg.sh
   - ./vcpkg install catch2 orc pybind11
   - cd ..
-
 
 
 script:
