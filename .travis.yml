@@ -14,9 +14,9 @@ jobs:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            packages:
+          packages:
             - g++-8
-  - os: osx
+    - os: osx
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -41,7 +41,6 @@ install:
   - ./bootstrap-vcpkg.sh
   - ./vcpkg install catch2 orc pybind11
   - cd ..
-
 
 
 script:
