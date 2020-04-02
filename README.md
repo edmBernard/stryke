@@ -1,5 +1,7 @@
 # Stryke
 
+[![Build Status](https://travis-ci.org/edmBernard/stryke.svg?branch=master)](https://travis-ci.org/edmBernard/stryke)
+
 A C++ template library build on top of Orc C++ library. There is also a [python binding here](python). All code is available on [github](https://github.com/edmBernard/Stryke). It's a template "header-only" library but depend on [Apache-Orc](https://orc.apache.org/). All headers are in `include` folder.
 
 Apache-Orc is defined as :
