@@ -5,59 +5,59 @@ language: cpp
 
 os: linux
 dist:
-  - bionic
-  - xenial
+- bionic
+- xenial
 
 env:
-  - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" CXXFLAGS=-std=c++17
+- MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" CXXFLAGS=-std=c++17
 
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-8
+    - g++-8
 
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      eval "${MATRIX_EVAL}";
-    fi
-  - uname -a
-  - $CXX --version
-  - $CC --version
-  - python --version
-  - python3 --version
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    eval "${MATRIX_EVAL}";
+  fi
+- uname -a
+- $CXX --version
+- $CC --version
+- python --version
+- python3 --version
 
 
 install:
-  # install dependencies for python tests
-  - curl -fsSL https://bootstrap.pypa.io/get-pip.py | python3 - --user
-  - python3 -m pip install --user path.py
-  - python3 -m pip install --user pytest
-  # install vcpkg and dependencies
-  - pwd
-  - git clone https://github.com/Microsoft/vcpkg.git
-  - cd vcpkg
-  - ./bootstrap-vcpkg.sh
-  - ./vcpkg install catch2 orc pybind11
-  - cd ..
+# install dependencies for python tests
+- curl -fsSL https://bootstrap.pypa.io/get-pip.py | python3 - --user
+- python3 -m pip install --user path.py
+- python3 -m pip install --user pytest
+# install vcpkg and dependencies
+- pwd
+- git clone https://github.com/Microsoft/vcpkg.git
+- cd vcpkg
+- ./bootstrap-vcpkg.sh
+- ./vcpkg install catch2 orc pybind11
+- cd ..
 
 
 
 script:
-  # build and install stryke cpp
-  - pwd
-  - mkdir -p build && cd build
-  - cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON -DPYTHON_EXECUTABLE=$(which python3)
-  - make
-  - make install
-  # - python3 setup.py install
+# build and install stryke cpp
+- pwd
+- mkdir -p build && cd build
+- cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_PYTHON_BINDING=ON -DBUILD_EXAMPLES=ON -DBUILD_UNIT_TESTS=ON -DPYTHON_EXECUTABLE=$(which python3)
+- make
+- make install
+# - python3 setup.py install
 
-  # Test CPP
-  - ./unit-test
-  - cd ..
+# Test CPP
+- ./unit-test
+- cd ..
 
-  # Test Python
-  - python3 -m pytest tests/python
+# Test Python
+- python3 -m pytest tests/python
 
