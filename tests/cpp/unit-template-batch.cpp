@@ -8,8 +8,8 @@ namespace fs = std::filesystem;
 
 TEST_CASE("OrcWriterImpl Batch", "[Core]") {
 
-  for (auto &&batchsize : {10, 100, 1000, 10000}) {
-    for (auto &&nbr_rows : {10, 100, 1000, 100000}) {
+  for (uint64_t batchsize : {10, 100, 1000, 10000}) {
+    for (uint64_t nbr_rows : {10, 100, 1000, 100000}) {
 
       std::string filename = "test.orc";
       stryke::WriterOptions options;
@@ -20,7 +20,7 @@ TEST_CASE("OrcWriterImpl Batch", "[Core]") {
       SECTION("Batch size: " + std::to_string(batchsize) + " nbr_rows: " + std::to_string(nbr_rows)) {
         {
           stryke::OrcWriterImpl<stryke::DateNumber, stryke::Int> writer({"date", "col1"}, filename, options);
-          for (int i = 0; i < nbr_rows; ++i) {
+          for (uint64_t i = 0; i < nbr_rows; ++i) {
             writer.write(i, i);
           }
         }
