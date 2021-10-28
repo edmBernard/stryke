@@ -19,6 +19,7 @@
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
 
+#include <array>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -604,7 +605,7 @@ public:
     if (!folder_path.empty()) {
       fs::create_directories(folder_path);
     }
-    this->outStream = orc::writeLocalFile(this->root_folder / this->filename);
+    this->outStream = orc::writeLocalFile((this->root_folder / this->filename).string());
     this->writer = orc::createWriter(*this->fileType, outStream.get(), this->orc_writeroptions);
     this->rowBatch = this->writer->createRowBatch(this->writeroptions.batchSize);
 

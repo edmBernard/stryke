@@ -1,30 +1,25 @@
-project(Stryke)
+cmake_minimum_required(VERSION 3.17)
 
 #**************************************************************************************************
 # General cMake settings
 #**************************************************************************************************
-cmake_minimum_required(VERSION 3.5)
+project(Stryke)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-  cmake_policy(SET CMP0007 NEW)
-endif(COMMAND cmake_policy)
-
-if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
-endif()
 
 #**************************************************************************************************
 # Find Package ************************************************************************************
+# Orc Dependency
 find_package(protobuf CONFIG REQUIRED)
-find_library(LZ4_LIBRARY NAMES lz4 liblz4)
-find_library(ZSTD_LIBRARY NAMES zstd)
 find_package (ZLIB REQUIRED)
 find_package(Snappy CONFIG REQUIRED)
 
-find_library(ORC_LIBRARY NAMES orc liborc)
+find_library(LZ4_LIBRARY NAMES lz4 liblz4 REQUIRED)
+find_library(ZSTD_LIBRARY NAMES zstd REQUIRED)
+find_library(ORC_LIBRARY NAMES orc liborc REQUIRED)
+
 
 find_package(Catch2 CONFIG REQUIRED)
+
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)
@@ -79,8 +74,9 @@ set(examples
 )
 
 #**************************************************************************************************
-# Set compiler ************************************************************************************
-add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directory
+# Set compiler ************************************************************************************^
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 #**************************************************************************************************
 # Linker ******************************************************************************************
