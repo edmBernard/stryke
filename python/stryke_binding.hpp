@@ -13,8 +13,6 @@
 //
 
 #pragma once
-#ifndef STRYKE_BINDING_FOR_TEST_HPP_
-#define STRYKE_BINDING_FOR_TEST_HPP_
 
 #include "stryke/core.hpp"
 #include "stryke/dispatch.hpp"
@@ -328,5 +326,3 @@ void declare_writer_thread(py::module &m, const std::string &typestr) {
       .def("close_async", (void (Class::*)(S, TypesFolder, Types...)) & Class::close_async)
       .def("close_sync", (void (Class::*)(S, TypesFolder, Types...)) & Class::close_sync);
 }
-
-#endif // !STRYKE_BINDING_FOR_TEST_HPP_

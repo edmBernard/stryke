@@ -7,7 +7,7 @@
 // Copyright (c) 2016 Adrian Colomitchi
 // Copyright (c) 2017 Florian Dang
 // Copyright (c) 2017 Paul Thompson
-// Copyright (c) 2018, 2019 Tomasz Kamiński
+// Copyright (c) 2018, 2019, 2020, 2021 Tomasz Kamiński
 // Copyright (c) 2019 Jiangang Zhuang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -5,13 +5,11 @@
 //
 //  Created by Erwan BERNARD on 03/04/2019.
 //
-//  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
+//  Copyright (c) 2018, 2019, 2020, 2021 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_CSV_DISPATCH_HPP_
-#define STRYKE_CSV_DISPATCH_HPP_
 
 #include "date/date.h"
 #include "stryke/csv/core.hpp"
@@ -255,5 +253,3 @@ public:
 
 } // namespace csv
 } // namespace stryke
-
-#endif // !STRYKE_CSV_DISPATCH_HPP_

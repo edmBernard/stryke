@@ -5,13 +5,11 @@
 //
 //  Created by Erwan BERNARD on 22/12/2018.
 //
-//  Copyright (c) 2018, 2019 Erwan BERNARD. All rights reserved.
+//  Copyright (c) 2018, 2019, 2020, 2021 Erwan BERNARD. All rights reserved.
 //  Distributed under the Apache License, Version 2.0. (See accompanying
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_READER_HPP_
-#define STRYKE_READER_HPP_
 
 #include "date/date.h"
 #include "orc/OrcFile.hh"
@@ -237,5 +235,3 @@ public:
 };
 
 } // namespace stryke
-
-#endif // !STRYKE_READER_HPP_
