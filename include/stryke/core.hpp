@@ -595,7 +595,7 @@ public:
   //! \param filename Output filename
   //! \param options Writer options
   //!
-  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
+  OrcWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string filename, const WriterOptions &options)
       : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
     this->fileType = orc::createStructType();
     auto ret = utils::createSchema<Types...>(this->fileType, this->column_names);

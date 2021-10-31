@@ -10,8 +10,6 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_CSV_SEQUENTIAL_HPP_
-#define STRYKE_CSV_SEQUENTIAL_HPP_
 
 #include "date/date.h"
 #include "stryke/csv/dispatch.hpp"
@@ -52,7 +50,7 @@ inline bool compare(Double value1, Double value2) {
 template <typename T, typename... Types>
 class CsvWriterSequential : public CsvWriterSequential<T, FolderEncode<>, Types...> {
 public:
-  CsvWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : CsvWriterSequential<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -61,7 +59,7 @@ public:
 template <typename T, typename... TypesFolder, typename... Types>
 class CsvWriterSequential<T, FolderEncode<TypesFolder...>, Types...> {
 public:
-  CsvWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
@@ -100,7 +98,7 @@ private:
 template <typename T, typename... Types>
 class CsvWriterSequentialDuplicate : public CsvWriterSequentialDuplicate<T, FolderEncode<>, Types...> {
 public:
-  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : CsvWriterSequentialDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -113,7 +111,7 @@ class CsvWriterSequentialDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;
 
 public:
-  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  CsvWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
@@ -136,5 +134,3 @@ public:
 
 } // namespace csv
 } // namespace stryke
-
-#endif // !STRYKE_CSV_SEQUENTIAL_HPP_

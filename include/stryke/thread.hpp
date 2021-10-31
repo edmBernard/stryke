@@ -47,7 +47,7 @@ namespace utils {
 template <template <typename...> typename Writer, typename T, typename... Types>
 class OrcWriterThread : public OrcWriterThread<Writer, T, FolderEncode<>, Types...> {
 public:
-  OrcWriterThread(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterThread(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : OrcWriterThread<Writer, T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -62,7 +62,7 @@ public:
 template <template <typename...> typename Writer, typename T, typename... TypesFolder, typename... Types>
 class OrcWriterThread<Writer, T, FolderEncode<TypesFolder...>, Types...> {
 public:
-  OrcWriterThread(std::array<std::string, 1 + sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  OrcWriterThread(std::array<std::string, 1 + sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options) {
     this->writer = std::make_unique<Writer<T, FolderEncode<TypesFolder...>, Types...>>(column_names, root_folder, file_prefix, options);
     this->cron_minute = options.cron;
     this->writer_thread = std::thread(&OrcWriterThread::consumer, this);

@@ -10,14 +10,13 @@
 //  file LICENSE or copy at http://www.apache.org/licenses/LICENSE-2.0)
 //
 #pragma once
-#ifndef STRYKE_UTILS_FOR_TEST_HPP_
-#define STRYKE_UTILS_FOR_TEST_HPP_
 
 #include "orc/OrcFile.hh"
 #include "orc/Reader.hh"
 #include "stryke/core.hpp"
 
 #include <string>
+#include <filesystem>
 
 namespace stryke {
 
@@ -34,9 +33,9 @@ struct ColumnsStats {
   uint64_t sum;
 };
 
-inline BasicStats get_basic_stats(std::string filename) {
+inline BasicStats get_basic_stats(std::filesystem::path filename) {
   BasicStats file_stats;
-  std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readFile(std::string(filename)), orc::ReaderOptions());
+  std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readFile(filename.string()), orc::ReaderOptions());
   std::unique_ptr<orc::Statistics> colStats = reader->getStatistics();
 
   file_stats.nbr_columns = colStats->getNumberOfColumns();
@@ -45,20 +44,4 @@ inline BasicStats get_basic_stats(std::string filename) {
   return file_stats;
 };
 
-template<typename T>
-ColumnsStats get_column_stats(std::string filename, uint32_t index);
-
-template <>
-inline ColumnsStats get_column_stats<Int>(std::string filename, uint32_t index) {
-  ColumnsStats file_stats;
-  std::unique_ptr<orc::Reader> reader = orc::createReader(orc::readFile(std::string(filename)), orc::ReaderOptions());
-  std::unique_ptr<orc::Statistics> colStats = reader->getStatistics();
-
-  // TODO: TO DO
-
-  return file_stats;
-}
-
 } // namespace Stryke
-
-#endif // !STRYKE_UTILS_FOR_TEST_HPP_

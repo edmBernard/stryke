@@ -57,7 +57,7 @@ inline bool compare(Double value1, Double value2) {
 template <typename T, typename... Types>
 class OrcWriterSequential : public OrcWriterSequential<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterSequential(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : OrcWriterSequential<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -79,7 +79,7 @@ public:
   //! \param file_prefix File prefix for output file
   //! \param options Writer options
   //!
-  OrcWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterSequential(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
@@ -141,7 +141,7 @@ private:
 template <typename T, typename... Types>
 class OrcWriterSequentialDuplicate : public OrcWriterSequentialDuplicate<T, FolderEncode<>, Types...> {
 public:
-  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : OrcWriterSequentialDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -167,7 +167,7 @@ public:
   //! \param file_prefix File prefix for output file
   //! \param options Writer options
   //!
-  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  OrcWriterSequentialDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);

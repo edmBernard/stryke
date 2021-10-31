@@ -132,7 +132,7 @@ namespace fs = std::filesystem;
 template <typename... Types>
 class CsvWriterDispatch : public CsvWriterDispatch<FolderEncode<>, Types...> {
 public:
-  CsvWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : CsvWriterDispatch<FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -143,7 +143,7 @@ public:
 template <typename... TypesFolder, typename... Types>
 class CsvWriterDispatch<FolderEncode<TypesFolder...>, Types...> {
 public:
-  CsvWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder), this->column_names_folder.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder), sizeof...(Types), this->column_names_file.begin());
@@ -200,7 +200,7 @@ protected:
 
       fs::create_directories(filename.parent_path());
 
-      this->writers[prefix_with_date] = std::make_unique<CsvWriterImpl<Types...>>(this->column_names_file, filename, this->writeroptions);
+      this->writers[prefix_with_date] = std::make_unique<CsvWriterImpl<Types...>>(this->column_names_file, filename.string(), this->writeroptions);
     }
     return prefix_with_date;
   }
@@ -219,7 +219,7 @@ protected:
 template <typename T, typename... Types>
 class CsvWriterDispatchDuplicate : public CsvWriterDispatchDuplicate<T, FolderEncode<>, Types...> {
 public:
-  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : CsvWriterDispatchDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -232,7 +232,7 @@ class CsvWriterDispatchDuplicate<T, FolderEncode<TypesFolder...>, Types...> {
   std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 2> column_names_full;
 
 public:
-  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  CsvWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);

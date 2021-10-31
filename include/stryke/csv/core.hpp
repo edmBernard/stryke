@@ -17,6 +17,7 @@
 #include "stryke/options.hpp"
 #include "stryke/type.hpp"
 
+#include <array>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -70,7 +71,7 @@ auto fillcsv(std::ofstream &writer, std::tuple<Types...> &data) {
 template <typename... Types>
 class CsvWriterImpl {
 public:
-  CsvWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string filename, const WriterOptions &options)
+  CsvWriterImpl(std::array<std::string, sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string filename, const WriterOptions &options)
       : writeroptions(options), column_names(column_names), root_folder(root_folder), filename(filename) {
 
     this->writer = std::ofstream(filename);

@@ -132,7 +132,7 @@ namespace fs = std::filesystem;
 template <typename... Types>
 class OrcWriterDispatch : public OrcWriterDispatch<FolderEncode<>, Types...> {
 public:
-  OrcWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterDispatch(std::array<std::string, sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : OrcWriterDispatch<FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -152,7 +152,7 @@ public:
   //! \param file_prefix File prefix for output file
   //! \param options Writer options
   //!
-  OrcWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterDispatch(std::array<std::string, sizeof...(TypesFolder) + sizeof...(Types)> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : writeroptions(options), root_folder(root_folder), file_prefix(file_prefix) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder), this->column_names_folder.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder), sizeof...(Types), this->column_names_file.begin());
@@ -230,7 +230,7 @@ protected:
 
       fs::create_directories(filename.parent_path());
 
-      this->writers[prefix_with_date] = std::make_unique<OrcWriterImpl<Types...>>(this->column_names_file, filename, this->writeroptions);
+      this->writers[prefix_with_date] = std::make_unique<OrcWriterImpl<Types...>>(this->column_names_file, filename.string(), this->writeroptions);
     }
     return prefix_with_date;
   }
@@ -261,7 +261,7 @@ public:
   //! \param file_prefix File prefix for output file
   //! \param options Writer options
   //!
-  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options)
+  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options)
       : OrcWriterDispatchDuplicate<T, FolderEncode<>, Types...>(column_names, root_folder, file_prefix, options) {
   }
 };
@@ -287,7 +287,7 @@ public:
   //! \param file_prefix File prefix for output file
   //! \param options Writer options
   //!
-  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::string root_folder, std::string file_prefix, const WriterOptions &options) {
+  OrcWriterDispatchDuplicate(std::array<std::string, sizeof...(Types) + sizeof...(TypesFolder) + 1> column_names, std::filesystem::path root_folder, std::string file_prefix, const WriterOptions &options) {
     std::copy_n(column_names.begin(), sizeof...(TypesFolder) + 1, this->column_names_full.begin());
     std::copy_n(column_names.begin() + sizeof...(TypesFolder) + 1, sizeof...(Types), this->column_names_full.begin() + sizeof...(TypesFolder) + 2);
     std::copy_n(column_names.begin(), 1, this->column_names_full.begin() + sizeof...(TypesFolder) + 1);
